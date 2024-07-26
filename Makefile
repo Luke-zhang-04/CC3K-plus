@@ -1,7 +1,7 @@
 CXX=g++
 CXXFLAGS=-std=c++14 -Wall -g -MMD
 EXEC=main
-CCFILES=$(wildcard *.cc)
+CCFILES=$(wildcard src/*.cc)
 OBJECTS=${CCFILES:.cc=.o}
 DEPENDS=${CCFILES:.cc=.d}
 
