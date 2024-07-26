@@ -5,8 +5,8 @@
 
 class Interactible {
     public:
-        char getCharacter() = 0;
-        char onInteract(Player* player) = 0;
-}
+        virtual char getCharacter() = 0;
+        virtual char onInteract(Player* player) = 0;
+};
 
 #endif // INTERACTIBLE_H

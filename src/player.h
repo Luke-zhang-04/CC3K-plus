@@ -2,7 +2,7 @@
 #define PLAYER_H
 
 #include "character.h"
-#include "Treasure.h"
+#include "treasure.h"
 
 class Player: public Character {
     private:
@@ -14,8 +14,8 @@ class Player: public Character {
         Player(Board& board, int maxHealth, int defence, int attack);
         char getCharacter();
         virtual void usePotion(int healthBuff, int attackBuff, int defenseBuff);
-        virtual void pickupGold(Treasure gold);
-        virtual void pickupSuit(Treasure suit);
+        virtual void pickupGold(int amt);
+        virtual void pickupSuit();
         void reset();
 };
 

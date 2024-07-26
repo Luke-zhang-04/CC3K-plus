@@ -1,10 +1,11 @@
 #include "treasure.h"
+#include "player.h"
 
 char Treasure::getCharacter() {
     return 'G';
 }
 
-void onRetrieve(Player* player) {
+bool Treasure::onRetrieve(Player* player) {
     player->pickupGold(amount);
+    return true;
 }
-

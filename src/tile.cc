@@ -1,3 +1,5 @@
+#include <ostream>
+
 #include "tile.h"
 
 char Tile::getCharacter() {
@@ -8,8 +10,19 @@ char Tile::getCharacter() {
     return mapTile;
 }
 
+bool Tile::movable() {
+    return player == nullptr && enemy == nullptr;
+}
+
 Tile::~Tile() {
     // delete enemy;
     delete item;
     // delete treasure;
+}
+
+
+std::ostream& operator>>(std::ostream& out, Tile &tile) {
+    out << tile.getCharacter();
+
+    return out;
 }

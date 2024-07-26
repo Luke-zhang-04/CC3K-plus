@@ -1,7 +1,5 @@
 #ifndef ENEMY_H
 #define ENEMY_H
-#include <string.h>
-
 #include "board.h"
 #include "character.h"
 
@@ -15,20 +13,31 @@ enum class EnemyType {
     Phoenix
 };
 
+enum class CharacterUpdateAction {
+    North,
+    NorthEast,
+    East,
+    SouthEast,
+    South,
+    SouthWest,
+    West,
+    NorthWest,
+    Attack,
+};
+
 class Enemy: public Character {
     private:
         char character;
+
+    protected:
+        CharacterUpdateAction walk(int x, int y);
 
     public:
         Enemy(EnemyType, Board&);
 
         char getCharacter();
 
-        virtual std::string update(int x, int y);
+        virtual CharacterUpdateAction update(int x, int y);
 };
-
-class Dragon: public Enemy {};
-
-class Merchant: public Enemy {};
 
 #endif

@@ -1,12 +1,17 @@
 CXX=g++
 CXXFLAGS=-std=c++14 -Wall -g -MMD
 EXEC=main
+OBJDIR=obj
 CCFILES=$(wildcard src/*.cc)
-OBJECTS=${CCFILES:.cc=.o}
-DEPENDS=${CCFILES:.cc=.d}
+OBJECTS=$(addprefix $(OBJDIR)/, ${CCFILES:.cc=.o})
+DEPENDS=${OBJECTS:.o=.d}
 
 ${EXEC}: ${OBJECTS}
-	${CXX} ${OBJECTS} -o ${EXEC}
+	${CXX} ${CXXFLAGS} ${OBJECTS} -o ${EXEC}
+
+${OBJECTS}: ${CCFILES}
+	mkdir -p obj/src
+	${CXX} ${CXXFLAGS} -c -o $@ $<
 
 -include ${DEPENDS}
 
