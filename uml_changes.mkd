@@ -28,3 +28,6 @@
 - `Game` needs a private method `newBoard`
 - `render` is public
 - Added a pointer to `Player`
+
+### Player
+- Fields `suited`, `attackMod`, `defenseMod`, and `gold` are protected instead of private

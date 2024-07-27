@@ -2,13 +2,14 @@
 #define PLAYER_H
 
 #include "character.h"
-#include "treasure.h"
+
+class Board;
 
 class Player: public Character {
-    private:
+    protected:
+        bool suited;
         int attackMod;
         int defenseMod;
-        bool suited;
         int gold;
 
     public:

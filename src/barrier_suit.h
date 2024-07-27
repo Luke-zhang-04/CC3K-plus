@@ -1,8 +1,9 @@
 #ifndef BARRIER_SUIT_H
 #define BARRIER_SUIT_H
 #include "dragon_protected.h"
-#include "player.h"
 #include "retrievable.h"
+
+class Player;
 
 class BarrierSuit: public Retrievable, DragonProtected {
     public:

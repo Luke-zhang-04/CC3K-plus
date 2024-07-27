@@ -1,7 +1,8 @@
 #ifndef ENEMY_H
 #define ENEMY_H
-#include "board.h"
 #include "character.h"
+
+class Board;
 
 enum class EnemyType { Vampire, Werewolf, Troll, Goblin, Merchant, Dragon, Phoenix };
 

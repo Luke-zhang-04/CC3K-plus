@@ -1,8 +1,11 @@
 #include "tile.h"
 
+#include "interactible.h"
+#include "player.h"
+
 #include <ostream>
 
-char Tile::getCharacter() {
+char Tile::getCharacter() const {
     if (player != nullptr)
         return player->getCharacter();
     // if (enemy != nullptr) return enemy->getCharacter();
@@ -12,7 +15,7 @@ char Tile::getCharacter() {
     return mapTile;
 }
 
-bool Tile::movable() {
+bool Tile::movable() const {
     return player == nullptr && enemy == nullptr;
 }
 

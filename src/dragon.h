@@ -1,7 +1,8 @@
 #ifndef DRAGON_H
 #define DRAGON_H
-#include "dragon_protected.h"
 #include "enemy.h"
+
+class DragonProtected;
 
 class Dragon: public Enemy {
     private:

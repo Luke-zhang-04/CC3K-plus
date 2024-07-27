@@ -4,6 +4,6 @@ char Potion::getCharacter() {
     return 'P';
 }
 
-char Potion::onInteract(Player* player) {
+void Potion::onInteract(Player* player) {
     player->usePotion(healthMod, attackMod, defenseMod);
 }

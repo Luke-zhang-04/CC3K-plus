@@ -1,5 +1,7 @@
 #include "barrier_suit.h"
 
+#include "player.h"
+
 char BarrierSuit::getCharacter() {
     return 'B';
 }

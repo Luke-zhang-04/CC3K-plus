@@ -1,5 +1,7 @@
 #include "enemy.h"
 
+#include "board.h"
+
 #include <Vector>
 
 Enemy::Enemy(EnemyType enemyType, Board& board): Character{board, 0, 0, 0}, character{0} {

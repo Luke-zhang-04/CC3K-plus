@@ -1,8 +1,9 @@
 #ifndef COMPASS_H
 #define COMPASS_H
 
-#include "board.h"
 #include "retrievable.h"
+
+class Board;
 
 class Compass: public Retrievable {
         Board& board;

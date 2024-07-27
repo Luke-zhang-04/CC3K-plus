@@ -1,10 +1,15 @@
 #include "board.h"
 
+#include "game.h"
 #include "tile.h"
 
 #include <array>
 #include <ostream>
 #include <vector>
+
+bool Board::merchantHostile() {
+    return game.merchantHostile;
+}
 
 void Board::render(std::ostream& out) {
     for (const std::vector<Tile*>& row : map) {
@@ -33,7 +38,7 @@ T optional2DIndex(std::vector<std::vector<T>>& vec, int x, int y) {
 
 const std::array<const std::array<const Tile*, 3>, 3> Board::getArea(int x, int y) {
     /* clang-format off */
-    return std::array<const std::array<const Tile*, 3>, 3>{{
+    return {{
         {optional2DIndex(map, x - 1, y - 1), optional2DIndex(map, x, y - 1), optional2DIndex(map, x + 1, y - 1)},
         {optional2DIndex(map, x - 1, y),     optional2DIndex(map, x, y),     optional2DIndex(map, x + 1, y)    },
         {optional2DIndex(map, x - 1, y + 1), optional2DIndex(map, x, y + 1), optional2DIndex(map, x + 1, y + 1)},

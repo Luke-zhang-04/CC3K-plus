@@ -1,6 +1,7 @@
 #ifndef CHARACTER_H
 #define CHARACTER_H
-#include "board.h"
+
+class Board;
 
 class Character {
     protected:

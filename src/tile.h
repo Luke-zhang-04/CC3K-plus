@@ -1,12 +1,14 @@
 #ifndef TILE_H
 #define TILE_H
-#include "enemy.h"
-#include "interactible.h"
-#include "player.h"
-#include "retrievable.h"
 
 #include <ostream>
 
+class Retrievable;
+class Interactible;
+class Enemy;
+class Player;
+
+/* clang-format off */
 struct Tile {
     friend std::ostream& operator>>(std::ostream&, Tile&);
 
@@ -25,5 +27,6 @@ struct Tile {
     // owns treasure, interactible and enemy
     ~Tile();
 };
+/* clang-format on */
 
 #endif

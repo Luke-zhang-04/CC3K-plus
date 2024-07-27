@@ -1,6 +1,7 @@
 #ifndef DRAGON_PROTECTED_H
 #define DRAGON_PROTECTED_H
-#include "dragon.h"
+
+class Dragon;
 
 class DragonProtected {
     protected:

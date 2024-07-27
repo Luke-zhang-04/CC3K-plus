@@ -1,11 +1,12 @@
 #ifndef BOARD_H
 #define BOARD_H
-#include "game.h"
 #include "tile.h"
 
 #include <array>
 #include <ostream>
 #include <vector>
+
+class Game;
 
 class Board {
     private:
@@ -19,9 +20,7 @@ class Board {
     public:
         Board(std::vector<std::vector<Tile*>>);
 
-        bool merchantHostile() {
-            return game.merchantHostile;
-        }
+        bool merchantHostile();
 
         void showStairs() {
             stairsVisible = true;

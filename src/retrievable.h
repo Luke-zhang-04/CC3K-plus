@@ -1,7 +1,7 @@
 #ifndef RETRIEVABLE_H
 #define RETRIEVABLE_H
 
-#include "player.h"
+class Player;
 
 class Retrievable {
     public:
@@ -9,4 +9,4 @@ class Retrievable {
         virtual bool onRetrieve(Player* player) = 0;
 };
 
-#endif // RETRIEVABLE_H
+#endif
