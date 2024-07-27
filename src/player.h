@@ -10,6 +10,7 @@ class Player: public Character {
         int defenseMod;
         bool suited;
         int gold;
+
     public:
         Player(Board& board, int maxHealth, int defence, int attack);
         char getCharacter();

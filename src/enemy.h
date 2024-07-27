@@ -3,15 +3,7 @@
 #include "board.h"
 #include "character.h"
 
-enum class EnemyType {
-    Vampire,
-    Werewolf,
-    Troll,
-    Goblin,
-    Merchant,
-    Dragon,
-    Phoenix
-};
+enum class EnemyType { Vampire, Werewolf, Troll, Goblin, Merchant, Dragon, Phoenix };
 
 enum class CharacterUpdateAction {
     North,

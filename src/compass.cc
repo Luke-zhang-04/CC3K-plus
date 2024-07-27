@@ -1,8 +1,9 @@
 #include "compass.h"
+
 #include "board.h"
 #include "player.h"
 
-Compass::Compass(Board& board): board(board) {}
+Compass::Compass(Board& board): board{board} {}
 
 char Compass::getCharacter() {
     return 'C';

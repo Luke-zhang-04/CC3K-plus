@@ -1,8 +1,10 @@
 #include "player.h"
+
 #include <algorithm>
 
-Player::Player(Board& board, int maxHealth, int attack,  int defence) :
-     attackMod{0}, defenseMod{0}, suited{false}, gold{0}, Character{board, maxHealth, attack, defense} {}
+Player::Player(Board& board, int maxHealth, int attack, int defence):
+    attackMod{0}, defenseMod{0}, suited{false}, gold{0},
+    Character{board, maxHealth, attack, defense} {}
 
 char Player::getCharacter() {
     return '@';

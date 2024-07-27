@@ -1,6 +1,6 @@
-#include <math.h>
-
 #include "character.h"
+
+#include <math.h>
 
 Character::Character(Board& board, int maxHealth, int attack, int defense):
     maxHealth{maxHealth}, board{board}, health{maxHealth}, defense{defense}, attack{attack} {}

@@ -5,7 +5,7 @@
 #include "retrievable.h"
 
 class Compass: public Retrievable {
-    Board& board;
+        Board& board;
 
     public:
         Compass(Board& board);

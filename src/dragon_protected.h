@@ -1,4 +1,4 @@
-#if !defined(DRAGON_PROTECTED_H)
+#ifndef DRAGON_PROTECTED_H
 #define DRAGON_PROTECTED_H
 #include "dragon.h"
 
@@ -9,7 +9,7 @@ class DragonProtected {
 
     public:
         void dragonDead();
-        DragonProtected(Dragon* d): dragon { d } {};
+        DragonProtected(Dragon* d): dragon{d} {};
 };
 
 #endif // DRAGON_PROTECTED_H

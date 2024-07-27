@@ -1,4 +1,5 @@
 #include "enemy.h"
+
 #include <Vector>
 
 Enemy::Enemy(EnemyType enemyType, Board& board): Character{board, 0, 0, 0}, character{0} {
@@ -57,23 +58,22 @@ char Enemy::getCharacter() {
 CharacterUpdateAction Enemy::walk(int x, int y) {
     auto area = board.getArea(x, y);
     std::vector<int> movable;
-    for (int ix = x-1; ix <= x+1; ix++) {
-        for (int iy = y-1; iy <= y+1; iy++) {
+    for (int ix = x - 1; ix <= x + 1; ix++) {
+        for (int iy = y - 1; iy <= y + 1; iy++) {
             // don't check the current tile
-            if (ix == x && iy == y) continue;
+            if (ix == x && iy == y)
+                continue;
 
             // if it's movable, add it to the array
-            if (area[ix][iy] && area[ix][iy]->movable()) {
-
-            }
+            if (area[ix][iy] && area[ix][iy]->movable()) {}
         }
     }
 }
 
 CharacterUpdateAction Enemy::update(int x, int y) {
     auto area = board.getArea(x, y);
-    for (int ix = x-1; ix <= x+1; ix++) {
-        for (int iy = y-1; iy <= y+1; iy++) {
+    for (int ix = x - 1; ix <= x + 1; ix++) {
+        for (int iy = y - 1; iy <= y + 1; iy++) {
             if (area[iy][ix] && area[iy][ix]->player) {
                 return CharacterUpdateAction::Attack;
             }

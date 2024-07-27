@@ -1,11 +1,11 @@
 #ifndef BOARD_H
 #define BOARD_H
+#include "game.h"
+#include "tile.h"
+
+#include <array>
 #include <ostream>
 #include <vector>
-#include <array>
-
-#include "tile.h"
-#include "game.h"
 
 class Board {
     private:

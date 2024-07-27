@@ -1,11 +1,11 @@
-#if !defined(TILE_H)
-#    define TILE_H
-#include <ostream>
-
-#include "retrievable.h"
-#include "player.h"
+#ifndef TILE_H
+#define TILE_H
 #include "enemy.h"
 #include "interactible.h"
+#include "player.h"
+#include "retrievable.h"
+
+#include <ostream>
 
 struct Tile {
     friend std::ostream& operator>>(std::ostream&, Tile&);
@@ -26,4 +26,4 @@ struct Tile {
     ~Tile();
 };
 
-#endif // TILE_H
+#endif

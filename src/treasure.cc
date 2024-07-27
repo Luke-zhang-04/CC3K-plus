@@ -1,4 +1,5 @@
 #include "treasure.h"
+
 #include "player.h"
 
 char Treasure::getCharacter() {

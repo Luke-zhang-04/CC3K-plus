@@ -1,4 +1,4 @@
-#if !defined(INTERACTIBLE_H)
+#ifndef INTERACTIBLE_H
 #define INTERACTIBLE_H
 
 #include "player.h"
@@ -9,4 +9,4 @@ class Interactible {
         virtual char onInteract(Player* player) = 0;
 };
 
-#endif // INTERACTIBLE_H
+#endif

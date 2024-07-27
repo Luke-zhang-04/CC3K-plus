@@ -1,8 +1,9 @@
 #ifndef GAME_H
 #define GAME_H
-#include <ostream>
 #include "board.h"
 #include "player.h"
+
+#include <ostream>
 
 enum class CardinalDirection {
     North,
@@ -16,7 +17,7 @@ enum class CardinalDirection {
 };
 
 class Game {
-    friend class Board;
+        friend class Board;
 
     private:
         bool merchantHostile = false;

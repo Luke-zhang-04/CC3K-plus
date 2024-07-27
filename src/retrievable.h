@@ -1,4 +1,4 @@
-#if !defined(RETRIEVABLE_H)
+#ifndef RETRIEVABLE_H
 #define RETRIEVABLE_H
 
 #include "player.h"
