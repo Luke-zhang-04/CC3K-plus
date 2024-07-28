@@ -1,9 +1,10 @@
 #include "barrier_suit.h"
 
+#include "constants.h"
 #include "player.h"
 
 char BarrierSuit::getCharacter() {
-    return 'B';
+    return Symbols::BarrierSuit;
 }
 
 bool BarrierSuit::onRetrieve(Player* player) {

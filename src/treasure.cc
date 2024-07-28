@@ -1,9 +1,10 @@
 #include "treasure.h"
 
+#include "constants.h"
 #include "player.h"
 
 char Treasure::getCharacter() {
-    return 'G';
+    return Symbols::Treasure;
 }
 
 bool Treasure::onRetrieve(Player* player) {

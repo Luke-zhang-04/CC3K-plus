@@ -1,13 +1,14 @@
 #include "player.h"
 
+#include "constants.h"
+
 #include <algorithm>
 
 Player::Player(Board& board, int maxHealth, int attack, int defence):
-    attackMod{0}, defenseMod{0}, suited{false}, gold{0},
     Character{board, maxHealth, attack, defense} {}
 
 char Player::getCharacter() {
-    return '@';
+    return Symbols::Player;
 }
 
 void Player::usePotion(int healthBuff, int attackBuff, int defenseBuff) {

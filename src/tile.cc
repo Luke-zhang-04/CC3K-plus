@@ -5,6 +5,12 @@
 
 #include <ostream>
 
+Tile::~Tile() {
+    delete enemy;
+    delete item;
+    delete treasure;
+}
+
 char Tile::getCharacter() const {
     if (player != nullptr)
         return player->getCharacter();
@@ -17,12 +23,6 @@ char Tile::getCharacter() const {
 
 bool Tile::movable() const {
     return player == nullptr && enemy == nullptr;
-}
-
-Tile::~Tile() {
-    // delete enemy;
-    delete item;
-    // delete treasure;
 }
 
 std::ostream& operator>>(std::ostream& out, Tile& tile) {

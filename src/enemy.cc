@@ -1,6 +1,7 @@
 #include "enemy.h"
 
 #include "board.h"
+#include "constants.h"
 
 #include <Vector>
 
@@ -10,43 +11,43 @@ Enemy::Enemy(EnemyType enemyType, Board& board): Character{board, 0, 0, 0}, char
             maxHealth = 50;
             attack = 25;
             defense = 25;
-            character = 'V';
+            character = Symbols::Vampire;
             break;
         case EnemyType::Werewolf:
             maxHealth = 120;
             attack = 30;
             defense = 5;
-            character = 'W';
+            character = Symbols::Werewolf;
             break;
         case EnemyType::Troll:
             maxHealth = 120;
             attack = 25;
             defense = 15;
-            character = 'T';
+            character = Symbols::Troll;
             break;
         case EnemyType::Goblin:
             maxHealth = 70;
             attack = 5;
             defense = 10;
-            character = 'G';
+            character = Symbols::Goblin;
             break;
         case EnemyType::Merchant:
             maxHealth = 30;
             attack = 70;
             defense = 5;
-            character = 'M';
+            character = Symbols::Merchant;
             break;
         case EnemyType::Dragon:
             maxHealth = 150;
             attack = 20;
             defense = 20;
-            character = 'D';
+            character = Symbols::Dragon;
             break;
         case EnemyType::Phoenix:
             maxHealth = 50;
             attack = 35;
             defense = 20;
-            character = 'X';
+            character = Symbols::Phoenix;
             break;
     }
 

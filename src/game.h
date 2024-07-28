@@ -25,13 +25,10 @@ class Game {
         Board* currentBoard = nullptr;
         Player* player;
 
+        void nextLevel();
+
     public:
         Game(Player*, std::ostream&);
-
-        Game(const Game& other);
-        Game(Game&& other);
-        Game& operator=(const Game& other);
-        Game& operator=(Game&& other);
         ~Game();
 
         void render();

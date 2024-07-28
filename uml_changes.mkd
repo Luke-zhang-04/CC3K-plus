@@ -1,33 +1,43 @@
 # CHANGES TO THE UML
+
 ### Player
-- `player->pickupGold` can just take an amount, no need to pass `Treasure`
-- `player->pickupSuit` needs no arguments, the suit will just call it when it's picked up, and now the player is suited
+
+-   `player->pickupGold` can just take an amount, no need to pass `Treasure`
+-   `player->pickupSuit` needs no arguments, the suit will just call it when it's picked up, and now the player is suited
 
 ### Retrievable
-- `onRetrieve` should return a bool, to denote whether the item was successfully retrieved. If it was, it should be removed from the board, otherwise it should persist
+
+-   `onRetrieve` should return a bool, to denote whether the item was successfully retrieved. If it was, it should be removed from the board, otherwise it should persist
 
 ### Enemy
-- New protected method `Enemy::walk` for more code re-use
-- Enemy does not return a string, instead enum elements for cardinal directions or attack
+
+-   New protected method `Enemy::walk` for more code re-use
+-   Enemy does not return a string, instead enum elements for cardinal directions or attack
 
 ### Treasure
-- Returns 'G' not 'B'
+
+-   Returns 'G' not 'B'
 
 ### Tile
-- Overload for output stream operator
+
+-   Overload for output stream operator
 
 ### Compass
-- When the `Compass` is retrieved, the player doesn't need to know, the board does.
-    - We can still call `onRetrieve(Player)`, but the constructor needs a `Board&` so it can alert the board on pickup
+
+-   When the `Compass` is retrieved, the player doesn't need to know, the board does.
+    -   We can still call `onRetrieve(Player)`, but the constructor needs a `Board&` so it can alert the board on pickup
 
 ### General
-- "Defense" was chosen as standard, was mis-spelled in `Character`
+
+-   "Defense" was chosen as standard, was mis-spelled in `Character`
 
 ### Game
-- `Board` is a friend class of `Game`
-- `Game` needs a private method `newBoard`
-- `render` is public
-- Added a pointer to `Player`
+
+-   `Board` is a friend class of `Game`
+-   `Game` needs a private method `nextLevel`
+-   `render` is public
+-   Added a pointer to `Player`
 
 ### Player
-- Fields `suited`, `attackMod`, `defenseMod`, and `gold` are protected instead of private
+
+-   Fields `suited`, `attackMod`, `defenseMod`, and `gold` are protected instead of private
