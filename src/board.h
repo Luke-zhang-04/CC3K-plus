@@ -12,13 +12,14 @@ class Board {
     private:
         Game& game;
         bool stairsVisible = false;
-        std::pair<int, int> playerLocation;
-        std::pair<int, int> stairLocation;
+        std::pair<size_t, size_t> playerLocation{0, 0};
+        std::pair<size_t, size_t> stairLocation{0, 0};
 
         std::vector<std::vector<Tile*>> map;
 
     public:
-        Board(std::vector<std::vector<Tile*>>);
+        Board(std::vector<std::vector<Tile*>>, Game&);
+        ~Board();
 
         bool merchantHostile();
 

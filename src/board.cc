@@ -1,11 +1,45 @@
 #include "board.h"
 
+#include "constants.h"
 #include "game.h"
 #include "tile.h"
 
 #include <array>
 #include <ostream>
 #include <vector>
+
+Board::Board(std::vector<std::vector<Tile*>> map, Game& game): map{map}, game{game} {
+    bool foundStairs = false, foundPlayer = false;
+
+    for (size_t y = 0; y < map.size(); y++) {
+        std::vector<Tile*>& row = map[y];
+
+        for (size_t x = 0; x < row.size(); x++) {
+            Tile* cell = row[x];
+
+            if (cell->mapTile == Symbols::Stairs) {
+                stairLocation = {x, y};
+                foundStairs = true;
+            }
+            if (cell->player != nullptr) {
+                playerLocation = {x, y};
+                foundPlayer = true;
+            }
+
+            if (foundPlayer && foundStairs) {
+                break;
+            }
+        }
+    }
+}
+
+Board::~Board() {
+    for (size_t y = 0; y < map.size(); y++) {
+        for (size_t x = 0; x < map[y].size(); x++) {
+            delete map[y][x];
+        }
+    }
+}
 
 bool Board::merchantHostile() {
     return game.merchantHostile;
