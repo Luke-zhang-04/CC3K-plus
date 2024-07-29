@@ -1,6 +1,7 @@
 #include "constants.h"
 
 #include <string>
+#include <utility>
 
 bool isEnemy(char symbol) {
     return symbol == Symbol::Vampire || symbol == Symbol::Werewolf || symbol == Symbol::Troll ||
@@ -66,6 +67,21 @@ CardinalDirection stringToDirection(std::string str) {
     }
 
     throw std::invalid_argument("unknown direction " + str);
+}
+
+std::string directionToString(CardinalDirection c) {
+    switch (c) {
+        case CardinalDirection::NorthWest: return "North West";
+        case CardinalDirection::North: return "North";
+        case CardinalDirection::NorthEast: return "North East";
+        case CardinalDirection::West: return "West";
+        case CardinalDirection::Center: return "Center";
+        case CardinalDirection::East: return "East";
+        case CardinalDirection::SouthWest: return "South West";
+        case CardinalDirection::South: return "South";
+        case CardinalDirection::SouthEast: return "South East";
+        default: return "";
+    }
 }
 
 std::pair<int, int> directionToDisplacement(CardinalDirection dir) {

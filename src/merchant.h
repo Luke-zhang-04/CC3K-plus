@@ -1,14 +1,16 @@
 #ifndef MERCHANT_H
 #define MERCHANT_H
 
-#include "board.h"
 #include "enemy.h"
 
+class Board;
+
 class Merchant: public Enemy {
+    protected:
+        EnemyUpdateAction act(int x, int y) override;
+
     public:
         Merchant(Board&);
-
-        EnemyUpdateAction update(int x, int y, unsigned int frame) override;
 };
 
 #endif

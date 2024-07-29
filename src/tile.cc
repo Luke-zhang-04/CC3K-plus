@@ -7,7 +7,7 @@
 #include "treasure.h"
 
 #include <ostream>
-#include <iostream>
+#include <utility>
 
 Tile::~Tile() {
     delete enemy;

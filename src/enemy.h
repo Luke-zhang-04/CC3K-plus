@@ -48,6 +48,10 @@ class Enemy: public Character {
         // takes in current location, queries whether there is a player near the location
         bool isPlayerNearby(int x, int y);
 
+        // theoretically could take in the frame if enemies act differently at different times. not
+        // currently requires
+        virtual EnemyUpdateAction act(int x, int y);
+
         Board& board;
 
         // gold value when killed
@@ -60,7 +64,7 @@ class Enemy: public Character {
 
         char getCharacter() override;
 
-        virtual EnemyUpdateAction update(int x, int y, unsigned int frame);
+        EnemyUpdateAction update(int x, int y, unsigned int frame);
 
         int goldValue();
 

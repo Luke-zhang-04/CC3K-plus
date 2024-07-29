@@ -1,6 +1,8 @@
 #ifndef CHARACTER_H
 #define CHARACTER_H
 
+#include <utility>
+
 class Board;
 struct Tile;
 
@@ -18,7 +20,7 @@ class Character {
         int getPower();
 
         /** Update its own health and returns it, could be negative if it dies */
-        virtual int beAttacked(int attackPower);
+        virtual std::pair<int, int> beAttacked(int attackPower);
 
         // whether or not this tile can be moved to
         virtual bool canMove(const Tile*) const;

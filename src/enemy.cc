@@ -4,7 +4,7 @@
 #include "constants.h"
 #include "random.h"
 
-#include <iostream>
+#include <cmath>
 #include <vector>
 
 Enemy::Enemy(EnemyType enemyType, Board& board): Character{0, 0, 0}, character{0}, board{board} {
@@ -67,18 +67,18 @@ EnemyUpdateAction Enemy::walk(int x, int y) {
     movable.reserve(8);
     for (int dx = 0; dx <= 2; ++dx) {
         for (int dy = 0; dy <= 2; ++dy) {
-            if (dx == 1 && dy == 1) continue; // if both are 0, move on, don't let them not move
-
-            //DEBUG!!!! REMOVE LATER!!
-            if (area[1][1]->getCharacter() != 'M') continue;
-            std::cout << "y: " << dy << ", x: " << dx << ", " << area[dy][dx]->getCharacter() << " : " << canMove(area[dy][dx]) << " DIRECTION: " << (int) static_cast<EnemyUpdateAction>(dx + dy * 3) <<std::endl;
+            if (dx == 1 && dy == 1)
+                continue; // if both are 0, move on, don't let them not move
 
             // don't move onto the stairs
             auto stairs = board.getStairLoc();
-            if (x + dx == stairs.first && y + dy == stairs.second) continue;
+            if (x + dx == stairs.first && y + dy == stairs.second)
+                continue;
 
             if (area[dy][dx] != nullptr && canMove(area[dy][dx])) {
-                // std::cout << area[1][1]->getCharacter() << " can move to: " << area[dy][dx]->getCharacter() << (int) static_cast<EnemyUpdateAction>(dx + dy * 3) << std::endl;
+                // std::cout << area[1][1]->getCharacter() << " can move to: " <<
+                // area[dy][dx]->getCharacter() << (int) static_cast<EnemyUpdateAction>(dx + dy *
+                // 3) << std::endl;
                 movable.emplace_back(
                     // Store this location as a movement direction
                     static_cast<EnemyUpdateAction>(dx + dy * 3)
@@ -88,11 +88,8 @@ EnemyUpdateAction Enemy::walk(int x, int y) {
     }
 
     // if no valid directions were found, don't move
-    if (movable.empty()) return EnemyUpdateAction::NoAction;
-
-    for (auto& c : movable) {
-        std::cout << "ACTIONS: " << (int) c << std::endl;
-    }
+    if (movable.empty())
+        return EnemyUpdateAction::NoAction;
 
     // pick a random location it can move to
     return movable[randInt(0, movable.size() - 1)];
@@ -104,17 +101,21 @@ bool Enemy::isPlayerNearby(int x, int y) {
     return std::abs((int) player.first - x) <= 1 && std::abs((int) player.second - y) <= 1;
 }
 
-// attack if possible, otherwise move
-EnemyUpdateAction Enemy::update(int x, int y, unsigned int frame) {
-    // if it's at least as old as the frame, don't do anything
-    if (age >= frame) return EnemyUpdateAction::NoAction;
-    std::cout << "AGE: " << age << ", FRAME: " << frame << std::endl;
-    age += 1; // gets older. happy birthday!
-
+EnemyUpdateAction Enemy::act(int x, int y) {
     if (isPlayerNearby(x, y))
         return EnemyUpdateAction::Attack;
     else
         return walk(x, y);
+}
+
+// attack if possible, otherwise move
+EnemyUpdateAction Enemy::update(int x, int y, unsigned int frame) {
+    // if it's at least as old as the frame, don't do anything
+    if (age >= frame)
+        return EnemyUpdateAction::NoAction;
+    age += 1; // gets older. happy birthday!
+
+    return act(x, y);
 }
 
 // most enemies are worth 1

@@ -17,6 +17,7 @@
 -   `beAttacked` is virtual so `Dragon` can override it and "unlock" the protected item when it dies
 -   `goldValue()` that returns how much gold a particular enemy is worth, so dragons and merchants can be worth 0
 -   Adding `age` so multi updates don't happen
+-   Splitting Enemy::update into Enemy::update and Enemy::act, so act can be overridden
 
 ### Dragon
 
@@ -53,8 +54,10 @@
 -   Added private static helper method `randomPopulateMap`
 -   Added private static helper method `labelChambers`
 -   Added private static helper method `traverseChamber`
--   Added private 2-D vector of tiles `chambers`
 -   Added field `shouldGenerate`
+
+### Dragon Protected
+-
 
 ### Board
 
@@ -62,6 +65,7 @@
 -   Need to add an `Update()` function which updates all enemies on the board
 -   Needs a private helper function to find the tile offset by a `CardinalDirection` from a particular x, y coordinate
 -   Adding `stairLocation()` so enemies can know to avoid stepping on the stairs
+-   Added private vector of sets of coordinate pairs `chambers`
 
 ### Player
 

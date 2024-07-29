@@ -6,6 +6,7 @@
 #include <array>
 #include <ostream>
 #include <string>
+#include <utility>
 #include <vector>
 
 class Game;
@@ -20,6 +21,7 @@ class Board {
         std::pair<size_t, size_t> stairLocation{0, 0};
 
         std::vector<std::vector<Tile*>> map;
+        std::vector<std::vector<std::pair<size_t, size_t>>> chambers = {};
 
         unsigned int frame = 0;
 
@@ -37,7 +39,7 @@ class Board {
         void showStairs();
 
         // render all tiles to ostream
-        void render(std::ostream&) const;
+        void render(std::ostream&, std::stringstream&) const;
 
         // update all enemies
         void updateEnemies();
@@ -55,7 +57,6 @@ class Board {
 
         const std::pair<size_t, size_t> getStairLoc();
         void movePlayer(CardinalDirection);
-
 };
 
 #endif

@@ -1,35 +1,60 @@
 #ifndef CONSTANTS_H
 #define CONSTANTS_H
+
 #include <string>
+#include <utility>
 
 using std::string;
 
 namespace Symbol {
-    const char BarrierSuit = 'B';
-    const char Compass = 'C';
+    constexpr const char BarrierSuit = 'B';
+    constexpr const char Compass = 'C';
 
-    const char Vampire = 'V';
-    const char Werewolf = 'W';
-    const char Troll = 'T';
-    const char Goblin = 'N';
-    const char Merchant = 'M';
-    const char Dragon = 'D';
-    const char Phoenix = 'X';
+    constexpr const char Vampire = 'V';
+    constexpr const char Werewolf = 'W';
+    constexpr const char Troll = 'T';
+    constexpr const char Goblin = 'N';
+    constexpr const char Merchant = 'M';
+    constexpr const char Dragon = 'D';
+    constexpr const char Phoenix = 'X';
 
-    const char Player = '@';
+    constexpr const char Player = '@';
 
-    const char Potion = 'P';
+    constexpr const char Potion = 'P';
 
-    const char Treasure = 'G';
+    constexpr const char Treasure = 'G';
 
-    const char Stairs = '\\';
-    const char WallVert = '|';
-    const char WallHorz = '-';
-    const char Door = '+';
-    const char Passage = '#';
-    const char FloorTile = '.';
-    const char Blank = ' ';
+    constexpr const char Stairs = '\\';
+    constexpr const char WallVert = '|';
+    constexpr const char WallHorz = '-';
+    constexpr const char Door = '+';
+    constexpr const char Passage = '#';
+    constexpr const char FloorTile = '.';
+    constexpr const char Blank = ' ';
 }; // namespace Symbol
+
+namespace SpawnRates {
+    const uint8_t EnemyTotal = 20;
+    const uint8_t EnemyTotalRate = 18;
+    const uint8_t EnemyVampireRate = 3;
+    const uint8_t EnemyWerewolfRate = 4;
+    const uint8_t EnemyTrollRate = 2;
+    const uint8_t EnemyGoblinRate = 5;
+    const uint8_t EnemyMerchantRate = 2;
+    const uint8_t EnemyPhoenixRate = 2;
+
+    const uint8_t PotionTotal = 10;
+    const uint8_t PotionTotalRate = 6;
+    const uint8_t PotionRate = 1;
+
+    const uint8_t GoldTotal = 10;
+    const uint8_t GoldTotalRate = 8;
+    const uint8_t GoldNormalRate = 5;
+    const uint8_t GoldSmallHoardRate = 2;
+    const uint8_t GoldDragonHoardRate = 1;
+
+    const uint8_t Total = SpawnRates::EnemyTotal + SpawnRates::PotionTotal + SpawnRates::GoldTotal;
+} // namespace SpawnRates
 
 enum class CardinalDirection {
     NorthWest,
@@ -59,15 +84,15 @@ enum class InputMapNumbers {
 };
 
 namespace ArrowKey {
-    const char KeyUp = 72;
-    const char KeyDown = 80;
-    const char KeyLeft = 75;
-    const char KeyRight = 77;
+    constexpr const char KeyUp = 72;
+    constexpr const char KeyDown = 80;
+    constexpr const char KeyLeft = 75;
+    constexpr const char KeyRight = 77;
 
-    const std::string StrKeyUp = std::string(1, 27) + (char)91 + 'A';
-    const std::string StrKeyDown = std::string(1, 27) + (char)91 + 'B';
-    const std::string StrKeyRight = std::string(1, 27) + (char)91 + 'C';
-    const std::string StrKeyLeft = std::string(1, 27) + (char)91 + 'D';
+    const std::string StrKeyUp = std::string(1, 27) + (char) 91 + 'A';
+    const std::string StrKeyDown = std::string(1, 27) + (char) 91 + 'B';
+    const std::string StrKeyRight = std::string(1, 27) + (char) 91 + 'C';
+    const std::string StrKeyLeft = std::string(1, 27) + (char) 91 + 'D';
     const std::string StrKeyUpRight = ArrowKey::StrKeyUp + ArrowKey::StrKeyRight;
     const std::string StrKeyRightUp = ArrowKey::StrKeyRight + ArrowKey::StrKeyUp;
     const std::string StrKeyUpLeft = ArrowKey::StrKeyUp + ArrowKey::StrKeyLeft;
@@ -76,7 +101,7 @@ namespace ArrowKey {
     const std::string StrKeyRightDown = ArrowKey::StrKeyRight + ArrowKey::StrKeyDown;
     const std::string StrKeyDownLeft = ArrowKey::StrKeyDown + ArrowKey::StrKeyLeft;
     const std::string StrKeyLeftDown = ArrowKey::StrKeyLeft + ArrowKey::StrKeyDown;
-}; // namespace ArrowKeys
+}; // namespace ArrowKey
 
 namespace Color {
     // Source: https://gist.github.com/RabaDabaDoba/145049536f815903c79944599c6f952a
@@ -160,12 +185,14 @@ namespace Color {
     const string Reset = "\e[0m";
 } // namespace Color
 
-extern bool isEnemy(char symbol);
+bool isEnemy(char symbol);
 
-extern std::string symbolToColor(char symbol);
+std::string symbolToColor(char symbol);
 
-extern CardinalDirection stringToDirection(std::string str);
+CardinalDirection stringToDirection(std::string str);
 
-extern std::pair<int, int> directionToDisplacement(CardinalDirection);
+std::string directionToString(CardinalDirection);
+
+std::pair<int, int> directionToDisplacement(CardinalDirection);
 
 #endif

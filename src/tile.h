@@ -33,6 +33,6 @@ struct Tile {
 };
 /* clang-format on */
 
-extern std::ostream& operator<<(std::ostream&, const Tile&);
+std::ostream& operator<<(std::ostream&, const Tile&);
 
 #endif

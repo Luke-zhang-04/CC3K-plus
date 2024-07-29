@@ -3,13 +3,14 @@
 #include "constants.h"
 #include "enemy.h"
 #include "game.h"
-#include "tile.h"
 #include "random.h"
+#include "tile.h"
 
 #include <array>
-#include <ostream>
 #include <iostream>
+#include <ostream>
 #include <string>
+#include <utility>
 #include <vector>
 
 Tile* Board::at(size_t x, size_t y) const {
@@ -77,13 +78,14 @@ void Board::showStairs() {
     map[stairLocation.second][stairLocation.first]->mapTile = Symbol::Stairs;
 }
 
-void Board::render(std::ostream& out) const {
+void Board::render(std::ostream& out, std::stringstream& logs) const {
     for (const std::vector<Tile*>& row : map) {
         for (const Tile* tile : row) {
             out << *tile;
         }
         out << '\n';
     }
+    out << logs.str() << '\n';
     out << std::flush;
 }
 
@@ -95,20 +97,20 @@ void Board::updateEnemies() {
             if (t->enemy) {
                 EnemyUpdateAction act = t->enemy->update(x, y, frame);
 
-                //DEBUG! PLEASE REMOVE!
-                if (t->getCharacter() != 'M') continue;
-                std::cout << "action: " << (int)act << std::endl;
-
                 if (act == EnemyUpdateAction::Attack) {
                     // if they don't miss, the player is attacked
                     if (randInt(0, 1) == 0) {
                         // don't worry if the player dies
-                        game.player->beAttacked(t->enemy->getPower());
+                        std::pair<int, int> attackStats =
+                            game.player->beAttacked(t->enemy->getPower());
+                        game.player->log(
+                            std::string(1, t->getCharacter()) + " deals " +
+                            std::string(1, attackStats.second) + " damage to PC."
+                        );
                     }
                 }
                 // otherwise, if they're doing anything they're moving
                 else if (act != EnemyUpdateAction::NoAction) {
-
                     Tile* newTile = inDirection(x, y, static_cast<CardinalDirection>(act));
                     std::swap(t->enemy, newTile->enemy);
                 }

@@ -5,8 +5,10 @@
 #include "player.h"
 
 #include <iostream>
-#include <unordered_set>
+#include <utility>
 #include <vector>
+
+typedef std::pair<size_t, size_t> coordPair;
 
 class Game {
         friend class Board;
@@ -19,7 +21,6 @@ class Game {
         Player* player;
         /** If enemies/potions/gold should be randomly generated */
         bool shouldGenerate;
-        std::vector<std::unordered_set<Tile*>> chambers = {};
 
         // update the board, then render the bottom bar. happens after a player action
         void update();
@@ -28,13 +29,11 @@ class Game {
         /**
          * @brief randomly populates floorTiles according to spec
          *
-         * SIDE EFFECTS: shuffles `floorTiles`, modifies tile pointers
+         * SIDE EFFECTS: shuffles each set inside the vector `chambers`
          *
          * @returns player location, stair location
          */
-        static std::pair<std::pair<size_t, size_t>, std::pair<size_t, size_t>> randomPopulateMap(
-            std::vector<std::unordered_set<Tile*>>& chambers, Board* newBoard, Player* player
-        );
+        static void randomPopulateMap(Board* newBoard, Player* player);
 
         /**
          * @brief go through each floor tile and try to find and label all chambers
@@ -46,9 +45,8 @@ class Game {
          * @returns vector of set of tiles which are floor tiles, with the same chamber
          * ID
          */
-        static std::vector<std::unordered_set<Tile*>> labelChambers(
-            std::vector<std::pair<size_t, size_t>>& floorTiles, const Board* const newBoard
-        );
+        static std::vector<std::vector<coordPair>>
+            labelChambers(std::vector<coordPair>& floorTiles, const Board* const newBoard);
 
         /**
          * @brief DFS-style function to crawl the chamber and label every tile in the chamber
@@ -59,11 +57,11 @@ class Game {
          *
          * @returns set of tiles with the same chamber ID
          */
-        static std::unordered_set<Tile*>& traverseChamber(
-            std::pair<size_t, size_t>&& tile,
+        static std::vector<coordPair>& traverseChamber(
+            coordPair&& tile,
             const Board* const newBoard,
             size_t currentChamberId,
-            std::unordered_set<Tile*>& recursiveChambers
+            std::vector<coordPair>& recursiveChambers
         );
 
     public:

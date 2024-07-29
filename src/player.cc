@@ -1,4 +1,5 @@
 #include "player.h"
+
 #include "constants.h"
 #include "tile.h"
 
@@ -42,5 +43,16 @@ int Player::getElectrum() {
 
 bool Player::canMove(const Tile* t) const {
     char mapTile = t->mapTile;
-    return Character::canMove(t) || mapTile == Symbol::Door || mapTile == Symbol::Passage || mapTile == Symbol::Stairs;
+    return Character::canMove(t) || mapTile == Symbol::Door || mapTile == Symbol::Passage ||
+           mapTile == Symbol::Stairs;
+}
+
+void Player::log(std::string str) {
+    if (sysLog.str().length() > 0)
+        sysLog << " ";
+    sysLog << str;
+}
+
+std::stringstream& Player::getLog() {
+    return sysLog;
 }

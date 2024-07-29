@@ -81,8 +81,8 @@ int main(int argc, char* argv[]) {
         game->render();
 
         std::string move;
+        std::cout << "Command: " << std::flush;
         while (std::cin >> move && move != "q") {
-            std::cout << (int)move[0] << ", " << (int)move[1] << ", " << (int)move[2] << ", " << (int)move[3] << ": " << move << " | " << move.substr(1) << std::endl;
             if (!game)
                 break;
             else if (move == "r") {
@@ -107,6 +107,12 @@ int main(int argc, char* argv[]) {
                 playerAlive = game->playerAttack(stringToDirection(direction));
             } else {
                 continue;
+            }
+
+            if (!playerAlive) {
+                std::cout << "You DEER! Would you like to continue? " << std::flush;
+            } else {
+                std::cout << "Command: " << std::flush;
             }
         }
 

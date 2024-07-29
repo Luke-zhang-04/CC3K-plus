@@ -1,17 +1,23 @@
 #include "random.h"
 
+#include <array>
+#include <random>
+#include <unordered_set>
+#include <utility>
+#include <vector>
+
 std::default_random_engine randomEngine{};
 
-template<typename T>
-void shuffle(std::vector<T>& vec) {
-    std::shuffle(vec.begin(), vec.end(), randomEngine);
+size_t randInt(size_t start, size_t end) {
+    return std::uniform_int_distribution<size_t>(start, end)(randomEngine);
 }
 
-template<typename T, size_t size>
-void shuffle(std::array<T, size>& arr) {
-    std::shuffle(arr.begin(), arr.end(), randomEngine);
-}
+std::pair<size_t, size_t> randIntPair(size_t start, size_t end) {
+    std::pair<size_t, size_t> pair{randInt(start, end), randInt(start, end - 1)};
 
-int randInt(int start, int end) {
-    return std::uniform_int_distribution<int>(start, end)(randomEngine);
+    if (pair.second >= pair.first) {
+        pair.second++;
+    }
+
+    return pair;
 }

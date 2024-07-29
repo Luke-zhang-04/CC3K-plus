@@ -96,6 +96,9 @@
     "forward_list": "cpp",
     "unordered_set": "cpp",
     "__availability": "cpp",
-    "filesystem": "cpp"
+    "filesystem": "cpp",
+    "utility": "cpp",
+    "__tree": "cpp",
+    "set": "cpp"
   },
 }

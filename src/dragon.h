@@ -2,6 +2,8 @@
 #define DRAGON_H
 #include "enemy.h"
 
+#include <utility>
+
 class DragonProtected;
 
 class Dragon: public Enemy {
@@ -10,11 +12,13 @@ class Dragon: public Enemy {
     private:
         DragonProtected* protects = nullptr;
 
+    protected:
+        EnemyUpdateAction act(int x, int y) override;
+
     public:
         Dragon(Board&);
         char getCharacter() override;
-        int beAttacked(int attackPower) override;
-        EnemyUpdateAction update(int x, int y, unsigned int frame) override;
+        std::pair<int, int> beAttacked(int attackPower) override;
 };
 
 #endif // DRAGON_H
