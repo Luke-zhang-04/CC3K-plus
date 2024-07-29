@@ -9,6 +9,7 @@ class Potion: public Interactible {
 
     public:
         Potion(int h = 0, int a = 0, int d = 0): healthMod{h}, attackMod{a}, defenseMod{d} {};
+        // Potion(const Potion&);
         char getCharacter() override;
         void onInteract(Player* player) override;
 };

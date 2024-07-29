@@ -169,6 +169,14 @@ void Game::randomPopulateMap(Board* newBoard, Player* player) {
         {SpawnRates::GoldSmallHoardRate, 1},
         {SpawnRates::GoldDragonHoardRate, 6},
     }});
+    std::array<Potion, 6> potionDist{
+        Potion{10},
+        Potion{0, 5},
+        Potion{0, 0, 5},
+        Potion{-10},
+        Potion{0, -5},
+        Potion{0, 0, -5}
+    };
     std::vector<EnemyType> enemyDist = createVector(std::array<std::pair<size_t, EnemyType>, 6>{
         {{SpawnRates::EnemyVampireRate, EnemyType::Vampire},
          {SpawnRates::EnemyWerewolfRate, EnemyType::Werewolf},
