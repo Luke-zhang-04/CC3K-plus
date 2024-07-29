@@ -52,6 +52,8 @@ class Board {
         const std::pair<size_t, size_t> getPlayerLoc();
 
         const std::pair<size_t, size_t> getStairLoc();
+        void movePlayer(CardinalDirection);
+
 };
 
 #endif

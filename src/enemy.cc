@@ -4,6 +4,7 @@
 #include "constants.h"
 #include "random.h"
 
+#include <iostream>
 #include <vector>
 
 Enemy::Enemy(EnemyType enemyType, Board& board): Character{0, 0, 0}, character{0}, board{board} {
@@ -63,18 +64,25 @@ EnemyUpdateAction Enemy::walk(int x, int y) {
     // collect a list of the locations it can move to
     auto area = board.getArea(x, y);
     std::vector<EnemyUpdateAction> movable;
-    for (int dx = -1; dx <= 1; ++dx) {
-        for (int dy = -1; dy <= 1; ++dy) {
-            if (!dx|dy) continue; // if both are 0, move on, don't let them not move
+    movable.reserve(8);
+    for (int dx = 0; dx <= 2; ++dx) {
+        for (int dy = 0; dy <= 2; ++dy) {
+            if (dx == 1 && dy == 1) continue; // if both are 0, move on, don't let them not move
 
             // don't move onto the stairs
             auto stairs = board.getStairLoc();
             if (x + dx == stairs.first && y + dy == stairs.second) continue;
 
-            if (area[dy][dx] && area[dy][dx]->movable()) {
+            if (area[dy][dx])
+                std::cout << "movable: " << area[dy][dx]->movable() << " thing: " << area[dy][dx]->getCharacter() << std::endl;
+            else
+                std::cout << 'n' << std::endl;
+
+            if (area[dy][dx] != nullptr && area[dy][dx]->movable()) {
+                std::cout << "?DJLFJSLDFJ" << std::endl;
                 movable.emplace_back(
                     // Store this location as a movement direction
-                    static_cast<EnemyUpdateAction>((dx + 1 - x) + (dy + 1 - y) * 3)
+                    static_cast<EnemyUpdateAction>(dx + dy * 3)
                 );
             }
         }
@@ -84,7 +92,7 @@ EnemyUpdateAction Enemy::walk(int x, int y) {
     if (movable.empty()) return EnemyUpdateAction::NoAction;
 
     // pick a random location it can move to
-    return movable[randInt(0, movable.size()-1)];
+    return movable[randInt(0, movable.size() - 1)];
 }
 
 // return whether the player is adjacent to the enemy

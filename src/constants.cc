@@ -67,3 +67,11 @@ CardinalDirection stringToDirection(std::string str) {
 
     throw std::invalid_argument("unknown direction " + str);
 }
+
+std::pair<int, int> directionToDisplacement(CardinalDirection dir) {
+    return {
+        ((int) dir) % 3 - 1,
+        ((int) dir) / 3 - 1
+    };
+}
+// TODO: Add direction to displacement

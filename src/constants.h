@@ -32,14 +32,15 @@ namespace Symbol {
 }; // namespace Symbol
 
 enum class CardinalDirection {
+    NorthWest,
     North,
     NorthEast,
-    East,
-    SouthEast,
-    South,
-    SouthWest,
     West,
-    NorthWest,
+    Center,
+    East,
+    SouthWest,
+    South,
+    SouthEast,
 };
 
 enum class InputMapNumbers {
@@ -144,5 +145,7 @@ extern bool isEnemy(char symbol);
 extern std::string symbolToColor(char symbol);
 
 extern CardinalDirection stringToDirection(std::string str);
+
+extern std::pair<int, int> directionToDisplacement(CardinalDirection);
 
 #endif

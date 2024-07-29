@@ -44,45 +44,45 @@ Tile* getTileFromChar(char character, Player* player, Board& board) {
 
         case Symbol::Stairs: return new Tile{Symbol::FloorTile};
 
-        case Symbol::Player: return new Tile{character, nullptr, nullptr, nullptr, player};
+        case Symbol::Player: return new Tile{Symbol::FloorTile, nullptr, nullptr, nullptr, player};
 
-        case Symbol::BarrierSuit: return new Tile{character, new BarrierSuit{nullptr}};
-        case Symbol::Compass: return new Tile{character, new Compass{board}};
+        case Symbol::BarrierSuit: return new Tile{Symbol::FloorTile, new BarrierSuit{nullptr}};
+        case Symbol::Compass: return new Tile{Symbol::FloorTile, new Compass{board}};
 
         case Symbol::Vampire:
-            return new Tile{character, nullptr, nullptr, new Enemy{EnemyType::Vampire, board}};
+            return new Tile{Symbol::FloorTile, nullptr, nullptr, new Enemy{EnemyType::Vampire, board}};
         case Symbol::Werewolf:
-            return new Tile{character, nullptr, nullptr, new Enemy{EnemyType::Werewolf, board}};
+            return new Tile{Symbol::FloorTile, nullptr, nullptr, new Enemy{EnemyType::Werewolf, board}};
         case Symbol::Troll:
-            return new Tile{character, nullptr, nullptr, new Enemy{EnemyType::Troll, board}};
+            return new Tile{Symbol::FloorTile, nullptr, nullptr, new Enemy{EnemyType::Troll, board}};
         case Symbol::Goblin:
-            return new Tile{character, nullptr, nullptr, new Enemy{EnemyType::Goblin, board}};
+            return new Tile{Symbol::FloorTile, nullptr, nullptr, new Enemy{EnemyType::Goblin, board}};
         case Symbol::Phoenix:
-            return new Tile{character, nullptr, nullptr, new Enemy{EnemyType::Phoenix, board}};
+            return new Tile{Symbol::FloorTile, nullptr, nullptr, new Enemy{EnemyType::Phoenix, board}};
 
-        case Symbol::Merchant: return new Tile{character, nullptr, nullptr, new Merchant{board}};
-        case Symbol::Dragon: return new Tile{character, nullptr, nullptr, new Dragon{board}};
+        case Symbol::Merchant: return new Tile{Symbol::FloorTile, nullptr, nullptr, new Merchant{board}};
+        case Symbol::Dragon: return new Tile{Symbol::FloorTile, nullptr, nullptr, new Dragon{board}};
 
         case (char) InputMapNumbers::PotionRestoreHealth:
-            return new Tile{character, nullptr, new Potion{10}};
+            return new Tile{Symbol::FloorTile, nullptr, new Potion{10}};
         case (char) InputMapNumbers::PotionBoostAttack:
-            return new Tile{character, nullptr, new Potion{0, 5}};
+            return new Tile{Symbol::FloorTile, nullptr, new Potion{0, 5}};
         case (char) InputMapNumbers::PotionBoostDefense:
-            return new Tile{character, nullptr, new Potion{0, 0, 5}};
+            return new Tile{Symbol::FloorTile, nullptr, new Potion{0, 0, 5}};
         case (char) InputMapNumbers::PotionPoisonHealth:
-            return new Tile{character, nullptr, new Potion{-10}};
+            return new Tile{Symbol::FloorTile, nullptr, new Potion{-10}};
         case (char) InputMapNumbers::PotionWoundAttack:
-            return new Tile{character, nullptr, new Potion{0, -5}};
+            return new Tile{Symbol::FloorTile, nullptr, new Potion{0, -5}};
         case (char) InputMapNumbers::PotionWoundDefense:
-            return new Tile{character, nullptr, new Potion{0, 0, -5}};
+            return new Tile{Symbol::FloorTile, nullptr, new Potion{0, 0, -5}};
         case (char) InputMapNumbers::TreasureSmallGoldPile:
-            return new Tile{character, new Treasure{1}};
+            return new Tile{Symbol::FloorTile, new Treasure{1}};
         case (char) InputMapNumbers::TreasureSmallHoard:
-            return new Tile{character, new Treasure{2}};
+            return new Tile{Symbol::FloorTile, new Treasure{2}};
         case (char) InputMapNumbers::TreasureMerchantHoard:
-            return new Tile{character, new Treasure{4}};
+            return new Tile{Symbol::FloorTile, new Treasure{4}};
         case (char) InputMapNumbers::TreasureDragonHoard:
-            return new Tile{character, new Treasure{6}};
+            return new Tile{Symbol::FloorTile, new Treasure{6}};
 
         default:
             throw std::invalid_argument("unknown map tile character " + std::string(1, character));
@@ -228,7 +228,6 @@ void Game::nextLevel() {
             floorTiles.push_back(currentLocation);
         }
         if (input == Symbol::Stairs) {
-            std::cout << "PENIS: " << currentLocation.first << ", " << currentLocation.second << std::endl;
             stairLocation = currentLocation;
         }
         if (input == Symbol::Player) {
@@ -283,7 +282,7 @@ void Game::nextLevel() {
         newBoard->playerLocation = std::move(playerLocation);
 
         if (compassLocation.first == 0 || compassLocation.second == 0) {
-            size_t index = randInt(0, compassHoldingEnemies.size());
+            size_t index = randInt(0, compassHoldingEnemies.size() - 1);
 
             compassHoldingEnemies[index]->giveTreasure(new Compass{*newBoard});
         } else {
@@ -301,9 +300,9 @@ bool Game::playerMove(CardinalDirection dir) {
 
     // TODO: can I put an assertion here that player is not nullptr? It should always be defined
     // and things have gone very wrong if not
-    Tile* curTile = currentBoard->map[loc.second][loc.first];
+    Tile* curTile = currentBoard->at(loc);
     Player* player = curTile->player;
-    Tile* newTile = currentBoard->inDirection(loc.first, loc.second, dir);
+    Tile* newTile = currentBoard->inDirection(loc, dir);
 
     // now check if we landed on a pickup
     if (newTile->treasure) {
@@ -319,6 +318,7 @@ bool Game::playerMove(CardinalDirection dir) {
     if (newTile->movable()) {
         // move the player to the open location
         std::swap(curTile->player, newTile->player);
+        currentBoard->movePlayer(dir);
     }
 
     update();

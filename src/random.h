@@ -15,7 +15,7 @@ void shuffle(std::vector<T>&);
 template<typename T, size_t size>
 void shuffle(std::array<T, size>&);
 
-/** @brief random integer between [start, end) */
+/** @brief random integer between [start, end] */
 int randInt(int start, int end);
 
 #endif

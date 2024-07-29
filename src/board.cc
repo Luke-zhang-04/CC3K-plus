@@ -8,6 +8,7 @@
 
 #include <array>
 #include <ostream>
+#include <iostream>
 #include <string>
 #include <vector>
 
@@ -20,10 +21,9 @@ Tile* Board::at(const std::pair<size_t, size_t>& coords) const {
 }
 
 Tile* Board::inDirection(size_t x, size_t y, CardinalDirection dir) const {
-    int dx = (int) dir % 3 - 1;
-    int dy = (int) dir / 3 - 1;
+    auto d = directionToDisplacement(dir);
 
-    return map.at(y + dy).at(x + dx);
+    return map.at(y + d.second).at(x + d.first);
 }
 
 Tile* Board::inDirection(const std::pair<size_t, size_t>& loc, CardinalDirection dir) const {
@@ -103,8 +103,9 @@ void Board::updateEnemies() {
                 }
                 // otherwise, if they're doing anything they're moving
                 else if (act != EnemyUpdateAction::NoAction) {
-                    // They've just checked that it's a legal move, so move them immediately
-                    // TODO: Use inDirection
+                    std::cout << "action:" << (int) static_cast<CardinalDirection>(act) << std::endl;
+                    Tile* newTile = inDirection(x, y, static_cast<CardinalDirection>(act));
+                    std::swap(t->enemy, newTile->enemy);
                 }
             }
         }
@@ -116,17 +117,17 @@ template<typename T>
 T optional2DIndex(
     const std::vector<std::vector<T>>& vec, size_t x, int xChange, size_t y, int yChange
 ) {
-    if (y < -yChange || y + xChange >= vec.size()) {
+    if (y < -yChange || y + yChange >= vec.size()) {
         return nullptr;
     }
 
-    const std::vector<T>& row = vec[y];
+    const std::vector<T>& row = vec[y + yChange];
 
-    if (x < -xChange || x + yChange >= row.size()) {
+    if (x < -xChange || x + xChange >= row.size()) {
         return nullptr;
     }
 
-    return row[x];
+    return row[x + xChange];
 }
 
 const std::array<const std::array<const Tile*, 3>, 3> Board::getArea(size_t x, size_t y) const {
@@ -150,4 +151,11 @@ const std::pair<size_t, size_t> Board::getPlayerLoc() {
 
 const std::pair<size_t, size_t> Board::getStairLoc() {
     return stairLocation; // same as `getPlayerLoc()`
+}
+
+void Board::movePlayer(CardinalDirection dir) {
+    auto d = directionToDisplacement(dir);
+
+    playerLocation.first += d.first;
+    playerLocation.second += d.second;
 }

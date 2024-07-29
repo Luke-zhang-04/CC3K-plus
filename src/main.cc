@@ -6,6 +6,7 @@
 #include <iostream>
 #include <stdlib.h> // srand/rand
 #include <string>
+#include <format>
 #include <sstream>
 #include <sys/types.h> // getpid
 #include <unistd.h>
@@ -20,6 +21,7 @@ Game* init(std::string& fileName) {
     Player* player;
     Game* game;
     char move;
+    std::cout << "Select race: options are (h)uman, (e)lf, (d)warf, (o)rc: " << std::flush;
     std::cin >> move;
 
     switch (move) {
@@ -71,8 +73,6 @@ int main(int argc, char* argv[]) {
         game = init(fileName);
         bool playerAlive = true;
 
-        std::cout << "PENIS" << std::endl;
-
         game->render();
 
         std::string move;
@@ -94,6 +94,7 @@ int main(int argc, char* argv[]) {
                 std::cin >> direction;
                 playerAlive = game->playerAttack(stringToDirection(move));
             } else {
+                std::cout << "I don't know what '" << move << "' means. Check the man page for details" << std::endl;
                 continue;
             }
         }
