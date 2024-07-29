@@ -1,6 +1,6 @@
 #include "player.h"
-
 #include "constants.h"
+#include "tile.h"
 
 #include <algorithm>
 
@@ -38,4 +38,9 @@ int Player::getDefense() {
 
 int Player::getElectrum() {
     return electrum;
+}
+
+bool Player::canMove(const Tile* t) const {
+    char mapTile = t->mapTile;
+    return Character::canMove(t) || mapTile == Symbol::Door || mapTile == Symbol::Passage || mapTile == Symbol::Stairs;
 }

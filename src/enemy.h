@@ -53,12 +53,14 @@ class Enemy: public Character {
         // gold value when killed
         int gold = 1;
 
+        int age = 0;
+
     public:
         Enemy(EnemyType, Board&);
 
         char getCharacter() override;
 
-        virtual EnemyUpdateAction update(int x, int y);
+        virtual EnemyUpdateAction update(int x, int y, unsigned int frame);
 
         int goldValue();
 

@@ -13,5 +13,5 @@ void shuffle(std::array<T, size>& arr) {
 }
 
 int randInt(int start, int end) {
-    return std::uniform_int_distribution<int>(start, end + 1)(randomEngine);
+    return std::uniform_int_distribution<int>(start, end)(randomEngine);
 }

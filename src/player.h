@@ -4,6 +4,7 @@
 #include "character.h"
 
 class Board;
+struct Tile;
 
 class Player: public Character {
     protected:
@@ -25,6 +26,8 @@ class Player: public Character {
         int getAttack();
         int getDefense();
         int getElectrum();
+
+        bool canMove(const Tile*) const override;
 };
 
 #endif

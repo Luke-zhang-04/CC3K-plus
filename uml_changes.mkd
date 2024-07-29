@@ -16,6 +16,7 @@
 -   Enemy does not return a string, instead enum elements for cardinal directions or attack
 -   `beAttacked` is virtual so `Dragon` can override it and "unlock" the protected item when it dies
 -   `goldValue()` that returns how much gold a particular enemy is worth, so dragons and merchants can be worth 0
+-   Adding `age` so multi updates don't happen
 
 ### Dragon
 
@@ -29,6 +30,7 @@
 
 -   Overload for output stream operator
 -   Added chamber ID
+-   Added separate `movablePlayer` method
 
 ### Compass
 

@@ -2,6 +2,7 @@
 #define CHARACTER_H
 
 class Board;
+struct Tile;
 
 class Character {
     protected:
@@ -18,6 +19,9 @@ class Character {
 
         /** Update its own health and returns it, could be negative if it dies */
         virtual int beAttacked(int attackPower);
+
+        // whether or not this tile can be moved to
+        virtual bool canMove(const Tile*) const;
 
         virtual ~Character();
 };

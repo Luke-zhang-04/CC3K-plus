@@ -8,10 +8,11 @@ Merchant::Merchant(Board& board): Enemy{EnemyType::Merchant, board} {
     gold = 0;
 }
 
-EnemyUpdateAction Merchant::update(int x, int y) {
+EnemyUpdateAction Merchant::update(int x, int y, unsigned int frame) {
     if (board.merchantHostile()) {
-        return Enemy::update(x, y); // If merchants are hostile, behave like normal enemy
+        return Enemy::update(x, y, frame); // If merchants are hostile, behave like normal enemy
     }
 
-    return Enemy::walk(x, y);
+    if (age < frame) return Enemy::walk(x, y);
+    else return EnemyUpdateAction::NoAction;
 }

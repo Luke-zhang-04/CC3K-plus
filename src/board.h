@@ -21,6 +21,8 @@ class Board {
 
         std::vector<std::vector<Tile*>> map;
 
+        unsigned int frame = 0;
+
         Tile* at(size_t x, size_t y) const;
         Tile* at(const std::pair<size_t, size_t>&) const;
         Tile* inDirection(size_t x, size_t y, CardinalDirection) const;

@@ -40,28 +40,28 @@ std::string symbolToColor(char symbol) {
 }
 
 CardinalDirection stringToDirection(std::string str) {
-    if (str == "no") {
+    if (str == "no" || str == ArrowKey::StrKeyUp) {
         return CardinalDirection::North;
     }
-    if (str == "so") {
+    if (str == "so" || str == ArrowKey::StrKeyDown) {
         return CardinalDirection::South;
     }
-    if (str == "ea") {
+    if (str == "ea" || str == ArrowKey::StrKeyRight) {
         return CardinalDirection::East;
     }
-    if (str == "we") {
+    if (str == "we" || str == ArrowKey::StrKeyLeft) {
         return CardinalDirection::West;
     }
-    if (str == "ne") {
+    if (str == "ne" || str == ArrowKey::StrKeyUpRight || str == ArrowKey::StrKeyRightUp) {
         return CardinalDirection::NorthEast;
     }
-    if (str == "nw") {
+    if (str == "nw" || str == ArrowKey::StrKeyUpLeft || str == ArrowKey::StrKeyLeftUp) {
         return CardinalDirection::NorthWest;
     }
-    if (str == "se") {
+    if (str == "se" || str == ArrowKey::StrKeyDownRight || str == ArrowKey::StrKeyRightDown) {
         return CardinalDirection::SouthEast;
     }
-    if (str == "sw") {
+    if (str == "sw" || str == ArrowKey::StrKeyDownLeft || str == ArrowKey::StrKeyLeftDown) {
         return CardinalDirection::SouthWest;
     }
 
@@ -69,9 +69,5 @@ CardinalDirection stringToDirection(std::string str) {
 }
 
 std::pair<int, int> directionToDisplacement(CardinalDirection dir) {
-    return {
-        ((int) dir) % 3 - 1,
-        ((int) dir) / 3 - 1
-    };
+    return {((int) dir) % 3 - 1, ((int) dir) / 3 - 1};
 }
-// TODO: Add direction to displacement

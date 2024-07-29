@@ -109,7 +109,7 @@ std::unordered_set<Tile*>& Game::traverseChamber(
 
             // We have an unlabeled floor tile
             traverseChamber(
-                {tile.first + col, tile.second + row},
+                {tile.first + col - 1, tile.second + row - 1},
                 newBoard,
                 currentChamberId,
                 recursiveChambers
@@ -152,8 +152,8 @@ std::pair<std::pair<size_t, size_t>, std::pair<size_t, size_t>> Game::randomPopu
     // newBoard->at(floorTiles[0])->player = player;
 
     // Spawn enemies
-    // for (uint8_t index = 2; index < 22; index++) {
-    //     uint8_t num = randInt(0, 18);
+    // for (unsigned int8_t index = 2; index < 22; index++) {
+    //     unsigned int8_t num = randInt(0, 18);
     //     Tile* curTile = newBoard->at(floorTiles[index]);
 
     //     if (0 <= num && 3 < num) {
@@ -172,7 +172,7 @@ std::pair<std::pair<size_t, size_t>, std::pair<size_t, size_t>> Game::randomPopu
     // }
 
     // Pick compass bearer
-    // for (uint8_t index = 22; index < 32; index++) {}
+    // for (unsigned int8_t index = 22; index < 32; index++) {}
 
     // return {floorTiles[0], floorTiles[1]};
 }
@@ -215,6 +215,7 @@ void Game::nextLevel() {
 
             tiles.emplace_back(std::vector<Tile*>{});
             isEnd = true;
+            std::cout << std::endl;
             continue;
         }
         if (input != Symbol::WallHorz && input != Symbol::WallVert) {
@@ -278,8 +279,8 @@ void Game::nextLevel() {
             throw std::invalid_argument("cannot assign compass to enemy and location not given");
         }
 
-        newBoard->stairLocation = std::move(stairLocation);
-        newBoard->playerLocation = std::move(playerLocation);
+        newBoard->stairLocation = stairLocation;
+        newBoard->playerLocation = playerLocation;
 
         if (compassLocation.first == 0 || compassLocation.second == 0) {
             size_t index = randInt(0, compassHoldingEnemies.size() - 1);
@@ -315,7 +316,7 @@ bool Game::playerMove(CardinalDirection dir) {
     }
 
     // if we can move into the desired location
-    if (newTile->movable()) {
+    if (player->canMove(newTile)) {
         // move the player to the open location
         std::swap(curTile->player, newTile->player);
         currentBoard->movePlayer(dir);

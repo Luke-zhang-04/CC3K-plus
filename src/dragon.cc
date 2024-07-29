@@ -19,8 +19,9 @@ int Dragon::beAttacked(int attackPower) {
 }
 
 // never moves, only attacks
-EnemyUpdateAction Dragon::update(int x, int y) {
+EnemyUpdateAction Dragon::update(int x, int y, unsigned int frame) {
     // TODO: Check adjacent to dragon hoard
+    // never moves, don't worry about double update
     if (false)
         return EnemyUpdateAction::Attack;
 

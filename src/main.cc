@@ -1,18 +1,18 @@
+#include "constants.h"
+#include "default_floor.h"
 #include "game.h"
 #include "player.h"
 #include "races.h"
 #include "random.h"
 
+#include <format>
+#include <fstream>
 #include <iostream>
+#include <sstream>
 #include <stdlib.h> // srand/rand
 #include <string>
-#include <format>
-#include <sstream>
 #include <sys/types.h> // getpid
 #include <unistd.h>
-#include <fstream>
-
-#include "default_floor.h"
 
 using std::cout;
 using std::endl;
@@ -33,7 +33,6 @@ Game* init(std::string& fileName) {
         case 'q': return nullptr;
         default: return init(fileName);
     }
-
 
     if (fileName == "") {
         std::stringstream stream{};
@@ -73,31 +72,45 @@ int main(int argc, char* argv[]) {
         game = init(fileName);
         bool playerAlive = true;
 
+        if (game == nullptr) {
+            std::cout << "Exiting..." << std::endl;
+
+            return 0;
+        }
+
         game->render();
 
         std::string move;
         while (std::cin >> move && move != "q") {
+            std::cout << (int)move[0] << ", " << (int)move[1] << ", " << (int)move[2] << ", " << (int)move[3] << ": " << move << " | " << move.substr(1) << std::endl;
             if (!game)
                 break;
             else if (move == "r") {
                 delete game;
                 game = init(fileName);
-            } else if (move == "no" || move == "so" || move == "ea" || move == "we" || move == "ne" ||
-                    move == "nw" || move == "se" || move == "sw") {
+            } else if (move == "no" || move == "so" || move == "ea" || move == "we" ||
+                       move == "ne" || move == "nw" || move == "se" || move == "sw" ||
+                       move == ArrowKey::StrKeyUp || move == ArrowKey::StrKeyDown ||
+                       move == ArrowKey::StrKeyRight || move == ArrowKey::StrKeyLeft ||
+                       move == ArrowKey::StrKeyUpRight || move == ArrowKey::StrKeyRightUp ||
+                       move == ArrowKey::StrKeyUpLeft || move == ArrowKey::StrKeyLeftUp ||
+                       move == ArrowKey::StrKeyDownRight || move == ArrowKey::StrKeyRightDown ||
+                       move == ArrowKey::StrKeyDownLeft || move == ArrowKey::StrKeyLeftDown) {
                 playerAlive = game->playerMove(stringToDirection(move));
             } else if (move == "u") {
                 std::string direction;
                 std::cin >> direction;
-                playerAlive = game->playerPickup(stringToDirection(move));
+                playerAlive = game->playerPickup(stringToDirection(direction));
             } else if (move == "a") {
                 std::string direction;
                 std::cin >> direction;
-                playerAlive = game->playerAttack(stringToDirection(move));
+                playerAlive = game->playerAttack(stringToDirection(direction));
             } else {
-                std::cout << "I don't know what '" << move << "' means. Check the man page for details" << std::endl;
                 continue;
             }
         }
+
+        std::cout << "Exiting..." << std::endl;
         delete game;
 
         return 0;

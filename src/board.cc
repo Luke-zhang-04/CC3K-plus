@@ -88,11 +88,16 @@ void Board::render(std::ostream& out) const {
 }
 
 void Board::updateEnemies() {
+    frame += 1;
     for (int y = 0; y < map.size(); ++y) {
         for (int x = 0; x < map[y].size(); ++x) {
             Tile* t = map[y][x];
             if (t->enemy) {
-                EnemyUpdateAction act = t->enemy->update(x, y);
+                EnemyUpdateAction act = t->enemy->update(x, y, frame);
+
+                //DEBUG! PLEASE REMOVE!
+                if (t->getCharacter() != 'M') continue;
+                std::cout << "action: " << (int)act << std::endl;
 
                 if (act == EnemyUpdateAction::Attack) {
                     // if they don't miss, the player is attacked
@@ -103,7 +108,7 @@ void Board::updateEnemies() {
                 }
                 // otherwise, if they're doing anything they're moving
                 else if (act != EnemyUpdateAction::NoAction) {
-                    std::cout << "action:" << (int) static_cast<CardinalDirection>(act) << std::endl;
+
                     Tile* newTile = inDirection(x, y, static_cast<CardinalDirection>(act));
                     std::swap(t->enemy, newTile->enemy);
                 }
@@ -117,13 +122,13 @@ template<typename T>
 T optional2DIndex(
     const std::vector<std::vector<T>>& vec, size_t x, int xChange, size_t y, int yChange
 ) {
-    if (y < -yChange || y + yChange >= vec.size()) {
+    if (y + yChange < 0 || y + yChange >= vec.size()) {
         return nullptr;
     }
 
     const std::vector<T>& row = vec[y + yChange];
 
-    if (x < -xChange || x + xChange >= row.size()) {
+    if (x + xChange < 0 || x + xChange >= row.size()) {
         return nullptr;
     }
 
@@ -134,7 +139,7 @@ const std::array<const std::array<const Tile*, 3>, 3> Board::getArea(size_t x, s
     /* clang-format off */
     return {{
         {optional2DIndex(map, x, -1, y, -1), optional2DIndex(map, x, 0, y, -1), optional2DIndex(map, x, +1, y, -1)},
-        {optional2DIndex(map, x, -1, y, 0),  optional2DIndex(map, x, 0, y, 0), optional2DIndex(map, x, +1, y, 0)  },
+        {optional2DIndex(map, x, -1, y, 0),  optional2DIndex(map, x, 0, y, 0),  optional2DIndex(map, x, +1, y, 0) },
         {optional2DIndex(map, x, -1, y, +1), optional2DIndex(map, x, 0, y, +1), optional2DIndex(map, x, +1, y, +1)},
     }};
     /* clang-format on */

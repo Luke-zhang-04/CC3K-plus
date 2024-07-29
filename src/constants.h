@@ -58,6 +58,26 @@ enum class InputMapNumbers {
     TreasureDragonHoard,
 };
 
+namespace ArrowKey {
+    const char KeyUp = 72;
+    const char KeyDown = 80;
+    const char KeyLeft = 75;
+    const char KeyRight = 77;
+
+    const std::string StrKeyUp = std::string(1, 27) + (char)91 + 'A';
+    const std::string StrKeyDown = std::string(1, 27) + (char)91 + 'B';
+    const std::string StrKeyRight = std::string(1, 27) + (char)91 + 'C';
+    const std::string StrKeyLeft = std::string(1, 27) + (char)91 + 'D';
+    const std::string StrKeyUpRight = ArrowKey::StrKeyUp + ArrowKey::StrKeyRight;
+    const std::string StrKeyRightUp = ArrowKey::StrKeyRight + ArrowKey::StrKeyUp;
+    const std::string StrKeyUpLeft = ArrowKey::StrKeyUp + ArrowKey::StrKeyLeft;
+    const std::string StrKeyLeftUp = ArrowKey::StrKeyLeft + ArrowKey::StrKeyUp;
+    const std::string StrKeyDownRight = ArrowKey::StrKeyDown + ArrowKey::StrKeyRight;
+    const std::string StrKeyRightDown = ArrowKey::StrKeyRight + ArrowKey::StrKeyDown;
+    const std::string StrKeyDownLeft = ArrowKey::StrKeyDown + ArrowKey::StrKeyLeft;
+    const std::string StrKeyLeftDown = ArrowKey::StrKeyLeft + ArrowKey::StrKeyDown;
+}; // namespace ArrowKeys
+
 namespace Color {
     // Source: https://gist.github.com/RabaDabaDoba/145049536f815903c79944599c6f952a
     /*

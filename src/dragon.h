@@ -14,7 +14,7 @@ class Dragon: public Enemy {
         Dragon(Board&);
         char getCharacter() override;
         int beAttacked(int attackPower) override;
-        EnemyUpdateAction update(int x, int y) override;
+        EnemyUpdateAction update(int x, int y, unsigned int frame) override;
 };
 
 #endif // DRAGON_H

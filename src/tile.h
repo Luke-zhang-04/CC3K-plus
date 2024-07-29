@@ -26,8 +26,7 @@ struct Tile {
     // return the character of the highest level item on this tile
     char getCharacter() const;
 
-    // whether or not a character can move into this tile
-    bool movable() const;
+    bool empty() const;
 
     // owns treasure, interactible and enemy
     ~Tile();
