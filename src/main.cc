@@ -6,6 +6,7 @@
 #include "player.h"
 #include "races.h"
 #include "game.h"
+#include "random.h"
 using namespace std;
 
 Game* init() {
@@ -42,7 +43,8 @@ int main(int argc, char* argv[]) {
     int seed = getpid();
     if (argc == 2)
         seed = stoi(string{argv[1]});
-    srand(seed); // only seed the random number generator once!
+
+    randomEngine.seed(seed);
 
     Game* game;
     game = init();

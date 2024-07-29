@@ -104,7 +104,7 @@ void Game::nextLevel(bool generate) {
     std::pair<size_t, size_t> dragonProtectedItemLocation{0, 0};
     std::vector<std::pair<size_t, size_t>> floorTiles; // Keep track of floor tiles for spawning
     std::vector<std::pair<size_t, size_t>>
-        compassHolders; // Keep track of floor tiles for spawning
+        compassHolders; // Enemies that CAN hold a compass
 
     Board* newBoard = new Board{std::vector<std::vector<Tile*>>(1, std::vector<Tile*>{}), *this};
 
@@ -128,22 +128,32 @@ void Game::nextLevel(bool generate) {
         }
 
         row.emplace_back(getTileFromChar(character, player, *newBoard));
+        std::pair<size_t, size_t> currentLocation{row.size() - 1, tiles.size() - 1};
 
         if (character == Symbol::FloorTile) {
-            floorTiles.push_back({row.size() - 1, tiles.size() - 1});
+            floorTiles.push_back(currentLocation);
         }
         if (character == Symbol::Stairs) {
-            stairLocation = {row.size() - 1, tiles.size() - 1};
+            stairLocation = currentLocation;
         }
         if (character == Symbol::Player) {
-            playerLocation = {row.size() - 1, tiles.size() - 1};
+            playerLocation = currentLocation;
         }
         if (character == Symbol::Compass) {
-            compassLocation = {row.size() - 1, tiles.size() - 1};
+            compassLocation = currentLocation;
+        }
+        if (character == Symbol::BarrierSuit || character == Symbol::Compass) {
+            dragonProtectedItemLocation = currentLocation;
         }
         if (isEnemy(character) && character != Symbol::Merchant && character != Symbol::Dragon) {
-            compassHolders.push_back({row.size() - 1, tiles.size() - 1});
+            compassHolders.push_back(currentLocation);
         }
+    }
+
+    // Postprocessing: connect dragon to protected
+    // Random gen
+    for (auto& row : tiles) {
+
     }
 
     delete currentBoard;
@@ -161,20 +171,17 @@ bool Game::playerMove(CardinalDirection dir) {
     Tile* newTile = currentBoard->inDirection(loc.first, loc.second, dir);
 
     // now check if we landed on a pickup
-    bool notCollectable = false;
     if (newTile->treasure) {
         // attempt to have the player retrieve it
         if (newTile->treasure->onRetrieve(player)) {
             // if they did, delete the Retrievable
             delete newTile->treasure;
             newTile->treasure = nullptr;
-        } else {
-            notCollectable = true;
         }
     }
 
     // if we can move into the desired location
-    if (newTile->movable() && !notCollectable) {
+    if (newTile->movable()) {
         // move the player to the open location
         std::swap(curTile->player, newTile->player);
     }
@@ -201,6 +208,7 @@ bool Game::playerAttack(CardinalDirection dir) {
 
             // they no longer have the item, so delete them and the item is safe
             delete enemy;
+            targetTile->enemy = nullptr;
         }
     }
 
@@ -218,7 +226,12 @@ bool Game::playerPickup(CardinalDirection dir) {
     // if there is an item there, interact with it
     Interactible* item = targetTile->item;
     if (item) {
+        // use the item
         item->onInteract(player);
+
+        // then delete it
+        delete item;
+        targetTile->item = nullptr;
     }
 
     // update everything else
