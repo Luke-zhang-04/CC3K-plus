@@ -2,39 +2,37 @@
 #define GAME_H
 #include "board.h"
 #include "player.h"
+#include "constants.h"
 
-#include <ostream>
+#include <iostream>
 
-enum class CardinalDirection {
-    North,
-    NorthEast,
-    East,
-    SouthEast,
-    South,
-    SouthWest,
-    West,
-    NorthWest,
-};
+
 
 class Game {
-        friend class Board;
+    friend class Board;
 
     private:
         bool merchantHostile = false;
         std::ostream& output;
+        std::istream& layoutInput; // Input for layout, endl represents end of layout
         Board* currentBoard = nullptr;
         Player* player;
 
-        void nextLevel();
+        // update the board, then render the bottom bar. happens after a player action
+        void update();
+        void nextLevel(bool generate = true);
 
     public:
-        Game(Player*, std::ostream&);
+        Game(Player*, std::ostream&, std::istream&);
         ~Game();
 
-        void render();
-        void playerMove(CardinalDirection);
-        void playerAttack(CardinalDirection);
-        void playerPickup(CardinalDirection);
+        /** @returns boolean indicating if player is still alive or not */
+        bool playerMove(CardinalDirection);
+        /** @returns boolean indicating if player is still alive or not */
+        bool playerAttack(CardinalDirection);
+        /** @returns boolean indicating if player is still alive or not */
+        bool playerPickup(CardinalDirection);
+        bool isAlive();
 };
 
 #endif

@@ -10,16 +10,21 @@ class Player: public Character {
         bool suited = false;
         int attackMod = 0;
         int defenseMod = 0;
-        int gold = 0;
+        int electrum = 0; // half gold increments
 
     public:
-        Player(Board& board, int maxHealth, int defence, int attack);
+        Player(int maxHealth, int defence, int attack);
 
         char getCharacter();
         virtual void usePotion(int healthBuff, int attackBuff, int defenseBuff);
         virtual void pickupGold(int amt);
         virtual void pickupSuit();
         void reset();
+
+        int getHealth();
+        int getAttack();
+        int getDefense();
+        int getElectrum();
 };
 
 #endif

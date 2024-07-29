@@ -7,7 +7,7 @@
 Compass::Compass(Board& board): board{board} {}
 
 char Compass::getCharacter() {
-    return Symbols::Compass;
+    return Symbol::Compass;
 }
 
 bool Compass::onRetrieve(Player* player) {

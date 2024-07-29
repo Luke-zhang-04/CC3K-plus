@@ -12,9 +12,9 @@ class Player;
 
 /* clang-format off */
 struct Tile {
-    friend std::ostream& operator>>(std::ostream&, Tile&);
+    friend std::ostream& operator<<(std::ostream&, Tile&);
 
-    char mapTile;
+    char mapTile = Symbol::Blank;
     Retrievable* treasure = nullptr;
     Interactible* item = nullptr;
     Enemy* enemy = nullptr;
@@ -27,14 +27,6 @@ struct Tile {
     bool movable() const;
 
     // owns treasure, interactible and enemy
-    Tile(
-        char mapTile,
-        Retrievable* treasure,
-        Interactible* item,
-        Enemy* enemy,
-        Player* player
-    );
-    Tile(char mapTile = Symbols::Blank);
     ~Tile();
 };
 /* clang-format on */

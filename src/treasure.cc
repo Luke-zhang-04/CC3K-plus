@@ -4,7 +4,7 @@
 #include "player.h"
 
 char Treasure::getCharacter() {
-    return Symbols::Treasure;
+    return Symbol::Treasure;
 }
 
 bool Treasure::onRetrieve(Player* player) {

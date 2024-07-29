@@ -5,11 +5,10 @@ class Board;
 
 class Character {
     protected:
-        Board& board;
         int maxHealth, health, defense, attack;
 
     public:
-        Character(Board& board, int maxHealth, int defense, int attack);
+        Character(int maxHealth, int defense, int attack);
 
         /** Character to be displayed on board */
         virtual char getCharacter() = 0;
@@ -17,7 +16,8 @@ class Character {
         /** Attacking power */
         int getPower();
 
-        int beAttacked(int attackPower);
+        /** Update its own health and returns it, could be negative if it dies */
+        virtual int beAttacked(int attackPower);
 };
 
 #endif

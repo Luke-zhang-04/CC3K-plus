@@ -8,7 +8,7 @@ class Merchant: public Enemy {
     public:
         Merchant(Board&);
 
-        CharacterUpdateAction update(int x, int y) override;
+        EnemyUpdateAction update(int x, int y) override;
 };
 
 #endif

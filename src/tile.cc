@@ -1,6 +1,7 @@
 #include "tile.h"
 
 #include "interactible.h"
+#include "constants.h"
 #include "player.h"
 
 #include <ostream>
@@ -22,11 +23,13 @@ char Tile::getCharacter() const {
 }
 
 bool Tile::movable() const {
-    return player == nullptr && enemy == nullptr;
+    return player == nullptr && enemy == nullptr && item == nullptr;
 }
 
-std::ostream& operator>>(std::ostream& out, Tile& tile) {
-    out << tile.getCharacter();
+std::ostream& operator<<(std::ostream& out, Tile& tile) {
+    char character = tile.getCharacter();
+
+    out << symbolToColor(character) << character << Color::Reset;
 
     return out;
 }

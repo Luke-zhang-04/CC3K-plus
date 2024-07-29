@@ -1,6 +1,6 @@
 {
   "files.autoSave": "onWindowChange",
-  "editor.formatOnSave": true,
+  "editor.formatOnSave": false,
   "files.associations": {
     "*.py": "python",
     "**/.i3/config": "i3",

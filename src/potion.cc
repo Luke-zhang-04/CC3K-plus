@@ -3,7 +3,7 @@
 #include "constants.h"
 
 char Potion::getCharacter() {
-    return Symbols::Potion;
+    return Symbol::Potion;
 }
 
 void Potion::onInteract(Player* player) {

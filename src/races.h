@@ -5,24 +5,24 @@
 
 class Dwarf: public Player {
     public:
-        Dwarf(Board& board);
+        Dwarf();
         void pickupGold(int amt) override;
 };
 
 class Elf: public Player {
     public:
-        Elf(Board& board);
+        Elf();
         void usePotion(int healthMod, int attackMod, int defenseMod) override;
 };
 
 class Human: public Player {
     public:
-        Human(Board& board);
+        Human();
 };
 
 class Orc: public Player {
     public:
-        Orc(Board& board);
+        Orc();
         void pickupGold(int amt) override;
 };
 

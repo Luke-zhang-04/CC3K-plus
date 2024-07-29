@@ -3,6 +3,7 @@
 ### Player
 
 -   `player->pickupGold` can just take an amount, no need to pass `Treasure`
+-   Gold should be stored as electrum (0.5 gold each), so orcs can easily collect in 1/2 increments
 -   `player->pickupSuit` needs no arguments, the suit will just call it when it's picked up, and now the player is suited
 
 ### Retrievable
@@ -13,6 +14,12 @@
 
 -   New protected method `Enemy::walk` for more code re-use
 -   Enemy does not return a string, instead enum elements for cardinal directions or attack
+-   `beAttacked` is virtual so `Dragon` can override it and "unlock" the protected item when it dies
+-   `goldValue()` that returns how much gold a particular enemy is worth, so dragons and merchants can be worth 0
+
+### Dragon
+
+-   Override `beAttacked` to "unlock" its protected item when it dies
 
 ### Treasure
 
@@ -26,18 +33,33 @@
 
 -   When the `Compass` is retrieved, the player doesn't need to know, the board does.
     -   We can still call `onRetrieve(Player)`, but the constructor needs a `Board&` so it can alert the board on pickup
+-   Compass is owned by an enemy
 
 ### General
 
 -   "Defense" was chosen as standard, was mis-spelled in `Character`
 
 ### Game
-
 -   `Board` is a friend class of `Game`
 -   `Game` needs a private method `nextLevel`
--   `render` is public
+-   `render` becomes `update`, a private method to update board, render board, then render bottom text
 -   Added a pointer to `Player`
+-   All player interaction functions should return whether the player is still alive
+
+### Board
+
+-   playerLocation is also useful for enemies checking whether they can attack the player, open it up as read only through a method `std::pair<int, int> getPlayerLoc()`
+-   Need to add an `Update()` function which updates all enemies on the board
+-   Needs a private helper function to find the tile offset by a `CardinalDirection` from a particular x, y coordinate
+
 
 ### Player
 
 -   Fields `suited`, `attackMod`, `defenseMod`, and `gold` are protected instead of private
+-   Methods `playerMove`, `playerAttack`, and `playerPickup` return a boolean, indicating if the player is still alive after that move
+-   Storing electrum instead of gold to avoid integer division
+-   Need getters for `health`, `attack`, `defense`, and `electrum`.
+
+### Character
+
+-   `Player`s don't care about board, only `Enemy`, so move `Board&` to `Enemy`

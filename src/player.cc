@@ -4,11 +4,11 @@
 
 #include <algorithm>
 
-Player::Player(Board& board, int maxHealth, int attack, int defence):
-    Character{board, maxHealth, attack, defense} {}
+Player::Player(int maxHealth, int attack, int defence):
+    Character{maxHealth, attack, defense} {}
 
 char Player::getCharacter() {
-    return Symbols::Player;
+    return Symbol::Player;
 }
 
 void Player::usePotion(int healthBuff, int attackBuff, int defenseBuff) {
@@ -22,5 +22,21 @@ void Player::pickupSuit() {
 }
 
 void Player::pickupGold(int amt) {
-    gold += amt;
+    electrum += amt*2;
+}
+
+int Player::getHealth() {
+    return health;
+}
+
+int Player::getAttack() {
+    return attack;
+}
+
+int Player::getDefense() {
+    return defense;
+}
+
+int Player::getElectrum() {
+    return electrum;
 }

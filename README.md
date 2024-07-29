@@ -50,7 +50,7 @@ In other words, if one chamber is huge and the other small, and we spawn many $x
 | Vampire  | `50`  | `25` | `25` | `V`            | $\displaystyle \frac{3}{18}$ |                                                                                                     |
 | Werewolf | `120` | `30` | `5`  | `W`            | $\displaystyle \frac{4}{18}$ |                                                                                                     |
 | Troll    | `120` | `25` | `15` | `V`            | $\displaystyle \frac{2}{18}$ |                                                                                                     |
-| Goblin   | `70`  | `5`  | `10` | `G`            | $\displaystyle \frac{5}{18}$ |                                                                                                     |
+| Goblin   | `70`  | `5`  | `10` | `N`            | $\displaystyle \frac{5}{18}$ |                                                                                                     |
 | Merchant | `30`  | `70` | `5`  | `M`            | $\displaystyle \frac{2}{18}$ | Attacking a merchant causes every merchant to be hostile                                            |
 | Dragon   | `150` | `20` | `20` | `D`            | See treasure spawn rates     | Always guards a treasure hoard, only hostile when a player is in 1-block radius of its dragon hoard |
 | Phoenix  | `50`  | `35` | `20` | `X`            | $\displaystyle \frac{2}{18}$ |                                                                                                     |

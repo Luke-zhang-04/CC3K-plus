@@ -7,7 +7,7 @@ class Treasure: public Retrievable {
         int amount;
 
     public:
-        Treasure(int amt): amount{amt} {};
+        Treasure(int amt = 0): amount{amt} {};
         char getCharacter() override;
         virtual bool onRetrieve(Player* player) override;
 };

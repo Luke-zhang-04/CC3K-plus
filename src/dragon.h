@@ -9,8 +9,10 @@ class Dragon: public Enemy {
         DragonProtected* protects;
 
     public:
+        Dragon(Board&);
         char getCharacter();
-        CharacterUpdateAction update(int x, int y);
+        int beAttacked(int attackPower) override;
+        EnemyUpdateAction update(int x, int y);
 };
 
 #endif // DRAGON_H

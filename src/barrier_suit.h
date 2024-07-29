@@ -4,9 +4,11 @@
 #include "retrievable.h"
 
 class Player;
+class Dragon;
 
 class BarrierSuit: public Retrievable, DragonProtected {
     public:
+        BarrierSuit(Dragon* d);
         char getCharacter() override;
         bool onRetrieve(Player* player) override;
 };

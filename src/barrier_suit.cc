@@ -2,9 +2,12 @@
 
 #include "constants.h"
 #include "player.h"
+#include "dragon.h"
+
+BarrierSuit::BarrierSuit(Dragon* d): DragonProtected{d} {}
 
 char BarrierSuit::getCharacter() {
-    return Symbols::BarrierSuit;
+    return Symbol::BarrierSuit;
 }
 
 bool BarrierSuit::onRetrieve(Player* player) {
