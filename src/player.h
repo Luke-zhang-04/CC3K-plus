@@ -13,9 +13,9 @@ class Player: public Character {
         int electrum = 0; // half gold increments
 
     public:
-        Player(int maxHealth, int defence, int attack);
+        Player(int maxHealth, int defense, int attack);
 
-        char getCharacter();
+        char getCharacter() override;
         virtual void usePotion(int healthBuff, int attackBuff, int defenseBuff);
         virtual void pickupGold(int amt);
         virtual void pickupSuit();

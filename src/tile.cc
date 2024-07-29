@@ -29,7 +29,7 @@ char Tile::getCharacter() const {
 bool Tile::movable() const {
     return player == nullptr && enemy == nullptr && item == nullptr && treasure == nullptr &&
            (mapTile == Symbol::FloorTile || mapTile == Symbol::Door ||
-            mapTile == Symbol::Passage   || mapTile == Symbol::Stairs);
+            mapTile == Symbol::Passage || mapTile == Symbol::Stairs);
 }
 
 std::ostream& operator<<(std::ostream& out, Tile& tile) {

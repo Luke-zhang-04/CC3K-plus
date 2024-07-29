@@ -14,3 +14,5 @@ int Character::beAttacked(int attackPower) {
 
     return health;
 }
+
+Character::~Character() {}

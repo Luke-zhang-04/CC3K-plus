@@ -1,13 +1,13 @@
+#include "game.h"
+#include "player.h"
+#include "races.h"
+#include "random.h"
+
 #include <iostream>
 #include <stdlib.h> // srand/rand
 #include <string>
 #include <sys/types.h> // getpid
 #include <unistd.h>
-#include "player.h"
-#include "races.h"
-#include "game.h"
-#include "random.h"
-using namespace std;
 
 Game* init() {
     Player* player;
@@ -15,22 +15,15 @@ Game* init() {
     char move;
     std::cin >> move;
     switch (move) {
-        case 'h':
-            player = new Human();
-        case 'e':
-            player = new Elf();
-        case 'd':
-            player = new Dwarf();
-        case 'o':
-            player = new Orc();
-        case 'r':
-            return init();
-        case 'q':
-            return nullptr;
-        default:
-            return init();
+        case 'h': player = new Human();
+        case 'e': player = new Elf();
+        case 'd': player = new Dwarf();
+        case 'o': player = new Orc();
+        case 'r': return init();
+        case 'q': return nullptr;
+        default: return init();
     }
-    return new Game(player, std::cout, std::cin); //WIP
+    return new Game(player, std::cout, std::cin); // WIP
 }
 
 // void playerTurn(Player* player) {
@@ -41,8 +34,9 @@ Game* init() {
 
 int main(int argc, char* argv[]) {
     int seed = getpid();
-    if (argc == 2)
-        seed = stoi(string{argv[1]});
+    if (argc == 2) {
+        seed = stoi(std::string(argv[1]));
+    }
 
     randomEngine.seed(seed);
 
@@ -52,25 +46,23 @@ int main(int argc, char* argv[]) {
 
     std::string move;
     while (std::cin >> move && move != "q") {
-        if (!game) break;
+        if (!game)
+            break;
         else if (move == "r") {
-                delete game;
-                game = init();
-        }
-        else if (move == "no" || move == "so" || move == "ea" || move == "we" || move == "ne" || move == "nw" || move == "se" || move == "sw") {
+            delete game;
+            game = init();
+        } else if (move == "no" || move == "so" || move == "ea" || move == "we" || move == "ne" ||
+                   move == "nw" || move == "se" || move == "sw") {
             playerAlive = game->playerMove(stringToDirection(move));
-        }
-        else if (move == "u") {
+        } else if (move == "u") {
             std::string direction;
             std::cin >> direction;
             playerAlive = game->playerPickup(stringToDirection(move));
-        }
-        else if (move == "a") {
+        } else if (move == "a") {
             std::string direction;
             std::cin >> direction;
             playerAlive = game->playerAttack(stringToDirection(move));
-        }
-        else {
+        } else {
             continue;
         }
     }

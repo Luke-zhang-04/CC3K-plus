@@ -18,6 +18,8 @@ class Character {
 
         /** Update its own health and returns it, could be negative if it dies */
         virtual int beAttacked(int attackPower);
+
+        virtual ~Character();
 };
 
 #endif

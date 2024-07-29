@@ -1,7 +1,7 @@
 #ifndef BOARD_H
 #define BOARD_H
-#include "tile.h"
 #include "constants.h"
+#include "tile.h"
 
 #include <array>
 #include <ostream>
@@ -11,7 +11,7 @@
 class Game;
 
 class Board {
-    friend class Game;
+        friend class Game;
 
     private:
         Game& game;

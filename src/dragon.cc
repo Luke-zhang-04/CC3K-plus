@@ -1,4 +1,6 @@
 #include "dragon.h"
+
+#include "constants.h"
 #include "dragon_protected.h"
 
 // sets the gold value to 0 and tells the enemy to give Dragon stats
@@ -19,5 +21,12 @@ int Dragon::beAttacked(int attackPower) {
 // never moves, only attacks
 EnemyUpdateAction Dragon::update(int x, int y) {
     // TODO: Check adjacent to dragon hoard
-    if (false) return EnemyUpdateAction::Attack;
+    if (false)
+        return EnemyUpdateAction::Attack;
+
+    return EnemyUpdateAction::NoAction;
+}
+
+char Dragon::getCharacter() {
+    return Symbol::Dragon;
 }

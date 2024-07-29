@@ -4,8 +4,7 @@
 
 #include <algorithm>
 
-Player::Player(int maxHealth, int attack, int defence):
-    Character{maxHealth, attack, defense} {}
+Player::Player(int maxHealth, int attack, int defense): Character{maxHealth, attack, defense} {}
 
 char Player::getCharacter() {
     return Symbol::Player;
@@ -22,7 +21,7 @@ void Player::pickupSuit() {
 }
 
 void Player::pickupGold(int amt) {
-    electrum += amt*2;
+    electrum += amt * 2;
 }
 
 int Player::getHealth() {

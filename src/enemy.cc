@@ -3,10 +3,9 @@
 #include "board.h"
 #include "constants.h"
 
-#include <stdlib.h> // srand/rand
-#include <Vector>
+#include <vector>
 
-Enemy::Enemy(EnemyType enemyType, Board& board): Character{0, 0, 0}, board{board}, character{0} {
+Enemy::Enemy(EnemyType enemyType, Board& board): Character{0, 0, 0}, character{0}, board{board} {
     switch (enemyType) {
         case EnemyType::Vampire:
             maxHealth = 50;
@@ -73,7 +72,7 @@ EnemyUpdateAction Enemy::walk(int x, int y) {
             if (area[iy][ix] && area[iy][ix]->movable()) {
                 movable.emplace_back(
                     // Store this location as a movement direction
-                    static_cast<EnemyUpdateAction>((ix+1-x) + (iy+1-y)*3)
+                    static_cast<EnemyUpdateAction>((ix + 1 - x) + (iy + 1 - y) * 3)
                 );
             }
         }
@@ -86,14 +85,15 @@ EnemyUpdateAction Enemy::walk(int x, int y) {
 // return whether the player is adjacent to the enemy
 bool Enemy::isPlayerNearby(int x, int y) {
     auto player = board.getPlayerLoc();
-    return std::abs(player.first  - x) <= 1 &&
-           std::abs(player.second - y) <= 1;
+    return std::abs(player.first - x) <= 1 && std::abs(player.second - y) <= 1;
 }
 
 // attack if possible, otherwise move
 EnemyUpdateAction Enemy::update(int x, int y) {
-    if (isPlayerNearby(x, y)) return EnemyUpdateAction::Attack;
-    else return walk(x, y);
+    if (isPlayerNearby(x, y))
+        return EnemyUpdateAction::Attack;
+    else
+        return walk(x, y);
 }
 
 // most enemies are worth 1
@@ -103,6 +103,11 @@ int Enemy::goldValue() {
 
 void Enemy::giveTreasure(Retrievable* toDrop) {
     drops = toDrop;
+}
+
+int Enemy::beAttacked(int attackPower) {
+    // TODO: stuff
+    return Character::beAttacked(attackPower);
 }
 
 Retrievable* Enemy::dropTreasure() {

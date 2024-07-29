@@ -47,7 +47,6 @@ int main(int argc, char* argv[]) {
     for (int i = 0; i < 10; i++) {
         // std::shuffle( v.begin(), v.end(), std::default_random_engine(seed) );
         std::shuffle(v.begin(), v.end(), rng);
-        std::shuffle(v.begin(), v.end(), std::default_random_engine{});
         print(v);
     } // for
 

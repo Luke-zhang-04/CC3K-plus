@@ -1,8 +1,8 @@
 #include "barrier_suit.h"
 
 #include "constants.h"
-#include "player.h"
 #include "dragon.h"
+#include "player.h"
 
 BarrierSuit::BarrierSuit(Dragon* d): DragonProtected{d} {}
 

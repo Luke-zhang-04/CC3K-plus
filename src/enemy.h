@@ -2,6 +2,7 @@
 #define ENEMY_H
 #include "character.h"
 
+class Retrievable;
 class Board;
 
 enum class EnemyType { Vampire, Werewolf, Troll, Goblin, Merchant, Dragon, Phoenix };
@@ -55,17 +56,17 @@ class Enemy: public Character {
     public:
         Enemy(EnemyType, Board&);
 
-        char getCharacter();
+        char getCharacter() override;
 
         virtual EnemyUpdateAction update(int x, int y);
 
         int goldValue();
 
         // override Character's beAttacked so it can drop when killed
-        int beAttacked(int);
+        int beAttacked(int) override;
 
         // give this enemy a retrievable
-        void pickupTreasure(Retrievable*);
+        void giveTreasure(Retrievable*);
 
         // take a retrievable from the enemy
         Retrievable* dropTreasure();

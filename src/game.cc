@@ -17,7 +17,7 @@
 #include <vector>
 
 Game::Game(Player* player, std::ostream& output, std::istream& layoutInput):
-    player{player}, output{output}, layoutInput{layoutInput} {}
+    output{output}, layoutInput{layoutInput}, player{player} {}
 
 Game::~Game() {
     delete currentBoard;
@@ -81,7 +81,8 @@ Tile* getTileFromChar(char character, Player* player, Board& board) {
         case (char) InputMapNumbers::TreasureDragonHoard:
             return new Tile{character, new Treasure{6}};
 
-        default: throw std::invalid_argument("unknown map tile character" + character);
+        default:
+            throw std::invalid_argument("unknown map tile character " + std::string(1, character));
     }
 }
 
@@ -103,8 +104,7 @@ void Game::nextLevel(bool generate) {
     std::pair<size_t, size_t> dragonLocation{0, 0};
     std::pair<size_t, size_t> dragonProtectedItemLocation{0, 0};
     std::vector<std::pair<size_t, size_t>> floorTiles; // Keep track of floor tiles for spawning
-    std::vector<std::pair<size_t, size_t>>
-        compassHolders; // Enemies that CAN hold a compass
+    std::vector<std::pair<size_t, size_t>> compassHolders; // Enemies that CAN hold a compass
 
     Board* newBoard = new Board{std::vector<std::vector<Tile*>>(1, std::vector<Tile*>{}), *this};
 
@@ -152,9 +152,6 @@ void Game::nextLevel(bool generate) {
 
     // Postprocessing: connect dragon to protected
     // Random gen
-    for (auto& row : tiles) {
-
-    }
 
     delete currentBoard;
     currentBoard = newBoard;
@@ -238,8 +235,4 @@ bool Game::playerPickup(CardinalDirection dir) {
     update();
 
     return player->getHealth() > 0;
-}
-
-Game::~Game() {
-    delete player;
 }

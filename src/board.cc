@@ -1,15 +1,14 @@
 #include "board.h"
 
 #include "constants.h"
+#include "enemy.h"
 #include "game.h"
 #include "tile.h"
-#include "enemy.h"
 
 #include <array>
 #include <ostream>
-#include <vector>
-#include <stdlib.h> // rand
 #include <string>
+#include <vector>
 
 Tile* Board::inDirection(int x, int y, CardinalDirection dir) {
     int dx = (int) dir % 3 - 1;
@@ -22,8 +21,9 @@ Tile* Board::inDirection(std::pair<int, int> loc, CardinalDirection dir) {
     return inDirection(loc.first, loc.second, dir);
 }
 
-// use the given 2d vector of tiles, but populate stairLocation and playerLocation for easy updating
-Board::Board(std::vector<std::vector<Tile*>> map, Game& game): map{map}, game{game} {
+// use the given 2d vector of tiles, but populate stairLocation and playerLocation for easy
+// updating
+Board::Board(std::vector<std::vector<Tile*>> map, Game& game): game{game}, map{map} {
     bool foundStairs = false, foundPlayer = false;
 
     for (size_t y = 0; y < map.size(); y++) {
@@ -35,7 +35,7 @@ Board::Board(std::vector<std::vector<Tile*>> map, Game& game): map{map}, game{ga
             if (cell->mapTile == Symbol::Stairs) {
                 stairLocation = {x, y};
                 // show the floor until the stair is shown
-                cell->mapTile == Symbol::FloorTile;
+                cell->mapTile = Symbol::FloorTile;
                 foundStairs = true;
             }
             if (cell->player != nullptr) {
@@ -105,10 +105,10 @@ void Board::updateEnemies() {
 template<typename T>
 T optional2DIndex(std::vector<std::vector<T>>& vec, int x, int y) {
     if (y < 0 || y >= vec.size()) {
-        return nullptr
+        return nullptr;
     }
 
-    std::vector<T*>& row = vec[y];
+    std::vector<T>& row = vec[y];
 
     if (x < 0 || x >= row.size()) {
         return nullptr;

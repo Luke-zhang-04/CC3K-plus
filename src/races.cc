@@ -2,7 +2,7 @@
 
 #include "player.h"
 
-#include <Algorithm>
+#include <algorithm>
 
 Dwarf::Dwarf(): Player{100, 20, 30} {}
 Elf::Elf(): Player{140, 30, 10} {}
@@ -14,7 +14,7 @@ void Elf::usePotion(int healthMod, int attackMod, int defenseMod) {
 }
 
 void Dwarf::pickupGold(int amt) {
-    electrum += 4*amt; // one gold is worth 2, which is worth 4 electrum
+    electrum += 4 * amt; // one gold is worth 2, which is worth 4 electrum
 }
 
 void Orc::pickupGold(int amt) {

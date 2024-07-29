@@ -1,15 +1,13 @@
 #ifndef GAME_H
 #define GAME_H
 #include "board.h"
-#include "player.h"
 #include "constants.h"
+#include "player.h"
 
 #include <iostream>
 
-
-
 class Game {
-    friend class Board;
+        friend class Board;
 
     private:
         bool merchantHostile = false;
