@@ -2,6 +2,7 @@
 
 #include "board.h"
 #include "constants.h"
+#include "random.h"
 
 #include <vector>
 
@@ -62,30 +63,34 @@ EnemyUpdateAction Enemy::walk(int x, int y) {
     // collect a list of the locations it can move to
     auto area = board.getArea(x, y);
     std::vector<EnemyUpdateAction> movable;
-    for (int ix = x - 1; ix <= x + 1; ix++) {
-        for (int iy = y - 1; iy <= y + 1; iy++) {
-            // don't check the current tile
-            if (ix == x && iy == y)
-                continue;
+    for (int dx = -1; dx <= 1; ++dx) {
+        for (int dy = -1; dy <= 1; ++dy) {
+            if (!dx|dy) continue; // if both are 0, move on, don't let them not move
 
-            // if it's movable, add it to the array
-            if (area[iy][ix] && area[iy][ix]->movable()) {
+            // don't move onto the stairs
+            auto stairs = board.getStairLoc();
+            if (x + dx == stairs.first && y + dy == stairs.second) continue;
+
+            if (area[dy][dx] && area[dy][dx]->movable()) {
                 movable.emplace_back(
                     // Store this location as a movement direction
-                    static_cast<EnemyUpdateAction>((ix + 1 - x) + (iy + 1 - y) * 3)
+                    static_cast<EnemyUpdateAction>((dx + 1 - x) + (dy + 1 - y) * 3)
                 );
             }
         }
     }
 
+    // if no valid directions were found, don't move
+    if (movable.empty()) return EnemyUpdateAction::NoAction;
+
     // pick a random location it can move to
-    return movable[rand() % movable.size()];
+    return movable[randInt(0, movable.size()-1)];
 }
 
 // return whether the player is adjacent to the enemy
 bool Enemy::isPlayerNearby(int x, int y) {
     auto player = board.getPlayerLoc();
-    return std::abs(player.first - x) <= 1 && std::abs(player.second - y) <= 1;
+    return std::abs((int) player.first - x) <= 1 && std::abs((int) player.second - y) <= 1;
 }
 
 // attack if possible, otherwise move
@@ -105,10 +110,11 @@ void Enemy::giveTreasure(Retrievable* toDrop) {
     drops = toDrop;
 }
 
-int Enemy::beAttacked(int attackPower) {
-    // TODO: stuff
-    return Character::beAttacked(attackPower);
-}
+// not used
+// int Enemy::beAttacked(int attackPower) {
+//     // TODO: stuff
+//     return Character::beAttacked(attackPower);
+// }
 
 Retrievable* Enemy::dropTreasure() {
     Retrievable* treasure = drops;

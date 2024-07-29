@@ -20,6 +20,9 @@ struct Tile {
     Enemy* enemy = nullptr;
     Player* player = nullptr;
 
+    /** Chamber ID, should only be non-zero if `mapTile` is a floor tile or stair */
+    size_t chamberId = 0;
+
     // return the character of the highest level item on this tile
     char getCharacter() const;
 
@@ -30,5 +33,7 @@ struct Tile {
     ~Tile();
 };
 /* clang-format on */
+
+extern std::ostream& operator<<(std::ostream&, const Tile&);
 
 #endif

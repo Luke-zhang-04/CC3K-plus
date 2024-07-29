@@ -4,20 +4,29 @@
 #include "enemy.h"
 #include "game.h"
 #include "tile.h"
+#include "random.h"
 
 #include <array>
 #include <ostream>
 #include <string>
 #include <vector>
 
-Tile* Board::inDirection(int x, int y, CardinalDirection dir) {
+Tile* Board::at(size_t x, size_t y) const {
+    return map.at(y).at(x);
+}
+
+Tile* Board::at(const std::pair<size_t, size_t>& coords) const {
+    return map.at(coords.second).at(coords.first);
+}
+
+Tile* Board::inDirection(size_t x, size_t y, CardinalDirection dir) const {
     int dx = (int) dir % 3 - 1;
     int dy = (int) dir / 3 - 1;
 
-    return map[y + dy][x + dx];
+    return map.at(y + dy).at(x + dx);
 }
 
-Tile* Board::inDirection(std::pair<int, int> loc, CardinalDirection dir) {
+Tile* Board::inDirection(const std::pair<size_t, size_t>& loc, CardinalDirection dir) const {
     return inDirection(loc.first, loc.second, dir);
 }
 
@@ -68,13 +77,14 @@ void Board::showStairs() {
     map[stairLocation.second][stairLocation.first]->mapTile = Symbol::Stairs;
 }
 
-void Board::render(std::ostream& out) {
+void Board::render(std::ostream& out) const {
     for (const std::vector<Tile*>& row : map) {
         for (const Tile* tile : row) {
-            out << tile;
+            out << *tile;
         }
-        out << std::endl; // TODO: Is it ok to flush this often?
+        out << '\n';
     }
+    out << std::flush;
 }
 
 void Board::updateEnemies() {
@@ -86,7 +96,7 @@ void Board::updateEnemies() {
 
                 if (act == EnemyUpdateAction::Attack) {
                     // if they don't miss, the player is attacked
-                    if (rand() % 2 == 0) {
+                    if (randInt(0, 1) == 0) {
                         // don't worry if the player dies
                         game.player->beAttacked(t->enemy->getPower());
                     }
@@ -103,30 +113,41 @@ void Board::updateEnemies() {
 
 /** Returns nullptr if element is out of bounds */
 template<typename T>
-T optional2DIndex(std::vector<std::vector<T>>& vec, int x, int y) {
-    if (y < 0 || y >= vec.size()) {
+T optional2DIndex(
+    const std::vector<std::vector<T>>& vec, size_t x, int xChange, size_t y, int yChange
+) {
+    if (y < -yChange || y + xChange >= vec.size()) {
         return nullptr;
     }
 
-    std::vector<T>& row = vec[y];
+    const std::vector<T>& row = vec[y];
 
-    if (x < 0 || x >= row.size()) {
+    if (x < -xChange || x + yChange >= row.size()) {
         return nullptr;
     }
 
     return row[x];
 }
 
-const std::array<const std::array<const Tile*, 3>, 3> Board::getArea(int x, int y) {
+const std::array<const std::array<const Tile*, 3>, 3> Board::getArea(size_t x, size_t y) const {
     /* clang-format off */
     return {{
-        {optional2DIndex(map, x - 1, y - 1), optional2DIndex(map, x, y - 1), optional2DIndex(map, x + 1, y - 1)},
-        {optional2DIndex(map, x - 1, y),     optional2DIndex(map, x, y),     optional2DIndex(map, x + 1, y)    },
-        {optional2DIndex(map, x - 1, y + 1), optional2DIndex(map, x, y + 1), optional2DIndex(map, x + 1, y + 1)},
+        {optional2DIndex(map, x, -1, y, -1), optional2DIndex(map, x, 0, y, -1), optional2DIndex(map, x, +1, y, -1)},
+        {optional2DIndex(map, x, -1, y, 0),  optional2DIndex(map, x, 0, y, 0), optional2DIndex(map, x, +1, y, 0)  },
+        {optional2DIndex(map, x, -1, y, +1), optional2DIndex(map, x, 0, y, +1), optional2DIndex(map, x, +1, y, +1)},
     }};
     /* clang-format on */
 }
 
-const std::pair<int, int> Board::getPlayerLoc() {
+const std::array<const std::array<const Tile*, 3>, 3>
+    Board::getArea(std::pair<size_t, size_t> coords) const {
+    return Board::getArea(coords.first, coords.second);
+}
+
+const std::pair<size_t, size_t> Board::getPlayerLoc() {
     return playerLocation; // should return the value not a reference
+}
+
+const std::pair<size_t, size_t> Board::getStairLoc() {
+    return stairLocation; // same as `getPlayerLoc()`
 }

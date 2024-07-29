@@ -21,8 +21,10 @@ class Board {
 
         std::vector<std::vector<Tile*>> map;
 
-        Tile* inDirection(int x, int y, CardinalDirection);
-        Tile* inDirection(std::pair<int, int>, CardinalDirection);
+        Tile* at(size_t x, size_t y) const;
+        Tile* at(const std::pair<size_t, size_t>&) const;
+        Tile* inDirection(size_t x, size_t y, CardinalDirection) const;
+        Tile* inDirection(const std::pair<size_t, size_t>&, CardinalDirection) const;
 
     public:
         Board(std::vector<std::vector<Tile*>>, Game&);
@@ -33,7 +35,7 @@ class Board {
         void showStairs();
 
         // render all tiles to ostream
-        void render(std::ostream&);
+        void render(std::ostream&) const;
 
         // update all enemies
         void updateEnemies();
@@ -43,9 +45,13 @@ class Board {
          *
          * nullptr -> no tile here, out of bounds
          */
-        const std::array<const std::array<const Tile*, 3>, 3> getArea(int x, int y);
+        const std::array<const std::array<const Tile*, 3>, 3> getArea(size_t x, size_t y) const;
+        const std::array<const std::array<const Tile*, 3>, 3>
+            getArea(std::pair<size_t, size_t>) const;
 
-        const std::pair<int, int> getPlayerLoc();
+        const std::pair<size_t, size_t> getPlayerLoc();
+
+        const std::pair<size_t, size_t> getStairLoc();
 };
 
 #endif

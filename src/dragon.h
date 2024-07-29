@@ -5,8 +5,10 @@
 class DragonProtected;
 
 class Dragon: public Enemy {
+        friend class Game;
+
     private:
-        DragonProtected* protects;
+        DragonProtected* protects = nullptr;
 
     public:
         Dragon(Board&);

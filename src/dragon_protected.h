@@ -4,6 +4,8 @@
 class Dragon;
 
 class DragonProtected {
+        friend class Game;
+
     protected:
         // if dragon is not nullptr, it is currently protected
         Dragon* dragon;

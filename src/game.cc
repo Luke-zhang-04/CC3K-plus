@@ -9,15 +9,19 @@
 #include "merchant.h"
 #include "player.h"
 #include "potion.h"
+#include "random.h"
 #include "retrievable.h"
 #include "tile.h"
 #include "treasure.h"
 
 #include <iostream>
+#include <unordered_set>
 #include <vector>
 
-Game::Game(Player* player, std::ostream& output, std::istream& layoutInput):
-    output{output}, layoutInput{layoutInput}, player{player} {}
+Game::Game(Player* player, std::ostream& output, std::istream& layoutInput, bool shouldGenerate):
+    output{output}, layoutInput{layoutInput}, player{player}, shouldGenerate{shouldGenerate} {
+        nextLevel();
+    }
 
 Game::~Game() {
     delete currentBoard;
@@ -26,8 +30,7 @@ Game::~Game() {
 
 void Game::update() {
     currentBoard->updateEnemies();
-    currentBoard->render(output);
-    // todo: render bottom bar
+    render();
 }
 
 Tile* getTileFromChar(char character, Player* player, Board& board) {
@@ -86,6 +89,94 @@ Tile* getTileFromChar(char character, Player* player, Board& board) {
     }
 }
 
+std::unordered_set<Tile*>& Game::traverseChamber(
+    std::pair<size_t, size_t>&& tile,
+    const Board* const newBoard,
+    size_t currentChamberId,
+    std::unordered_set<Tile*>& recursiveChambers
+) {
+    auto area = newBoard->getArea(tile);
+
+    newBoard->at(tile)->chamberId = currentChamberId;
+    recursiveChambers.insert(newBoard->at(tile));
+
+    for (int row = 0; row < 3; row++) {
+        for (int col = 0; col < 3; col++) {
+            if ((row == 1 && col == 1) || area[row][col] == nullptr ||
+                area[row][col]->mapTile != Symbol::FloorTile || area[row][col]->chamberId != 0) {
+                continue;
+            }
+
+            // We have an unlabeled floor tile
+            traverseChamber(
+                {tile.first + col, tile.second + row},
+                newBoard,
+                currentChamberId,
+                recursiveChambers
+            );
+        }
+    }
+
+    return recursiveChambers;
+}
+
+std::vector<std::unordered_set<Tile*>> Game::labelChambers(
+    std::vector<std::pair<size_t, size_t>>& floorTiles, const Board* const newBoard
+) {
+    size_t chamberIdCounter = 1;
+
+    std::vector<std::unordered_set<Tile*>> chambers;
+
+    for (auto& floorTile : floorTiles) {
+        if (newBoard->at(floorTile)->chamberId == 0) {
+            // We have an unlabeled boy, label him and his comrades
+            chambers.emplace_back(std::unordered_set<Tile*>{});
+            traverseChamber(
+                std::move(floorTile), newBoard, chamberIdCounter++, chambers[chambers.size() - 1]
+            );
+        }
+    }
+
+    return chambers;
+}
+
+std::pair<std::pair<size_t, size_t>, std::pair<size_t, size_t>> Game::randomPopulateMap(
+    std::vector<std::unordered_set<Tile*>>& chambers, Board* newBoard, Player* player
+) {
+    // if (floorTiles.size() <= 42) {
+    //     throw std::length_error("board is not large enough to spawn everything");
+    // }
+
+    // shuffle(floorTiles);
+
+    // newBoard->at(floorTiles[0])->player = player;
+
+    // Spawn enemies
+    // for (uint8_t index = 2; index < 22; index++) {
+    //     uint8_t num = randInt(0, 18);
+    //     Tile* curTile = newBoard->at(floorTiles[index]);
+
+    //     if (0 <= num && 3 < num) {
+    //         curTile->enemy = new Enemy{EnemyType::Vampire, *newBoard};
+    //     } else if (3 <= num && num < 7) {
+    //         curTile->enemy = new Enemy{EnemyType::Werewolf, *newBoard};
+    //     } else if (7 <= num && num < 9) {
+    //         curTile->enemy = new Enemy{EnemyType::Troll, *newBoard};
+    //     } else if (9 <= num && num < 14) {
+    //         curTile->enemy = new Enemy{EnemyType::Goblin, *newBoard};
+    //     } else if (14 <= num && num < 16) {
+    //         curTile->enemy = new Enemy{EnemyType::Merchant, *newBoard};
+    //     } else {
+    //         curTile->enemy = new Enemy{EnemyType::Phoenix, *newBoard};
+    //     }
+    // }
+
+    // Pick compass bearer
+    // for (uint8_t index = 22; index < 32; index++) {}
+
+    // return {floorTiles[0], floorTiles[1]};
+}
+
 /**
  * @brief delete the old board and create a new one using data from the layoutInput stream
  *
@@ -94,64 +185,111 @@ Tile* getTileFromChar(char character, Player* player, Board& board) {
  * - There will be exactly one dragon in a cardinal or ordinal direction from the hoard
  *     - No need to use bipartite matching algorithm
  * - https://piazza.com/class/lvkzhr2nagi58v/post/294
- *
- * @param generate - if game items should be generated or not
  */
-void Game::nextLevel(bool generate) {
+void Game::nextLevel() {
     std::pair<size_t, size_t> compassLocation{0, 0};
     std::pair<size_t, size_t> stairLocation{0, 0};
     std::pair<size_t, size_t> playerLocation{0, 0};
-    std::pair<size_t, size_t> dragonLocation{0, 0};
-    std::pair<size_t, size_t> dragonProtectedItemLocation{0, 0};
+    // TODO: there can actually be multiple dragons
+    Dragon* dragon = nullptr;                          // NON OWNERSHIP
+    DragonProtected* dragonProtectedItem = nullptr;    // NON OWNERSHIP
     std::vector<std::pair<size_t, size_t>> floorTiles; // Keep track of floor tiles for spawning
-    std::vector<std::pair<size_t, size_t>> compassHolders; // Enemies that CAN hold a compass
+    std::vector<Enemy*> compassHoldingEnemies;         // Enemies that CAN hold a compass
 
     Board* newBoard = new Board{std::vector<std::vector<Tile*>>(1, std::vector<Tile*>{}), *this};
 
-    char character;
+    char input;
     bool isEnd = false; // Tracks if a line has only | and -, but not the first line
 
-    while (layoutInput >> character) {
-        std::vector<std::vector<Tile*>>& tiles = newBoard->map;
+    std::vector<std::vector<Tile*>>& tiles = newBoard->map;
+
+    layoutInput >> std::noskipws;
+
+    while (layoutInput >> input) {
         std::vector<Tile*>& row = tiles[tiles.size() - 1];
 
-        if (character == '\n') {
+        if (input == '\n') {
             if (isEnd) { // End of floor
                 break;
             }
 
             tiles.emplace_back(std::vector<Tile*>{});
             isEnd = true;
+            continue;
         }
-        if (character != Symbol::WallHorz || character != Symbol::WallVert) {
+        if (input != Symbol::WallHorz && input != Symbol::WallVert) {
             isEnd = false;
         }
 
-        row.emplace_back(getTileFromChar(character, player, *newBoard));
+        row.emplace_back(getTileFromChar(input, player, *newBoard));
         std::pair<size_t, size_t> currentLocation{row.size() - 1, tiles.size() - 1};
 
-        if (character == Symbol::FloorTile) {
+        if (input == Symbol::FloorTile) {
             floorTiles.push_back(currentLocation);
         }
-        if (character == Symbol::Stairs) {
+        if (input == Symbol::Stairs) {
+            std::cout << "PENIS: " << currentLocation.first << ", " << currentLocation.second << std::endl;
             stairLocation = currentLocation;
         }
-        if (character == Symbol::Player) {
+        if (input == Symbol::Player) {
             playerLocation = currentLocation;
         }
-        if (character == Symbol::Compass) {
+        // "You can assume the file won't contain a compass." --(https://piazza.com/class/lvkzhr2nagi58v/post/294)
+        if (input == Symbol::Compass) {
             compassLocation = currentLocation;
         }
-        if (character == Symbol::BarrierSuit || character == Symbol::Compass) {
-            dragonProtectedItemLocation = currentLocation;
+        if (input == Symbol::BarrierSuit || input == (char)InputMapNumbers::TreasureDragonHoard) {
+            dragonProtectedItem = dynamic_cast<DragonProtected*>(row[row.size() - 1]->treasure);
         }
-        if (isEnemy(character) && character != Symbol::Merchant && character != Symbol::Dragon) {
-            compassHolders.push_back(currentLocation);
+        if (input == Symbol::Dragon) {
+            dragon = dynamic_cast<Dragon*>(row[row.size() - 1]->enemy);
+        }
+        if (isEnemy(input) && input != Symbol::Merchant && input != Symbol::Dragon) {
+            compassHoldingEnemies.push_back(row[row.size() - 1]->enemy);
         }
     }
 
+    layoutInput >> std::skipws;
+
     // Postprocessing: connect dragon to protected
-    // Random gen
+    if (dragonProtectedItem != nullptr && dragon != nullptr) {
+        if (dragon->protects != nullptr || dragonProtectedItem->dragon != nullptr) {
+            throw std::logic_error(
+                "dragon/dragon protected item already linked (that's not supposed to happen wtf?)"
+            );
+        }
+
+        dragon->protects = dragonProtectedItem;
+        dragonProtectedItem->dragon = dragon; // DRAGON DEEZ NUTS ACROSS...
+    }
+
+    // Postprocessing: label chambers
+    chambers = labelChambers(floorTiles, newBoard); // If I try std::move I get -Wpessimizing-move?
+
+    if (shouldGenerate) { // Random gen
+        randomPopulateMap(chambers, newBoard, player);
+    } else { // Passed in map
+        if (stairLocation.first == 0 || stairLocation.second == 0) {
+            throw std::invalid_argument("invalid stair location in pre-determined map");
+        }
+        if (playerLocation.first == 0 || playerLocation.second == 0) {
+            throw std::invalid_argument("invalid player location in pre-determined map");
+        }
+        if (compassHoldingEnemies.size() == 0 && (compassLocation.first == 0 || compassLocation.second == 0)) {
+            throw std::invalid_argument("cannot assign compass to enemy and location not given");
+        }
+
+        newBoard->stairLocation = std::move(stairLocation);
+        newBoard->playerLocation = std::move(playerLocation);
+
+        if (compassLocation.first == 0 || compassLocation.second == 0) {
+            size_t index = randInt(0, compassHoldingEnemies.size());
+
+            compassHoldingEnemies[index]->giveTreasure(new Compass{*newBoard});
+        } else {
+            newBoard->at(compassLocation)->treasure = new Compass{*newBoard};
+        }
+    }
 
     delete currentBoard;
     currentBoard = newBoard;
@@ -235,4 +373,9 @@ bool Game::playerPickup(CardinalDirection dir) {
     update();
 
     return player->getHealth() > 0;
+}
+
+void Game::render() const {
+    currentBoard->render(output);
+    // TODO: info pannel
 }

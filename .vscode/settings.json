@@ -1,6 +1,6 @@
 {
   "files.autoSave": "onWindowChange",
-  "editor.formatOnSave": true,
+  "editor.formatOnSave": false,
   "files.associations": {
     "*.py": "python",
     "**/.i3/config": "i3",
@@ -93,6 +93,9 @@
     "stack": "cpp",
     "iterator": "cpp",
     "memory_resource": "cpp",
-    "forward_list": "cpp"
+    "forward_list": "cpp",
+    "unordered_set": "cpp",
+    "__availability": "cpp",
+    "filesystem": "cpp"
   },
 }

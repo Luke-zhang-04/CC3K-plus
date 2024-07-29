@@ -32,7 +32,7 @@ bool Tile::movable() const {
             mapTile == Symbol::Passage || mapTile == Symbol::Stairs);
 }
 
-std::ostream& operator<<(std::ostream& out, Tile& tile) {
+std::ostream& operator<<(std::ostream& out, const Tile& tile) {
     char character = tile.getCharacter();
 
     out << symbolToColor(character) << character << Color::Reset;

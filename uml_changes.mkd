@@ -28,6 +28,7 @@
 ### Tile
 
 -   Overload for output stream operator
+-   Added chamber ID
 
 ### Compass
 
@@ -40,18 +41,25 @@
 -   "Defense" was chosen as standard, was mis-spelled in `Character`
 
 ### Game
+
 -   `Board` is a friend class of `Game`
 -   `Game` needs a private method `nextLevel`
 -   `render` becomes `update`, a private method to update board, render board, then render bottom text
+-   `render` is needed to render without side-effects (initial display)
 -   Added a pointer to `Player`
 -   All player interaction functions should return whether the player is still alive
+-   Added private static helper method `randomPopulateMap`
+-   Added private static helper method `labelChambers`
+-   Added private static helper method `traverseChamber`
+-   Added private 2-D vector of tiles `chambers`
+-   Added field `shouldGenerate`
 
 ### Board
 
 -   playerLocation is also useful for enemies checking whether they can attack the player, open it up as read only through a method `std::pair<int, int> getPlayerLoc()`
 -   Need to add an `Update()` function which updates all enemies on the board
 -   Needs a private helper function to find the tile offset by a `CardinalDirection` from a particular x, y coordinate
-
+-   Adding `stairLocation()` so enemies can know to avoid stepping on the stairs
 
 ### Player
 

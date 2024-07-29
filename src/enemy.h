@@ -62,9 +62,6 @@ class Enemy: public Character {
 
         int goldValue();
 
-        // override Character's beAttacked so it can drop when killed
-        int beAttacked(int) override;
-
         // give this enemy a retrievable
         void giveTreasure(Retrievable*);
 
