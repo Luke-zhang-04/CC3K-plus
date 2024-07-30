@@ -78,6 +78,6 @@ void Player::displayInfo(std::ostream& out) {
     out << Color::BWhite << "ATK: " << Color::Reset << attack + attackMod << '\n';
     out << Color::BWhite << "DEF: " << Color::Reset << defense + defenseMod << '\n';
     // logs begin with a space
-    out << Color::BWhite << "Action:" << Color::Reset << sysLog.str() << "\n" << std::endl;
+    out << Color::BWhite << "Action:" << Color::Reset << sysLog.str() << "\n";
     clearLog();
 }

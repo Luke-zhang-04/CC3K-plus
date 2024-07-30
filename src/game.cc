@@ -654,6 +654,7 @@ bool Game::didWin() {
 void Game::render() const {
     currentBoard->render(output);
     player->displayInfo(output);
+    output << Color::BWhite << "Floor: " << Color::Reset << level << '\n' << std::endl;
 }
 
 int Game::getScore() const {

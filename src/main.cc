@@ -78,7 +78,7 @@ int main(int argc, char* argv[]) {
             stream = _stream;
 
             for (int i = 0; i < 5; i++) {
-                *_stream << std::string{smallFloor} << '\n';
+                *_stream << std::string{oneChamberFloor} << '\n';
             }
 
             *_stream >> std::noskipws;
@@ -92,13 +92,6 @@ int main(int argc, char* argv[]) {
 
             game = new Game(initPlayer(), std::cout, *stream, isInputMap);
         }
-
-        // TODO REMOVE
-        game->render();
-        game->nextLevel();
-        game->render();
-        game->nextLevel();
-        game->render();
 
         bool playerAlive = true;
 
