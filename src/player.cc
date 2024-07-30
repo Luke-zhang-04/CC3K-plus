@@ -13,8 +13,8 @@ char Player::getCharacter() {
 }
 
 void Player::usePotion(int healthBuff, int attackBuff, int defenseBuff) {
-    attackMod += attackBuff;
-    defenseMod += defenseBuff;
+    attackMod += std::max(attackMod + attackBuff, 0);
+    defenseMod = std::max(defenseMod + defenseBuff, 0);
     // don't gain more than max or less than 1
     health = std::max(std::min(health + healthBuff, maxHealth), 1);
 }
