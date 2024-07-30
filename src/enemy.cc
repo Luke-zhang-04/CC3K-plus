@@ -5,7 +5,10 @@
 #include "random.h"
 
 #include <cmath>
+#include <cstddef>
 #include <vector>
+
+using std::size_t;
 
 Enemy::Enemy(EnemyType enemyType, Board& board): Character{0, 0, 0}, character{0}, board{board} {
     switch (enemyType) {
@@ -60,7 +63,7 @@ char Enemy::getCharacter() {
     return character;
 }
 
-EnemyUpdateAction Enemy::walk(int x, int y) {
+EnemyUpdateAction Enemy::walk(size_t x, size_t y) {
     // collect a list of the locations it can move to
     auto area = board.getArea(x, y);
     std::vector<EnemyUpdateAction> movable;
@@ -96,12 +99,13 @@ EnemyUpdateAction Enemy::walk(int x, int y) {
 }
 
 // return whether the player is adjacent to the enemy
-bool Enemy::isPlayerNearby(int x, int y) {
+bool Enemy::isPlayerNearby(size_t x, size_t y) {
     auto player = board.getPlayerLoc();
-    return std::abs((int) player.first - x) <= 1 && std::abs((int) player.second - y) <= 1;
+    return std::abs((long long) player.first - (long long) x) <= 1 &&
+           std::abs((long long) player.second - (long long) y) <= 1;
 }
 
-EnemyUpdateAction Enemy::act(int x, int y) {
+EnemyUpdateAction Enemy::act(size_t x, size_t y) {
     if (isPlayerNearby(x, y))
         return EnemyUpdateAction::Attack;
     else
@@ -109,7 +113,7 @@ EnemyUpdateAction Enemy::act(int x, int y) {
 }
 
 // attack if possible, otherwise move
-EnemyUpdateAction Enemy::update(int x, int y, unsigned int frame) {
+EnemyUpdateAction Enemy::update(size_t x, size_t y, size_t frame) {
     // if it's at least as old as the frame, don't do anything
     if (age >= frame)
         return EnemyUpdateAction::NoAction;
@@ -119,7 +123,7 @@ EnemyUpdateAction Enemy::update(int x, int y, unsigned int frame) {
 }
 
 // most enemies are worth 1
-int Enemy::goldValue() {
+unsigned int Enemy::goldValue() {
     return gold;
 }
 

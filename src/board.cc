@@ -7,11 +7,14 @@
 #include "tile.h"
 
 #include <array>
+#include <cstddef>
 #include <iostream>
 #include <ostream>
 #include <string>
 #include <utility>
 #include <vector>
+
+using std::size_t;
 
 Tile* Board::at(size_t x, size_t y) const {
     return map.at(y).at(x);
@@ -90,8 +93,8 @@ void Board::render(std::ostream& out) const {
 
 void Board::updateEnemies() {
     frame += 1;
-    for (int y = 0; y < map.size(); ++y) {
-        for (int x = 0; x < map[y].size(); ++x) {
+    for (size_t y = 0; y < map.size(); ++y) {
+        for (size_t x = 0; x < map[y].size(); ++x) {
             Tile* t = map[y][x];
             if (t->enemy) {
                 EnemyUpdateAction act = t->enemy->update(x, y, frame);

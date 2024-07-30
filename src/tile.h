@@ -3,7 +3,10 @@
 
 #include "constants.h"
 
+#include <cstddef>
 #include <ostream>
+
+using std::size_t;
 
 class Retrievable;
 class Interactible;

@@ -4,7 +4,10 @@
 #include "constants.h"
 #include "dragon_protected.h"
 
+#include <cstddef>
 #include <utility>
+
+using std::size_t;
 
 // sets the gold value to 0 and tells the enemy to give Dragon stats
 Dragon::Dragon(Board& board): Enemy(EnemyType::Dragon, board) {
@@ -22,7 +25,7 @@ std::pair<int, int> Dragon::beAttacked(int attackPower) {
 }
 
 // never moves, only attacks
-EnemyUpdateAction Dragon::act(int x, int y) {
+EnemyUpdateAction Dragon::act(size_t x, size_t y) {
     auto area = board.getArea(x, y);
     // first, check if the player is nearby (within range)
     for (int ix = 0; ix <= 2; ++ix) {

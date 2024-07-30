@@ -1,8 +1,8 @@
 #include "constants.h"
 
+#include <stdexcept>
 #include <string>
 #include <utility>
-#include <stdexcept>
 
 bool isEnemy(char symbol) {
     return symbol == Symbol::Vampire || symbol == Symbol::Werewolf || symbol == Symbol::Troll ||

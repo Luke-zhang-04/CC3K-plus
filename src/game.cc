@@ -16,12 +16,15 @@
 #include "util.h"
 
 #include <array>
+#include <cstddef>
 #include <iostream>
 #include <queue>
+#include <stdexcept>
 #include <unordered_map>
 #include <utility>
-#include <stdexcept>
 #include <vector>
+
+using std::size_t;
 
 Game::Game(Player* player, std::ostream& output, std::istream& layoutInput, bool shouldGenerate):
     output{output}, layoutInput{layoutInput}, player{player}, shouldGenerate{shouldGenerate} {
@@ -56,24 +59,19 @@ Tile* getTileFromChar(char character, Player* player, Board& board) {
 
         case Symbol::Vampire:
             return new Tile{
-                Symbol::FloorTile, nullptr, nullptr, new Enemy{EnemyType::Vampire, board}
-            };
+                Symbol::FloorTile, nullptr, nullptr, new Enemy{EnemyType::Vampire, board}};
         case Symbol::Werewolf:
             return new Tile{
-                Symbol::FloorTile, nullptr, nullptr, new Enemy{EnemyType::Werewolf, board}
-            };
+                Symbol::FloorTile, nullptr, nullptr, new Enemy{EnemyType::Werewolf, board}};
         case Symbol::Troll:
             return new Tile{
-                Symbol::FloorTile, nullptr, nullptr, new Enemy{EnemyType::Troll, board}
-            };
+                Symbol::FloorTile, nullptr, nullptr, new Enemy{EnemyType::Troll, board}};
         case Symbol::Goblin:
             return new Tile{
-                Symbol::FloorTile, nullptr, nullptr, new Enemy{EnemyType::Goblin, board}
-            };
+                Symbol::FloorTile, nullptr, nullptr, new Enemy{EnemyType::Goblin, board}};
         case Symbol::Phoenix:
             return new Tile{
-                Symbol::FloorTile, nullptr, nullptr, new Enemy{EnemyType::Phoenix, board}
-            };
+                Symbol::FloorTile, nullptr, nullptr, new Enemy{EnemyType::Phoenix, board}};
 
         case Symbol::Merchant:
             return new Tile{Symbol::FloorTile, nullptr, nullptr, new Merchant{board}};
@@ -172,8 +170,7 @@ void Game::randomPopulateMap(Board* newBoard, Player* player) {
         Potion{"BD", 0, 0, 5},
         Potion{"PH", -10},
         Potion{"WA", 0, -5},
-        Potion{"WD", 0, 0, -5}
-    };
+        Potion{"WD", 0, 0, -5}};
     std::vector<int> goldDist = createVector(std::array<std::pair<size_t, int>, 3>{{
         {SpawnRates::GoldNormalRate, 2},
         {SpawnRates::GoldSmallHoardRate, 1},
@@ -185,8 +182,7 @@ void Game::randomPopulateMap(Board* newBoard, Player* player) {
          {SpawnRates::EnemyTrollRate, EnemyType::Troll},
          {SpawnRates::EnemyGoblinRate, EnemyType::Goblin},
          {SpawnRates::EnemyMerchantRate, EnemyType::Merchant},
-         {SpawnRates::EnemyPhoenixRate, EnemyType::Phoenix}}
-    });
+         {SpawnRates::EnemyPhoenixRate, EnemyType::Phoenix}}});
 
     // Summary: selectedChambers holds chamberIDs in some random order. The number of occurrences
     // of a chamberID is bounded by chamberTileCounts. Each spawned item advances
@@ -200,9 +196,7 @@ void Game::randomPopulateMap(Board* newBoard, Player* player) {
         totalTileCount += chambers[index].size();
         size_t offsetChamberId = newBoard->at(chambers[index][0])->chamberId - 1;
 
-        chamberTileCounts[offsetChamberId] = {
-            offsetChamberId, chambers[offsetChamberId].size()
-        };
+        chamberTileCounts[offsetChamberId] = {offsetChamberId, chambers[offsetChamberId].size()};
         chamberIters[offsetChamberId] = chambers[index].begin();
     }
 

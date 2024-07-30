@@ -4,9 +4,12 @@
 #include "constants.h"
 #include "player.h"
 
+#include <cstddef>
 #include <iostream>
 #include <utility>
 #include <vector>
+
+using std::size_t;
 
 typedef std::pair<size_t, size_t> coordPair;
 

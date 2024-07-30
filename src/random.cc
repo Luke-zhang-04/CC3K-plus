@@ -1,10 +1,13 @@
 #include "random.h"
 
 #include <array>
+#include <cstddef>
 #include <random>
 #include <unordered_set>
 #include <utility>
 #include <vector>
+
+using std::size_t;
 
 std::default_random_engine randomEngine{};
 

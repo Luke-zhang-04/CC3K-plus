@@ -2,7 +2,10 @@
 #define DRAGON_H
 #include "enemy.h"
 
+#include <cstddef>
 #include <utility>
+
+using std::size_t;
 
 class DragonProtected;
 
@@ -13,7 +16,7 @@ class Dragon: public Enemy {
         DragonProtected* protects = nullptr;
 
     protected:
-        EnemyUpdateAction act(int x, int y) override;
+        EnemyUpdateAction act(size_t x, size_t y) override;
 
     public:
         Dragon(Board&);

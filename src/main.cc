@@ -5,7 +5,6 @@
 #include "races.h"
 #include "random.h"
 
-#include <format>
 #include <fstream>
 #include <iostream>
 #include <sstream>
@@ -21,7 +20,8 @@ Game* init(std::string& fileName) {
     Player* player;
     Game* game;
     char move;
-    std::cout << "Select race: options are (h)uman, (e)lf, (d)warf, (o)rc, and (g)od: " << std::flush;
+    std::cout << "Select race: options are (h)uman, (e)lf, (d)warf, (o)rc, and (g)od: "
+              << std::flush;
     std::cin >> move;
 
     switch (move) {
@@ -91,19 +91,14 @@ int main(int argc, char* argv[]) {
                 break;
             else if (move == "r") {
                 playerAlive = true;
-                std::cout << "DELETING GAME" << "\n";
+                std::cout << "DELETING GAME"
+                          << "\n";
                 delete game;
-                std::cout << "DELETED GAME" << "\n";
+                std::cout << "DELETED GAME"
+                          << "\n";
                 std::cout << fileName << "\n";
                 game = init(fileName);
-            } else if (move == "no" || move == "so" || move == "ea" || move == "we" ||
-                       move == "ne" || move == "nw" || move == "se" || move == "sw" ||
-                       move == ArrowKey::StrKeyUp || move == ArrowKey::StrKeyDown ||
-                       move == ArrowKey::StrKeyRight || move == ArrowKey::StrKeyLeft ||
-                       move == ArrowKey::StrKeyUpRight || move == ArrowKey::StrKeyRightUp ||
-                       move == ArrowKey::StrKeyUpLeft || move == ArrowKey::StrKeyLeftUp ||
-                       move == ArrowKey::StrKeyDownRight || move == ArrowKey::StrKeyRightDown ||
-                       move == ArrowKey::StrKeyDownLeft || move == ArrowKey::StrKeyLeftDown) {
+            } else if (move == "no" || move == "so" || move == "ea" || move == "we" || move == "ne" || move == "nw" || move == "se" || move == "sw" || move == ArrowKey::StrKeyUp || move == ArrowKey::StrKeyDown || move == ArrowKey::StrKeyRight || move == ArrowKey::StrKeyLeft || move == ArrowKey::StrKeyUpRight || move == ArrowKey::StrKeyRightUp || move == ArrowKey::StrKeyUpLeft || move == ArrowKey::StrKeyLeftUp || move == ArrowKey::StrKeyDownRight || move == ArrowKey::StrKeyRightDown || move == ArrowKey::StrKeyDownLeft || move == ArrowKey::StrKeyLeftDown) {
                 playerAlive = game->playerMove(stringToDirection(move));
             } else if (move == "u") {
                 std::string direction;
@@ -125,8 +120,7 @@ int main(int argc, char* argv[]) {
                 if (choice == "Yes" || choice == "yes" || choice == "y") {
                     playerAlive = true;
                     game = init(fileName);
-                }
-                else
+                } else
                     game = nullptr;
             } else {
                 std::cout << "Command: " << std::flush;

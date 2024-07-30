@@ -2,6 +2,10 @@
 #define ENEMY_H
 #include "character.h"
 
+#include <cstddef>
+
+using std::size_t;
+
 class Retrievable;
 class Board;
 
@@ -43,30 +47,30 @@ class Enemy: public Character {
         Retrievable* drops = nullptr; // item which drops when killed
 
     protected:
-        EnemyUpdateAction walk(int x, int y);
+        EnemyUpdateAction walk(size_t x, size_t y);
 
         // takes in current location, queries whether there is a player near the location
-        bool isPlayerNearby(int x, int y);
+        bool isPlayerNearby(size_t x, size_t y);
 
         // theoretically could take in the frame if enemies act differently at different times. not
         // currently requires
-        virtual EnemyUpdateAction act(int x, int y);
+        virtual EnemyUpdateAction act(size_t x, size_t y);
 
         Board& board;
 
         // gold value when killed
-        int gold = 1;
+        unsigned int gold = 1;
 
-        int age = 0;
+        size_t age = 0;
 
     public:
         Enemy(EnemyType, Board&);
 
         char getCharacter() override;
 
-        EnemyUpdateAction update(int x, int y, unsigned int frame);
+        EnemyUpdateAction update(size_t x, size_t y, size_t frame);
 
-        int goldValue();
+        unsigned int goldValue();
 
         // give this enemy a retrievable
         void giveTreasure(Retrievable*);

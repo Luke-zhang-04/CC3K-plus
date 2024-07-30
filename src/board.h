@@ -4,10 +4,13 @@
 #include "tile.h"
 
 #include <array>
+#include <cstddef>
 #include <ostream>
 #include <string>
 #include <utility>
 #include <vector>
+
+using std::size_t;
 
 class Game;
 

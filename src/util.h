@@ -2,8 +2,11 @@
 #define UTIL_H
 
 #include <array>
+#include <cstddef>
 #include <utility>
 #include <vector>
+
+using std::size_t;
 
 /**
  * @brief Create a Vector object from pairs in `elements`, where the `first` is the number of items

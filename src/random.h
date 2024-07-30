@@ -1,11 +1,14 @@
 #ifndef RANDOM_WRAPPER_H
 #define RANDOM_WRAPPER_H
 
-#include <array>
 #include <algorithm>
+#include <array>
+#include <cstddef>
 #include <random>
 #include <utility>
 #include <vector>
+
+using std::size_t;
 
 extern std::default_random_engine randomEngine;
 
