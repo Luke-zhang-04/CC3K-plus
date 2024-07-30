@@ -101,7 +101,7 @@ void Board::updateEnemies() {
                     if (randInt(0, 1) == 0) {
                         // don't worry if the player dies
                         std::pair<int, int> attackStats =
-                            game.player->beAttacked(t->enemy->getPower());
+                            game.player->beAttacked(t->enemy->getAttack());
 
                         (game.player->log()) << " " << t->getCharacter() << " deals "
                                              << attackStats.second << " damage to PC.";

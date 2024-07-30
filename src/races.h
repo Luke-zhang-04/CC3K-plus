@@ -32,4 +32,10 @@ class Orc: public Player {
         void displayInfo(std::ostream&) override;
 };
 
+class God: public Player {
+    public:
+        God();
+        void displayInfo(std::ostream&) override;
+};
+
 #endif

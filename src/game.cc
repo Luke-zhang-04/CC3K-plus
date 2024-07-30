@@ -166,7 +166,12 @@ void Game::randomPopulateMap(Board* newBoard, Player* player) {
 
     // Spawn distributions
     std::array<Potion, 6> potionDist{
-        Potion{"RH", 10}, Potion{"BH", 0, 5}, Potion{"BD", 0, 0, 5}, Potion{"PH", -10}, Potion{"WA", 0, -5}, Potion{"WD", 0, 0, -5}
+        Potion{"RH", 10},
+        Potion{"BH", 0, 5},
+        Potion{"BD", 0, 0, 5},
+        Potion{"PH", -10},
+        Potion{"WA", 0, -5},
+        Potion{"WD", 0, 0, -5}
     };
     std::vector<int> goldDist = createVector(std::array<std::pair<size_t, int>, 3>{{
         {SpawnRates::GoldNormalRate, 2},
@@ -192,10 +197,16 @@ void Game::randomPopulateMap(Board* newBoard, Player* player) {
         shuffle(chambers[index]);
 
         totalTileCount += chambers[index].size();
-        chamberTileCounts[index] = {newBoard->at(chambers[index][0])->chamberId, chambers[index].size()};
-        chamberIters[index] = chambers[index].begin();
+        size_t offsetChamberId = newBoard->at(chambers[index][0])->chamberId - 1;
+
+        chamberTileCounts[offsetChamberId] = {
+            offsetChamberId, chambers[offsetChamberId].size()
+        };
+        chamberIters[offsetChamberId] = chambers[index].begin();
     }
-    if (totalTileCount <= SpawnRates::Total + 2) {
+
+    // +2 for player/stairs, + goldTotal for dragon hoards
+    if (totalTileCount <= SpawnRates::Total + SpawnRates::GoldTotal + 2) {
         throw std::length_error("board is not large enough to spawn everything");
     }
 
@@ -263,6 +274,9 @@ void Game::randomPopulateMap(Board* newBoard, Player* player) {
  * - https://piazza.com/class/lvkzhr2nagi58v/post/294
  */
 void Game::nextLevel() {
+    // reset the player, just in case this isn't the first floor
+    player->reset();
+
     coordPair compassLocation{0, 0};
     coordPair stairLocation{0, 0};
     coordPair playerLocation{0, 0};
@@ -374,9 +388,6 @@ void Game::nextLevel() {
     currentBoard = newBoard;
 
     ++level;
-
-    // DEBUG:
-    currentBoard->showStairs();
 }
 
 bool Game::playerMove(CardinalDirection dir) {
@@ -426,7 +437,6 @@ bool Game::playerMove(CardinalDirection dir) {
         player->log() << ".";
     }
 
-
     update();
 
     // logging
@@ -442,7 +452,7 @@ bool Game::playerAttack(CardinalDirection dir) {
     // if there is an enemy there, they are attacked
     Enemy* enemy = targetTile->enemy;
     if (enemy) {
-        std::pair<int, int> attackStats = enemy->beAttacked(player->getPower());
+        std::pair<int, int> attackStats = enemy->beAttacked(player->getAttack());
         player->log() << "PC deals " << attackStats.second << " damage to "
                       << targetTile->getCharacter() << " (" << std::max(0, attackStats.first)
                       << " HP). ";

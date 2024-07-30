@@ -21,7 +21,7 @@ Game* init(std::string& fileName) {
     Player* player;
     Game* game;
     char move;
-    std::cout << "Select race: options are (h)uman, (e)lf, (d)warf, (o)rc: " << std::flush;
+    std::cout << "Select race: options are (h)uman, (e)lf, (d)warf, (o)rc, and (g)od: " << std::flush;
     std::cin >> move;
 
     switch (move) {
@@ -29,10 +29,13 @@ Game* init(std::string& fileName) {
         case 'e': player = new Elf(); break;
         case 'd': player = new Dwarf(); break;
         case 'o': player = new Orc(); break;
+        case 'g': player = new God(); break;
         case 'r': return init(fileName);
         case 'q': return nullptr;
         default: return init(fileName);
     }
+
+    std::cout << "GENERATING NEW MAP WITH " << fileName << " AS FILENAME!\n";
 
     if (fileName == "") {
         std::stringstream stream{};
@@ -87,7 +90,11 @@ int main(int argc, char* argv[]) {
             if (!game)
                 break;
             else if (move == "r") {
+                playerAlive = true;
+                std::cout << "DELETING GAME" << "\n";
                 delete game;
+                std::cout << "DELETED GAME" << "\n";
+                std::cout << fileName << "\n";
                 game = init(fileName);
             } else if (move == "no" || move == "so" || move == "ea" || move == "we" ||
                        move == "ne" || move == "nw" || move == "se" || move == "sw" ||
@@ -111,12 +118,14 @@ int main(int argc, char* argv[]) {
             }
 
             if (!playerAlive) {
-                std::cout << "You DEER! Would you like to continue? (Yes/No)" << std::flush;
+                std::cout << "You DEER! Would you like to continue? (Yes/No) " << std::flush;
                 delete game;
                 std::string choice;
                 std::cin >> choice;
-                if (choice == "Yes" || choice == "yes" || choice == "y")
+                if (choice == "Yes" || choice == "yes" || choice == "y") {
+                    playerAlive = true;
                     game = init(fileName);
+                }
                 else
                     game = nullptr;
             } else {

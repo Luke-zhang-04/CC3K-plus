@@ -72,7 +72,7 @@ EnemyUpdateAction Enemy::walk(int x, int y) {
 
             // don't move onto the stairs
             auto stairs = board.getStairLoc();
-            if (x + dx == stairs.first && y + dy == stairs.second)
+            if (x + dx - 1 == stairs.first && y + dy - 1 == stairs.second)
                 continue;
 
             if (area[dy][dx] != nullptr && canMove(area[dy][dx])) {

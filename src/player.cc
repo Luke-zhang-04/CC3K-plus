@@ -23,6 +23,12 @@ void Player::pickupSuit() {
     suited = true;
 }
 
+void Player::reset() {
+    attackMod = 0;
+    defenseMod = 0;
+    // TODO: anything else?
+}
+
 void Player::pickupGold(int amt) {
     electrum += amt * 2;
 }
@@ -32,11 +38,11 @@ int Player::getHealth() {
 }
 
 int Player::getAttack() {
-    return attack;
+    return attack + attackMod;
 }
 
 int Player::getDefense() {
-    return defense;
+    return defense + defenseMod;
 }
 
 int Player::getElectrum() {
@@ -73,8 +79,8 @@ void Player::displayInfo(std::ostream& out) {
     }
 
     out << Color::BWhite << "HP: " << healthColor << health << Color::Reset << '\n';
-    out << Color::BWhite << "ATK: " << Color::Reset << attack << '\n';
-    out << Color::BWhite << "DEF: " << Color::Reset << defense << '\n';
+    out << Color::BWhite << "ATK: " << Color::Reset << attack + attackMod << '\n';
+    out << Color::BWhite << "DEF: " << Color::Reset << defense + defenseMod << '\n';
     out << sysLog.str() << "\n";
     clearLog();
 }

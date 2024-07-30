@@ -74,10 +74,12 @@
 -   Methods `playerMove`, `playerAttack`, and `playerPickup` return a boolean, indicating if the player is still alive after that move
 -   Storing electrum instead of gold to avoid integer division
 -   Need getters for `health`, `attack`, `defense`, and `electrum`.
+-   Needs custom attack functions
 
 ### Character
 
 -   `Player`s don't care about board, only `Enemy`, so move `Board&` to `Enemy`
+-   Add `getDefense` and change getPower to getAttack so the player can override to use attack/defense mod
 
 ### Potion
 

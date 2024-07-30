@@ -28,8 +28,8 @@ class Player: public Character {
         void reset();
 
         int getHealth();
-        int getAttack();
-        int getDefense();
+        int getAttack() override;
+        int getDefense() override;
         int getElectrum();
 
         bool canMove(const Tile*) const override;

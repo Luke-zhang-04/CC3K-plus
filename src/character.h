@@ -17,7 +17,8 @@ class Character {
         virtual char getCharacter() = 0;
 
         /** Attacking power */
-        int getPower();
+        virtual int getAttack();
+        virtual int getDefense();
 
         /** Update its own health and returns it, could be negative if it dies */
         virtual std::pair<int, int> beAttacked(int attackPower);
