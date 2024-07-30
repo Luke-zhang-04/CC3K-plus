@@ -33,6 +33,7 @@ class Player: public Character {
         bool canMove(const Tile*) const override;
 
         void log(std::string);
+        void clearLog();
         std::stringstream& getLog();
 };
 

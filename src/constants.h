@@ -54,6 +54,20 @@ namespace SpawnRates {
     const uint8_t GoldDragonHoardRate = 1;
 
     const uint8_t Total = SpawnRates::EnemyTotal + SpawnRates::PotionTotal + SpawnRates::GoldTotal;
+
+    static_assert(
+        Total == SpawnRates::EnemyTotal + SpawnRates::PotionTotal + SpawnRates::GoldTotal,
+        "Spawn totals don't add up"
+    );
+    static_assert(
+        EnemyTotalRate == EnemyVampireRate + EnemyWerewolfRate + EnemyTrollRate + EnemyGoblinRate +
+                              EnemyMerchantRate + EnemyPhoenixRate,
+        "Enemy rate totals don't add up"
+    );
+    static_assert(
+        GoldTotalRate == GoldNormalRate + GoldSmallHoardRate + GoldDragonHoardRate,
+        "Gold rate totals don't add up"
+    );
 } // namespace SpawnRates
 
 enum class CardinalDirection {

@@ -53,6 +53,10 @@ void Player::log(std::string str) {
     sysLog << str;
 }
 
+void Player::clearLog() {
+    sysLog.clear();
+}
+
 std::stringstream& Player::getLog() {
     return sysLog;
 }

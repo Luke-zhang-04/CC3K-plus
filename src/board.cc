@@ -107,6 +107,7 @@ void Board::updateEnemies() {
                             std::string(1, t->getCharacter()) + " deals " +
                             std::string(1, attackStats.second) + " damage to PC."
                         );
+                        std::cout << "DEBUG ATTK:" << attackStats.second << std::endl;
                     }
                 }
                 // otherwise, if they're doing anything they're moving

@@ -17,6 +17,7 @@
 
 #include <array>
 #include <iostream>
+#include <queue>
 #include <unordered_map>
 #include <utility>
 #include <vector>
@@ -160,23 +161,17 @@ void Game::randomPopulateMap(Board* newBoard, Player* player) {
     std::vector<std::pair<size_t, size_t>> chamberTileCounts{};
     // Number of things have been spawned in each chamber
     std::unordered_map<size_t, std::vector<coordPair>::iterator> chamberIters{};
-    std::vector<size_t> selectedChambers{}; // Chambers selected for spawning
+    std::queue<size_t> selectedChambers{}; // Chambers selected for spawning
 
     // Spawn distributions
-    // TODO: POTIONS
+    std::array<Potion, 6> potionDist{
+        Potion{10}, Potion{0, 5}, Potion{0, 0, 5}, Potion{-10}, Potion{0, -5}, Potion{0, 0, -5}
+    };
     std::vector<int> goldDist = createVector(std::array<std::pair<size_t, int>, 3>{{
         {SpawnRates::GoldNormalRate, 2},
         {SpawnRates::GoldSmallHoardRate, 1},
         {SpawnRates::GoldDragonHoardRate, 6},
     }});
-    std::array<Potion, 6> potionDist{
-        Potion{10},
-        Potion{0, 5},
-        Potion{0, 0, 5},
-        Potion{-10},
-        Potion{0, -5},
-        Potion{0, 0, -5}
-    };
     std::vector<EnemyType> enemyDist = createVector(std::array<std::pair<size_t, EnemyType>, 6>{
         {{SpawnRates::EnemyVampireRate, EnemyType::Vampire},
          {SpawnRates::EnemyWerewolfRate, EnemyType::Werewolf},
@@ -194,7 +189,6 @@ void Game::randomPopulateMap(Board* newBoard, Player* player) {
 
     chamberTileCounts.reserve(chambers.size());
     chamberIters.reserve(chambers.size());
-    selectedChambers.reserve(SpawnRates::Total);
 
     for (size_t index = 0; index < chambers.size(); index++) {
         shuffle(chambers[index]);
@@ -216,7 +210,49 @@ void Game::randomPopulateMap(Board* newBoard, Player* player) {
     chamberIters[initSpawns.first]++;
     chamberIters[initSpawns.second]++;
 
-    for (uint8_t index = 0; index < SpawnRates::EnemyTotal; index++) {}
+    for (uint8_t i = 0; i < SpawnRates::Total; i++) {
+        int randIndex = randInt(0, chamberTileCounts.size() - 1);
+
+        chamberTileCounts[randIndex].second--;
+
+        selectedChambers.push(chamberTileCounts[randIndex].first);
+
+        if (chamberTileCounts[randIndex].second == 0) {
+            chamberTileCounts.erase(chamberTileCounts.begin() + randIndex);
+        }
+    }
+
+    for (uint8_t i = 0; i < SpawnRates::PotionTotal; i++) {
+        size_t chamberId = selectedChambers.front();
+        Potion* potion = new Potion{potionDist[randInt(0, potionDist.size() - 1)]};
+
+        selectedChambers.pop();
+
+        newBoard->at(*chamberIters[chamberId])->item = potion;
+        chamberIters[chamberId]++;
+    }
+    for (uint8_t i = 0; i < SpawnRates::GoldTotal; i++) {
+        size_t chamberId = selectedChambers.front();
+        int amt = goldDist[randInt(0, goldDist.size() - 1)];
+
+        selectedChambers.pop();
+
+        if (amt == 6) {
+            // TODO DRAGON HOW???
+        } else {
+            newBoard->at(*chamberIters[chamberId])->treasure = new Treasure{amt};
+            chamberIters[chamberId]++;
+        }
+    }
+    for (uint8_t i = 0; i < SpawnRates::EnemyTotal; i++) {
+        size_t chamberId = selectedChambers.front();
+        EnemyType type = enemyDist[randInt(0, enemyDist.size() - 1)];
+
+        selectedChambers.pop();
+
+        newBoard->at(*chamberIters[chamberId])->enemy = new Enemy{type, *newBoard};
+        chamberIters[chamberId]++;
+    }
 }
 
 /**
@@ -435,5 +471,6 @@ bool Game::playerPickup(CardinalDirection dir) {
 
 void Game::render() const {
     currentBoard->render(output, player->getLog());
+    player->clearLog();
     // TODO: info pannel
 }
