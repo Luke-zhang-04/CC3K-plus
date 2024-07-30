@@ -259,6 +259,7 @@ void Game::randomPopulateMap(Board* newBoard, Player* player) {
 
         tile->item = potion;
     }
+    std::cout << "PENIS" << std::endl;
     for (uint8_t i = 0; i < SpawnRates::GoldTotal; i++) {
         std::cout << i << std::endl;
 
