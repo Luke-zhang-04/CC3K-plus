@@ -1,7 +1,7 @@
 #ifndef BOARD_H
 #define BOARD_H
 #include "constants.h"
-#include "tile.h"
+#include "types.h"
 
 #include <array>
 #include <cstddef>
@@ -13,6 +13,7 @@
 using std::size_t;
 
 class Game;
+struct Tile;
 
 class Board {
         friend class Game;
@@ -20,18 +21,20 @@ class Board {
     private:
         Game& game;
         bool stairsVisible = false;
-        std::pair<size_t, size_t> playerLocation{0, 0};
-        std::pair<size_t, size_t> stairLocation{0, 0};
+        coordPair playerLocation{0, 0};
+        coordPair stairLocation{0, 0};
 
         std::vector<std::vector<Tile*>> map;
-        std::vector<std::vector<std::pair<size_t, size_t>>> chambers = {};
+
+        /** Chambers is more like a vector to a map, except the keys are just sequential from 1 */
+        std::vector<std::vector<Tile*>> chambers = {};
 
         unsigned int frame = 0;
 
         Tile* at(size_t x, size_t y) const;
-        Tile* at(const std::pair<size_t, size_t>&) const;
+        Tile* at(const coordPair&) const;
         Tile* inDirection(size_t x, size_t y, CardinalDirection) const;
-        Tile* inDirection(const std::pair<size_t, size_t>&, CardinalDirection) const;
+        Tile* inDirection(const coordPair&, CardinalDirection) const;
 
     public:
         Board(std::vector<std::vector<Tile*>>, Game&);
@@ -53,12 +56,12 @@ class Board {
          * nullptr -> no tile here, out of bounds
          */
         const std::array<const std::array<const Tile*, 3>, 3> getArea(size_t x, size_t y) const;
-        const std::array<const std::array<const Tile*, 3>, 3>
-            getArea(std::pair<size_t, size_t>) const;
+        const std::array<const std::array<const Tile*, 3>, 3> getArea(coordPair) const;
+        const std::array<const std::array<const Tile*, 3>, 3> getArea(Tile*) const;
 
-        const std::pair<size_t, size_t> getPlayerLoc();
+        const coordPair getPlayerLoc();
 
-        const std::pair<size_t, size_t> getStairLoc();
+        const coordPair getStairLoc();
         void movePlayer(CardinalDirection);
 };
 

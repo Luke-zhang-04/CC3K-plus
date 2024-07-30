@@ -7,7 +7,7 @@ char Treasure::getCharacter() {
     return Symbol::Treasure;
 }
 
-bool Treasure::onRetrieve(Player* player) {
+bool Treasure::retrieved(Player* player) {
     player->pickupGold(amount);
     return true;
 }

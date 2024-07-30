@@ -4,17 +4,14 @@
 #include "dragon.h"
 #include "player.h"
 
-BarrierSuit::BarrierSuit(Dragon* d): DragonProtected{d} {}
+BarrierSuit::BarrierSuit(Dragon* d): Retrievable{d} {}
 
 char BarrierSuit::getCharacter() {
     return Symbol::BarrierSuit;
 }
 
-bool BarrierSuit::onRetrieve(Player* player) {
-    if (dragon == nullptr) {
-        player->pickupSuit();
-        return true;
-    }
+bool BarrierSuit::retrieved(Player* player) {
+    player->pickupSuit();
 
-    return false;
+    return true;
 }

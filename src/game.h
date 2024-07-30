@@ -9,9 +9,7 @@
 #include <utility>
 #include <vector>
 
-using std::size_t;
-
-typedef std::pair<size_t, size_t> coordPair;
+struct Tile;
 
 class Game {
         friend class Board;
@@ -51,8 +49,8 @@ class Game {
          * @returns vector of set of tiles which are floor tiles, with the same chamber
          * ID
          */
-        static std::vector<std::vector<coordPair>>
-            labelChambers(std::vector<coordPair>& floorTiles, const Board* const newBoard);
+        static std::vector<std::vector<Tile*>>
+            labelChambers(std::vector<Tile*>& floorTiles, const Board* const newBoard);
 
         /**
          * @brief DFS-style function to crawl the chamber and label every tile in the chamber
@@ -63,11 +61,11 @@ class Game {
          *
          * @returns set of tiles with the same chamber ID
          */
-        static std::vector<coordPair>& traverseChamber(
-            coordPair&& tile,
+        static std::vector<Tile*>& traverseChamber(
+            Tile* tile,
             const Board* const newBoard,
-            size_t currentChamberId,
-            std::vector<coordPair>& recursiveChambers
+            std::size_t currentChamberId,
+            std::vector<Tile*>& recursiveChambers
         );
 
     public:

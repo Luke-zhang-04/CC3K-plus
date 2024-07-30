@@ -2,10 +2,10 @@
 
 #include "player.h"
 
-bool DragonHoard::onRetrieve(Player* player) {
-    if (dragon == nullptr) {
-        player->pickupGold(amount);
-        return true;
-    }
+bool DragonHoard::retrieved(Player* player) {
+    // if (dragon == nullptr) {
+    //     player->pickupGold(amount);
+    //     return true;
+    // }
     return false;
 }

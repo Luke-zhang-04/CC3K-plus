@@ -5,18 +5,14 @@
 #include <cstddef>
 #include <utility>
 
-using std::size_t;
-
-class DragonProtected;
-
 class Dragon: public Enemy {
         friend class Game;
 
     private:
-        DragonProtected* protects = nullptr;
+        Retrievable* protects = nullptr;
 
     protected:
-        EnemyUpdateAction act(size_t x, size_t y) override;
+        EnemyUpdateAction act(std::size_t x, std::size_t y) override;
 
     public:
         Dragon(Board&);

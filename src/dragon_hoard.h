@@ -5,12 +5,12 @@
 
 class Player;
 
-class DragonHoard: public DragonProtected, Treasure {
+class DragonHoard: public Treasure {
     private:
         int amount = 6;
 
-    public:
-        bool onRetrieve(Player* player) override;
+    protected:
+        bool retrieved(Player* player) override;
 };
 
 #endif // DRAGON_HOARD_H

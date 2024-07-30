@@ -10,7 +10,7 @@ char Compass::getCharacter() {
     return Symbol::Compass;
 }
 
-bool Compass::onRetrieve(Player* player) {
+bool Compass::retrieved(Player* player) {
     board.showStairs();
     return true;
 }

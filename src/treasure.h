@@ -6,10 +6,12 @@ class Treasure: public Retrievable {
     private:
         int amount;
 
+    protected:
+        virtual bool retrieved(Player* player) override;
+
     public:
         Treasure(int amt = 0): amount{amt} {};
         char getCharacter() override;
-        virtual bool onRetrieve(Player* player) override;
 };
 
 #endif

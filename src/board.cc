@@ -5,6 +5,7 @@
 #include "game.h"
 #include "random.h"
 #include "tile.h"
+#include "types.h"
 
 #include <array>
 #include <cstddef>
@@ -57,7 +58,7 @@ Tile* Board::at(size_t x, size_t y) const {
     return map.at(y).at(x);
 }
 
-Tile* Board::at(const std::pair<size_t, size_t>& coords) const {
+Tile* Board::at(const coordPair& coords) const {
     return map.at(coords.second).at(coords.first);
 }
 
@@ -67,7 +68,7 @@ Tile* Board::inDirection(size_t x, size_t y, CardinalDirection dir) const {
     return map.at(y + d.second).at(x + d.first);
 }
 
-Tile* Board::inDirection(const std::pair<size_t, size_t>& loc, CardinalDirection dir) const {
+Tile* Board::inDirection(const coordPair& loc, CardinalDirection dir) const {
     return inDirection(loc.first, loc.second, dir);
 }
 
@@ -148,16 +149,19 @@ const std::array<const std::array<const Tile*, 3>, 3> Board::getArea(size_t x, s
     /* clang-format on */
 }
 
-const std::array<const std::array<const Tile*, 3>, 3>
-    Board::getArea(std::pair<size_t, size_t> coords) const {
+const std::array<const std::array<const Tile*, 3>, 3> Board::getArea(coordPair coords) const {
     return Board::getArea(coords.first, coords.second);
 }
 
-const std::pair<size_t, size_t> Board::getPlayerLoc() {
+const std::array<const std::array<const Tile*, 3>, 3> Board::getArea(Tile* tile) const {
+    return Board::getArea(tile->location);
+}
+
+const coordPair Board::getPlayerLoc() {
     return playerLocation; // should return the value not a reference
 }
 
-const std::pair<size_t, size_t> Board::getStairLoc() {
+const coordPair Board::getStairLoc() {
     return stairLocation; // same as `getPlayerLoc()`
 }
 

@@ -13,6 +13,7 @@
 #include "retrievable.h"
 #include "tile.h"
 #include "treasure.h"
+#include "types.h"
 #include "util.h"
 
 #include <array>
@@ -41,83 +42,85 @@ void Game::update() {
     render();
 }
 
-Tile* getTileFromChar(char character, Player* player, Board& board) {
+Tile* getTileFromChar(coordPair loc, char character, Player* player, Board& board) {
     switch (character) {
         case Symbol::WallVert:
         case Symbol::WallHorz:
         case Symbol::Door:
         case Symbol::Passage:
         case Symbol::FloorTile:
-        case Symbol::Blank: return new Tile{character};
+        case Symbol::Blank: return new Tile{loc, character};
 
-        case Symbol::Stairs: return new Tile{Symbol::FloorTile};
+        case Symbol::Stairs: return new Tile{loc, Symbol::FloorTile};
 
-        case Symbol::Player: return new Tile{Symbol::FloorTile, nullptr, nullptr, nullptr, player};
+        case Symbol::Player:
+            return new Tile{loc, Symbol::FloorTile, nullptr, nullptr, nullptr, player};
 
-        case Symbol::BarrierSuit: return new Tile{Symbol::FloorTile, new BarrierSuit{nullptr}};
-        case Symbol::Compass: return new Tile{Symbol::FloorTile, new Compass{board}};
+        case Symbol::BarrierSuit:
+            return new Tile{loc, Symbol::FloorTile, new BarrierSuit{nullptr}};
+        case Symbol::Compass: return new Tile{loc, Symbol::FloorTile, new Compass{board}};
 
         case Symbol::Vampire:
             return new Tile{
-                Symbol::FloorTile, nullptr, nullptr, new Enemy{EnemyType::Vampire, board}
+                loc, Symbol::FloorTile, nullptr, nullptr, new Enemy{EnemyType::Vampire, board}
             };
         case Symbol::Werewolf:
             return new Tile{
-                Symbol::FloorTile, nullptr, nullptr, new Enemy{EnemyType::Werewolf, board}
+                loc, Symbol::FloorTile, nullptr, nullptr, new Enemy{EnemyType::Werewolf, board}
             };
         case Symbol::Troll:
             return new Tile{
-                Symbol::FloorTile, nullptr, nullptr, new Enemy{EnemyType::Troll, board}
+                loc, Symbol::FloorTile, nullptr, nullptr, new Enemy{EnemyType::Troll, board}
             };
         case Symbol::Goblin:
             return new Tile{
-                Symbol::FloorTile, nullptr, nullptr, new Enemy{EnemyType::Goblin, board}
+                loc, Symbol::FloorTile, nullptr, nullptr, new Enemy{EnemyType::Goblin, board}
             };
         case Symbol::Phoenix:
             return new Tile{
-                Symbol::FloorTile, nullptr, nullptr, new Enemy{EnemyType::Phoenix, board}
+                loc, Symbol::FloorTile, nullptr, nullptr, new Enemy{EnemyType::Phoenix, board}
             };
 
         case Symbol::Merchant:
-            return new Tile{Symbol::FloorTile, nullptr, nullptr, new Merchant{board}};
+            return new Tile{loc, Symbol::FloorTile, nullptr, nullptr, new Merchant{board}};
         case Symbol::Dragon:
-            return new Tile{Symbol::FloorTile, nullptr, nullptr, new Dragon{board}};
+            return new Tile{loc, Symbol::FloorTile, nullptr, nullptr, new Dragon{board}};
 
         case (char) InputMapNumbers::PotionRestoreHealth:
-            return new Tile{Symbol::FloorTile, nullptr, new Potion{"RH", 10}};
+            return new Tile{loc, Symbol::FloorTile, nullptr, new Potion{"RH", 10}};
         case (char) InputMapNumbers::PotionBoostAttack:
-            return new Tile{Symbol::FloorTile, nullptr, new Potion{"BA", 0, 5}};
+            return new Tile{loc, Symbol::FloorTile, nullptr, new Potion{"BA", 0, 5}};
         case (char) InputMapNumbers::PotionBoostDefense:
-            return new Tile{Symbol::FloorTile, nullptr, new Potion{"BD", 0, 0, 5}};
+            return new Tile{loc, Symbol::FloorTile, nullptr, new Potion{"BD", 0, 0, 5}};
         case (char) InputMapNumbers::PotionPoisonHealth:
-            return new Tile{Symbol::FloorTile, nullptr, new Potion{"PH", -10}};
+            return new Tile{loc, Symbol::FloorTile, nullptr, new Potion{"PH", -10}};
         case (char) InputMapNumbers::PotionWoundAttack:
-            return new Tile{Symbol::FloorTile, nullptr, new Potion{"WA", 0, -5}};
+            return new Tile{loc, Symbol::FloorTile, nullptr, new Potion{"WA", 0, -5}};
         case (char) InputMapNumbers::PotionWoundDefense:
-            return new Tile{Symbol::FloorTile, nullptr, new Potion{"WD", 0, 0, -5}};
+            return new Tile{loc, Symbol::FloorTile, nullptr, new Potion{"WD", 0, 0, -5}};
         case (char) InputMapNumbers::TreasureSmallGoldPile:
-            return new Tile{Symbol::FloorTile, new Treasure{1}};
+            return new Tile{loc, Symbol::FloorTile, new Treasure{1}};
         case (char) InputMapNumbers::TreasureSmallHoard:
-            return new Tile{Symbol::FloorTile, new Treasure{2}};
+            return new Tile{loc, Symbol::FloorTile, new Treasure{2}};
         case (char) InputMapNumbers::TreasureMerchantHoard:
-            return new Tile{Symbol::FloorTile, new Treasure{4}};
+            return new Tile{loc, Symbol::FloorTile, new Treasure{4}};
         case (char) InputMapNumbers::TreasureDragonHoard:
-            return new Tile{Symbol::FloorTile, new Treasure{6}};
+            return new Tile{loc, Symbol::FloorTile, new Treasure{6}};
 
         default:
             throw std::invalid_argument("unknown map tile character " + std::string(1, character));
     }
 }
 
-std::vector<coordPair>& Game::traverseChamber(
-    coordPair&& tile,
+std::vector<Tile*>& Game::traverseChamber(
+    Tile* tile,
     const Board* const newBoard,
     size_t currentChamberId,
-    std::vector<coordPair>& recursiveChambers
+    std::vector<Tile*>& recursiveChambers
 ) {
     auto area = newBoard->getArea(tile);
 
-    newBoard->at(tile)->chamberId = currentChamberId;
+    tile->chamberId = currentChamberId;
     recursiveChambers.emplace_back(tile);
 
     for (int row = 0; row < 3; row++) {
@@ -127,9 +130,10 @@ std::vector<coordPair>& Game::traverseChamber(
                 continue;
             }
 
-            // We have an unlabeled floor tile
+            // We have an unlabeled floor tile. Label it and add it.
             traverseChamber(
-                {tile.first + col - 1, tile.second + row - 1},
+                // Workaround because `getArea` returns constants but `at` is private and does not
+                newBoard->at(area[row][col]->location),
                 newBoard,
                 currentChamberId,
                 recursiveChambers
@@ -140,16 +144,16 @@ std::vector<coordPair>& Game::traverseChamber(
     return recursiveChambers;
 }
 
-std::vector<std::vector<coordPair>>
-    Game::labelChambers(std::vector<coordPair>& floorTiles, const Board* const newBoard) {
+std::vector<std::vector<Tile*>>
+    Game::labelChambers(std::vector<Tile*>& floorTiles, const Board* const newBoard) {
     size_t chamberIdCounter = 1;
 
-    std::vector<std::vector<coordPair>> chambers;
+    std::vector<std::vector<Tile*>> chambers;
 
     for (auto& floorTile : floorTiles) {
-        if (newBoard->at(floorTile)->chamberId == 0) {
+        if (floorTile->chamberId == 0) {
             // We have an unlabeled boy, label him and his comrades
-            chambers.emplace_back(std::vector<coordPair>{});
+            chambers.emplace_back(std::vector<Tile*>{});
             traverseChamber(
                 std::move(floorTile), newBoard, chamberIdCounter++, chambers[chambers.size() - 1]
             );
@@ -160,14 +164,14 @@ std::vector<std::vector<coordPair>>
 }
 
 void Game::randomPopulateMap(Board* newBoard, Player* player) {
-    std::vector<std::vector<coordPair>>& chambers = newBoard->chambers;
+    std::vector<std::vector<Tile*>>& chambers = newBoard->chambers;
     size_t totalTileCount = 0;
     // Pair (chamber id, remaining spawnable tiles)
     // When remaining spawnable tiles becomes 0, delete that pair from the vector. This way, we can
     // always pick a random chamber that has a free tile.
-    std::vector<std::pair<size_t, size_t>> chamberTileCounts(chambers.size());
+    std::vector<coordPair> chamberTileCounts(chambers.size());
     // Number of things have been spawned in each chamber
-    std::unordered_map<size_t, std::vector<coordPair>::iterator> chamberIters{};
+    std::unordered_map<size_t, std::vector<Tile*>::iterator> chamberIters{};
     std::queue<size_t> selectedChambers{}; // Chambers selected for spawning
     std::vector<Enemy*> compassHoldingEnemies{};
 
@@ -205,7 +209,7 @@ void Game::randomPopulateMap(Board* newBoard, Player* player) {
         shuffle(chambers[index]);
 
         totalTileCount += chambers[index].size();
-        size_t offsetChamberId = newBoard->at(chambers[index][0])->chamberId - 1;
+        size_t offsetChamberId = chambers[index][0]->chamberId - 1;
 
         chamberTileCounts[offsetChamberId] = {offsetChamberId, chambers[offsetChamberId].size()};
         chamberIters[offsetChamberId] = chambers[index].begin();
@@ -216,11 +220,12 @@ void Game::randomPopulateMap(Board* newBoard, Player* player) {
         throw std::length_error("board is not large enough to spawn everything");
     }
 
+    // (random player location, random stair location)
     std::pair<int, int> initSpawns = randIntPair(0, chambers.size() - 1);
 
-    newBoard->at(*chamberIters[initSpawns.first])->player = player;
-    newBoard->playerLocation = *chamberIters[initSpawns.first];
-    newBoard->stairLocation = *chamberIters[initSpawns.second];
+    (*chamberIters[initSpawns.first])->player = player;
+    newBoard->playerLocation = (*chamberIters[initSpawns.first])->location;
+    newBoard->stairLocation = (*chamberIters[initSpawns.second])->location;
 
     chamberIters[initSpawns.first]++;
     chamberIters[initSpawns.second]++;
@@ -244,20 +249,36 @@ void Game::randomPopulateMap(Board* newBoard, Player* player) {
 
         selectedChambers.pop();
 
-        newBoard->at(*chamberIters[chamberId])->item = potion;
+        Tile* tile = *chamberIters[chamberId];
         chamberIters[chamberId]++;
+
+        while (!tile->empty()) {
+            tile = *chamberIters[chamberId];
+            chamberIters[chamberId]++;
+        }
+
+        tile->item = potion;
     }
     for (uint8_t i = 0; i < SpawnRates::GoldTotal; i++) {
+        std::cout << i << std::endl;
+
         size_t chamberId = selectedChambers.front();
         int amt = goldDist[randInt(0, goldDist.size() - 1)];
 
         selectedChambers.pop();
 
+        Tile* tile = *chamberIters[chamberId];
+        chamberIters[chamberId]++;
+
+        while (!tile->empty()) {
+            tile = *chamberIters[chamberId];
+            chamberIters[chamberId]++;
+        }
+
         if (amt == 6) {
             // TODO DRAGON HOW???
         } else {
-            newBoard->at(*chamberIters[chamberId])->treasure = new Treasure{amt};
-            chamberIters[chamberId]++;
+            tile->treasure = new Treasure{amt};
         }
     }
     for (uint8_t i = 0; i < SpawnRates::EnemyTotal; i++) {
@@ -266,15 +287,21 @@ void Game::randomPopulateMap(Board* newBoard, Player* player) {
 
         selectedChambers.pop();
 
+        Tile* tile = *chamberIters[chamberId];
+        chamberIters[chamberId]++;
+
+        while (!tile->empty()) {
+            tile = *chamberIters[chamberId];
+            chamberIters[chamberId]++;
+        }
+
         Enemy* newEnemy = new Enemy{type, *newBoard};
+        (*chamberIters[chamberId])->enemy = newEnemy;
 
         // Should never be dragon but check anyways
         if (type != EnemyType::Dragon && type != EnemyType::Merchant) {
             compassHoldingEnemies.push_back(newEnemy);
         }
-
-        newBoard->at(*chamberIters[chamberId])->enemy = newEnemy;
-        chamberIters[chamberId]++;
     }
 
     if (compassHoldingEnemies.empty()) {
@@ -282,7 +309,7 @@ void Game::randomPopulateMap(Board* newBoard, Player* player) {
         size_t chamberId = selectedChambers.front();
 
         selectedChambers.pop();
-        newBoard->at(*chamberIters[chamberId])->treasure = new Compass{*newBoard};
+        (*chamberIters[chamberId])->treasure = new Compass{*newBoard};
         chamberIters[chamberId]++;
     } else {
         Enemy* compassHolder = compassHoldingEnemies[randInt(0, compassHoldingEnemies.size() - 1)];
@@ -308,10 +335,10 @@ void Game::nextLevel() {
     coordPair stairLocation{0, 0};
     coordPair playerLocation{0, 0};
     // TODO: there can actually be multiple dragons
-    Dragon* dragon = nullptr;                       // NON OWNERSHIP
-    DragonProtected* dragonProtectedItem = nullptr; // NON OWNERSHIP
-    std::vector<coordPair> floorTiles;              // Keep track of floor tiles for spawning
-    std::vector<Enemy*> compassHoldingEnemies;      // Enemies that CAN hold a compass
+    Dragon* dragon = nullptr;                   // NON OWNERSHIP
+    Retrievable* dragonProtectedItem = nullptr; // NON OWNERSHIP
+    std::vector<Tile*> floorTiles;              // Keep track of floor tiles for spawning
+    std::vector<Enemy*> compassHoldingEnemies;  // Enemies that CAN hold a compass
 
     Board* newBoard = new Board{std::vector<std::vector<Tile*>>(1, std::vector<Tile*>{}), *this};
 
@@ -339,11 +366,12 @@ void Game::nextLevel() {
             isEnd = false;
         }
 
-        row.emplace_back(getTileFromChar(input, player, *newBoard));
-        coordPair currentLocation{row.size() - 1, tiles.size() - 1};
+        coordPair currentLocation{row.size(), tiles.size() - 1};
+        Tile* newTile = getTileFromChar(currentLocation, input, player, *newBoard);
+        row.emplace_back(newTile);
 
         if (input == Symbol::FloorTile) {
-            floorTiles.push_back(currentLocation);
+            floorTiles.push_back(newTile);
         }
         if (input == Symbol::Stairs) {
             stairLocation = currentLocation;
@@ -357,7 +385,7 @@ void Game::nextLevel() {
             compassLocation = currentLocation;
         }
         if (input == Symbol::BarrierSuit || input == (char) InputMapNumbers::TreasureDragonHoard) {
-            dragonProtectedItem = dynamic_cast<DragonProtected*>(row[row.size() - 1]->treasure);
+            dragonProtectedItem = row[row.size() - 1]->treasure;
         }
         if (input == Symbol::Dragon) {
             dragon = dynamic_cast<Dragon*>(row[row.size() - 1]->enemy);
@@ -371,14 +399,15 @@ void Game::nextLevel() {
 
     // Postprocessing: connect dragon to protected
     if (dragonProtectedItem != nullptr && dragon != nullptr) {
-        if (dragon->protects != nullptr || dragonProtectedItem->dragon != nullptr) {
+        if (dragon->protects != nullptr || dragonProtectedItem->isProtected()) {
             throw std::logic_error(
                 "dragon/dragon protected item already linked (that's not supposed to happen wtf?)"
             );
         }
 
         dragon->protects = dragonProtectedItem;
-        dragonProtectedItem->dragon = dragon; // DRAGON DEEZ NUTS ACROSS...
+        dragonProtectedItem->setProtector(dragon
+        ); // DRAGON DEEZ NUTS ACROSS... // TODO: allow protecting after creation
     }
 
     // Postprocessing: label chambers
@@ -455,7 +484,7 @@ bool Game::playerMove(CardinalDirection dir) {
                     if (newArea[dy][dx]->enemy)
                         player->log() << " and sees a " << newArea[dy][dx]->getCharacter();
                     else if (newArea[dy][dx]->item)
-                        player->log() << " and sees an unknown potion ";
+                        player->log() << " and sees an unknown potion";
                     else if (newArea[dy][dx]->treasure)
                         player->log() << " and sees a treasure";
                 }
@@ -480,7 +509,7 @@ bool Game::playerAttack(CardinalDirection dir) {
     Enemy* enemy = targetTile->enemy;
     if (enemy) {
         std::pair<int, int> attackStats = enemy->beAttacked(player->getAttack());
-        player->log() << "PC deals " << attackStats.second << " damage to "
+        player->log() << " PC deals " << attackStats.second << " damage to "
                       << targetTile->getCharacter() << " (" << std::max(0, attackStats.first)
                       << " HP). ";
         if (attackStats.first <= 0) {
@@ -498,8 +527,6 @@ bool Game::playerAttack(CardinalDirection dir) {
 
     // update everything else, possibly triggering the enemy to attack back
     update();
-
-    // player->log("PC deals " + )
 
     return player->getHealth() > 0;
 }
@@ -529,5 +556,4 @@ bool Game::playerPickup(CardinalDirection dir) {
 void Game::render() const {
     currentBoard->render(output);
     player->displayInfo(output);
-    // TODO: info pannel
 }

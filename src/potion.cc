@@ -7,7 +7,7 @@ char Potion::getCharacter() {
 }
 
 void Potion::onInteract(Player* player) {
-    player->log() << "PC uses " << type << ". ";
+    player->log() << " PC uses " << type << ".";
 
     player->usePotion(healthMod, attackMod, defenseMod);
 }

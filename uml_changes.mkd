@@ -33,6 +33,7 @@
 -   Overload for output stream operator
 -   Added chamber ID
 -   Added separate `movablePlayer` method
+-   Added `x`, `y` location to tile
 
 ### Compass
 
