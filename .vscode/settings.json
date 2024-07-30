@@ -100,6 +100,12 @@
     "utility": "cpp",
     "__tree": "cpp",
     "set": "cpp",
-    "algorithm": "cpp"
+    "algorithm": "cpp",
+    "*.tcc": "cpp",
+    "list": "cpp",
+    "functional": "cpp",
+    "ranges": "cpp",
+    "cinttypes": "cpp",
+    "fstream": "cpp"
   },
 }

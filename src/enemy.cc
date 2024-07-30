@@ -3,6 +3,7 @@
 #include "board.h"
 #include "constants.h"
 #include "random.h"
+#include "retrievable.h"
 
 #include <cmath>
 #include <cstddef>
@@ -57,6 +58,10 @@ Enemy::Enemy(EnemyType enemyType, Board& board): Character{0, 0, 0}, character{0
     }
 
     health = maxHealth;
+}
+
+Enemy::~Enemy() {
+    delete drops;
 }
 
 char Enemy::getCharacter() {

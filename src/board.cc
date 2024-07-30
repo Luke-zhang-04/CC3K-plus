@@ -16,24 +16,6 @@
 
 using std::size_t;
 
-Tile* Board::at(size_t x, size_t y) const {
-    return map.at(y).at(x);
-}
-
-Tile* Board::at(const std::pair<size_t, size_t>& coords) const {
-    return map.at(coords.second).at(coords.first);
-}
-
-Tile* Board::inDirection(size_t x, size_t y, CardinalDirection dir) const {
-    auto d = directionToDisplacement(dir);
-
-    return map.at(y + d.second).at(x + d.first);
-}
-
-Tile* Board::inDirection(const std::pair<size_t, size_t>& loc, CardinalDirection dir) const {
-    return inDirection(loc.first, loc.second, dir);
-}
-
 // use the given 2d vector of tiles, but populate stairLocation and playerLocation for easy
 // updating
 Board::Board(std::vector<std::vector<Tile*>> map, Game& game): game{game}, map{map} {
@@ -69,6 +51,24 @@ Board::~Board() {
             delete map[y][x];
         }
     }
+}
+
+Tile* Board::at(size_t x, size_t y) const {
+    return map.at(y).at(x);
+}
+
+Tile* Board::at(const std::pair<size_t, size_t>& coords) const {
+    return map.at(coords.second).at(coords.first);
+}
+
+Tile* Board::inDirection(size_t x, size_t y, CardinalDirection dir) const {
+    auto d = directionToDisplacement(dir);
+
+    return map.at(y + d.second).at(x + d.first);
+}
+
+Tile* Board::inDirection(const std::pair<size_t, size_t>& loc, CardinalDirection dir) const {
+    return inDirection(loc.first, loc.second, dir);
 }
 
 bool Board::merchantHostile() {

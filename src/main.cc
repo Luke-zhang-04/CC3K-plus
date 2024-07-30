@@ -90,14 +90,17 @@ int main(int argc, char* argv[]) {
             if (!game)
                 break;
             else if (move == "r") {
-                playerAlive = true;
-                std::cout << "DELETING GAME"
-                          << "\n";
                 delete game;
-                std::cout << "DELETED GAME"
-                          << "\n";
-                std::cout << fileName << "\n";
+
+                playerAlive = true;
                 game = init(fileName);
+                if (game == nullptr) {
+                    std::cout << "Exiting..." << std::endl;
+
+                    return 0;
+                }
+
+                game->render();
             } else if (move == "no" || move == "so" || move == "ea" || move == "we" || move == "ne" || move == "nw" || move == "se" || move == "sw" || move == ArrowKey::StrKeyUp || move == ArrowKey::StrKeyDown || move == ArrowKey::StrKeyRight || move == ArrowKey::StrKeyLeft || move == ArrowKey::StrKeyUpRight || move == ArrowKey::StrKeyRightUp || move == ArrowKey::StrKeyUpLeft || move == ArrowKey::StrKeyLeftUp || move == ArrowKey::StrKeyDownRight || move == ArrowKey::StrKeyRightDown || move == ArrowKey::StrKeyDownLeft || move == ArrowKey::StrKeyLeftDown) {
                 playerAlive = game->playerMove(stringToDirection(move));
             } else if (move == "u") {
@@ -109,6 +112,8 @@ int main(int argc, char* argv[]) {
                 std::cin >> direction;
                 playerAlive = game->playerAttack(stringToDirection(direction));
             } else {
+                std::cout << "I don't know what '" << move << "' means. Try again\n";
+
                 continue;
             }
 

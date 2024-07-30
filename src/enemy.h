@@ -65,6 +65,7 @@ class Enemy: public Character {
 
     public:
         Enemy(EnemyType, Board&);
+        ~Enemy();
 
         char getCharacter() override;
 
