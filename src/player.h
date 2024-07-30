@@ -19,7 +19,7 @@ class Player: public Character {
         void clearLog();
 
     public:
-        Player(int maxHealth, int defense, int attack);
+        Player(int maxHealth, int attack, int defense);
 
         char getCharacter() override;
         virtual void usePotion(int healthBuff, int attackBuff, int defenseBuff);

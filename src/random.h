@@ -2,6 +2,7 @@
 #define RANDOM_WRAPPER_H
 
 #include <array>
+#include <algorithm>
 #include <random>
 #include <utility>
 #include <vector>

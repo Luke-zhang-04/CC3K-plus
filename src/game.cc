@@ -20,6 +20,7 @@
 #include <queue>
 #include <unordered_map>
 #include <utility>
+#include <stdexcept>
 #include <vector>
 
 Game::Game(Player* player, std::ostream& output, std::istream& layoutInput, bool shouldGenerate):

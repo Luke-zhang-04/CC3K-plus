@@ -11,7 +11,7 @@ class Character {
         int maxHealth, health, defense, attack;
 
     public:
-        Character(int maxHealth, int defense, int attack);
+        Character(int maxHealth, int attack, int defense);
 
         /** Character to be displayed on board */
         virtual char getCharacter() = 0;
