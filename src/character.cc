@@ -17,9 +17,10 @@ int Character::getDefense() {
 }
 
 std::pair<int, int> Character::beAttacked(int attackPower) {
-    health -= std::ceil((100.0 / (100 + getDefense())) * attackPower);
+    int attackCalc = std::ceil((100.0 / (100 + getDefense())) * attackPower);
+    health -= attackCalc;
 
-    return {health, std::ceil((100.0 / (100 + getDefense())) * attackPower)};
+    return {health, attackCalc};
 }
 
 bool Character::canMove(const Tile* t) const {

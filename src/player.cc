@@ -65,7 +65,7 @@ std::stringstream& Player::log() {
 
 void Player::displayInfo(std::ostream& out) {
     // display gold
-    out << "Gold: " << electrum / 2;
+    out << Color::BWhite << "Gold: " << Color::Reset << electrum / 2;
     if (electrum % 2 == 1)
         out << ".5";
     out << '\n';

@@ -163,10 +163,16 @@ void Game::randomPopulateMap(Board* newBoard, Player* player) {
     std::vector<std::vector<coordPair>>& chambers = newBoard->chambers;
     size_t totalTileCount = 0;
     // Pair (chamber id, remaining spawnable tiles)
+    // When remaining spawnable tiles becomes 0, delete that pair from the vector. This way, we can
+    // always pick a random chamber that has a free tile.
     std::vector<std::pair<size_t, size_t>> chamberTileCounts(chambers.size());
     // Number of things have been spawned in each chamber
     std::unordered_map<size_t, std::vector<coordPair>::iterator> chamberIters{};
     std::queue<size_t> selectedChambers{}; // Chambers selected for spawning
+    std::vector<Enemy*> compassHoldingEnemies{};
+
+    compassHoldingEnemies.reserve(SpawnRates::EnemyTotal);
+    chamberIters.reserve(chambers.size());
 
     // Spawn distributions
     std::array<Potion, 6> potionDist{
@@ -195,8 +201,6 @@ void Game::randomPopulateMap(Board* newBoard, Player* player) {
     // of a chamberID is bounded by chamberTileCounts. Each spawned item advances
     // chamberIters. We shuffle chamberTiles, so this is random. to index the tiles.
 
-    chamberIters.reserve(chambers.size());
-
     for (size_t index = 0; index < chambers.size(); index++) {
         shuffle(chambers[index]);
 
@@ -207,8 +211,8 @@ void Game::randomPopulateMap(Board* newBoard, Player* player) {
         chamberIters[offsetChamberId] = chambers[index].begin();
     }
 
-    // +2 for player/stairs, + goldTotal for dragon hoards
-    if (totalTileCount <= SpawnRates::Total + SpawnRates::GoldTotal + 2) {
+    // +2 for player/stairs, +1 for potential compass, + goldTotal for dragon hoards
+    if (totalTileCount <= SpawnRates::Total + SpawnRates::GoldTotal + 3) {
         throw std::length_error("board is not large enough to spawn everything");
     }
 
@@ -221,7 +225,7 @@ void Game::randomPopulateMap(Board* newBoard, Player* player) {
     chamberIters[initSpawns.first]++;
     chamberIters[initSpawns.second]++;
 
-    for (uint8_t i = 0; i < SpawnRates::Total; i++) {
+    for (uint8_t i = 0; i < SpawnRates::Total + SpawnRates::GoldTotal + 1; i++) {
         size_t randIndex = randInt(0, chamberTileCounts.size() - 1);
 
         chamberTileCounts[randIndex].second--;
@@ -233,6 +237,7 @@ void Game::randomPopulateMap(Board* newBoard, Player* player) {
         }
     }
 
+    // Use all the data we just collected to spawn stuff (steps should be simple)
     for (uint8_t i = 0; i < SpawnRates::PotionTotal; i++) {
         size_t chamberId = selectedChambers.front();
         Potion* potion = new Potion{potionDist[randInt(0, potionDist.size() - 1)]};
@@ -261,8 +266,28 @@ void Game::randomPopulateMap(Board* newBoard, Player* player) {
 
         selectedChambers.pop();
 
-        newBoard->at(*chamberIters[chamberId])->enemy = new Enemy{type, *newBoard};
+        Enemy* newEnemy = new Enemy{type, *newBoard};
+
+        // Should never be dragon but check anyways
+        if (type != EnemyType::Dragon && type != EnemyType::Merchant) {
+            compassHoldingEnemies.push_back(newEnemy);
+        }
+
+        newBoard->at(*chamberIters[chamberId])->enemy = newEnemy;
         chamberIters[chamberId]++;
+    }
+
+    if (compassHoldingEnemies.empty()) {
+        // If there is no enemy to hold the compass, put it on the ground somewhere
+        size_t chamberId = selectedChambers.front();
+
+        selectedChambers.pop();
+        newBoard->at(*chamberIters[chamberId])->treasure = new Compass{*newBoard};
+        chamberIters[chamberId]++;
+    } else {
+        Enemy* compassHolder = compassHoldingEnemies[randInt(0, compassHoldingEnemies.size() - 1)];
+
+        compassHolder->giveTreasure(new Compass{*newBoard});
     }
 }
 
@@ -458,7 +483,7 @@ bool Game::playerAttack(CardinalDirection dir) {
         player->log() << "PC deals " << attackStats.second << " damage to "
                       << targetTile->getCharacter() << " (" << std::max(0, attackStats.first)
                       << " HP). ";
-        if (attackStats.first < 0) {
+        if (attackStats.first <= 0) {
             // if they die, take their gold
             player->pickupGold(enemy->goldValue());
 

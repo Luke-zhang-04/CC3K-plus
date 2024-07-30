@@ -20,7 +20,11 @@ class Character {
         virtual int getAttack();
         virtual int getDefense();
 
-        /** Update its own health and returns it, could be negative if it dies */
+        /**
+         * Update its own health and returns it, could be negative if it dies
+         *
+         * @returns {new health, damage dealt}
+         */
         virtual std::pair<int, int> beAttacked(int attackPower);
 
         // whether or not this tile can be moved to

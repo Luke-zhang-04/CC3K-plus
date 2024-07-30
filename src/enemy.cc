@@ -136,12 +136,6 @@ void Enemy::giveTreasure(Retrievable* toDrop) {
     drops = toDrop;
 }
 
-// not used
-// int Enemy::beAttacked(int attackPower) {
-//     // TODO: stuff
-//     return Character::beAttacked(attackPower);
-// }
-
 Retrievable* Enemy::dropTreasure() {
     Retrievable* treasure = drops;
     drops = nullptr;

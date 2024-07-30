@@ -56,9 +56,10 @@ namespace SpawnRates {
 
     const uint8_t Total = SpawnRates::EnemyTotal + SpawnRates::PotionTotal + SpawnRates::GoldTotal;
 
+    static_assert(EnemyTotal > 0, "Need at least 1 enemy for compass");
     static_assert(
         Total == SpawnRates::EnemyTotal + SpawnRates::PotionTotal + SpawnRates::GoldTotal,
-        "Spawn totals don't add up"
+        "Spawn totals don't add up (how tf did we get here)"
     );
     static_assert(
         EnemyTotalRate == EnemyVampireRate + EnemyWerewolfRate + EnemyTrollRate + EnemyGoblinRate +

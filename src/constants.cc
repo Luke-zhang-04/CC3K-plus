@@ -13,7 +13,8 @@ bool isEnemy(char symbol) {
 std::string symbolToColor(char symbol) {
     switch (symbol) {
         case Symbol::BarrierSuit:
-        case Symbol::Compass: return Color::White; // TODO: these white/value
+        case Symbol::Compass:
+            return Color::White; // TODO: these white/values may not show up if light mode?
 
         case Symbol::Vampire: return Color::IRed;
         case Symbol::Werewolf: return Color::White;
