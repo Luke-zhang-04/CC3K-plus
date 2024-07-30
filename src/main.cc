@@ -72,24 +72,23 @@ int main(int argc, char* argv[]) {
 
         std::istream* stream = nullptr;
         if (fileName == "") {
-            std::stringstream _stream{};
+            std::stringstream* _stream = new std::stringstream{};
+            stream = _stream;
 
-            stream = &_stream;
+            stream = _stream;
 
             for (int i = 0; i < 5; i++) {
-                _stream << smallFloor << '\n';
+                *_stream << std::string{smallFloor} << '\n';
             }
 
-            std::cout << _stream.str() << std::endl;
-
-            _stream >> std::noskipws;
+            *_stream >> std::noskipws;
 
             game = new Game(initPlayer(), std::cout, *stream, isInputMap);
         } else {
-            std::ifstream _stream{fileName};
-            stream = &_stream;
+            std::ifstream* _stream = new std::ifstream{fileName};
+            stream = _stream;
 
-            _stream >> std::noskipws;
+            *_stream >> std::noskipws;
 
             game = new Game(initPlayer(), std::cout, *stream, isInputMap);
         }
@@ -185,6 +184,7 @@ int main(int argc, char* argv[]) {
 
         std::cout << "Exiting..." << std::endl;
         delete game;
+        delete stream;
 
         return 0;
     } catch (const std::exception& ex) {
