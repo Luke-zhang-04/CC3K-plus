@@ -99,6 +99,13 @@ enum class InputMapNumbers {
     TreasureDragonHoard,
 };
 
+namespace TreasureType {
+    constexpr const uint8_t SmallGoldPile = 1;
+    constexpr const uint8_t SmallHoard = 2;
+    constexpr const uint8_t MerchantHoard = 4;
+    constexpr const uint8_t DragonHoard = 6;
+} // namespace TreasureType
+
 namespace ArrowKey {
     constexpr const char KeyUp = 72;
     constexpr const char KeyDown = 80;

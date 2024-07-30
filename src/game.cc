@@ -28,7 +28,8 @@
 using std::size_t;
 
 Game::Game(Player* player, std::ostream& output, std::istream& layoutInput, bool shouldGenerate):
-    output{output}, layoutInput{layoutInput}, player{player}, shouldGenerate{shouldGenerate} {
+    output{output}, layoutInput{layoutInput}, player{player}, shouldGenerate{shouldGenerate},
+    suitLevel{(int)randInt(0, 4)} {
     nextLevel();
 }
 
@@ -99,13 +100,13 @@ Tile* getTileFromChar(coordPair loc, char character, Player* player, Board& boar
         case (char) InputMapNumbers::PotionWoundDefense:
             return new Tile{loc, Symbol::FloorTile, nullptr, new Potion{"WD", 0, 0, -5}};
         case (char) InputMapNumbers::TreasureSmallGoldPile:
-            return new Tile{loc, Symbol::FloorTile, new Treasure{1}};
+            return new Tile{loc, Symbol::FloorTile, new Treasure{TreasureType::SmallGoldPile}};
         case (char) InputMapNumbers::TreasureSmallHoard:
-            return new Tile{loc, Symbol::FloorTile, new Treasure{2}};
+            return new Tile{loc, Symbol::FloorTile, new Treasure{TreasureType::SmallHoard}};
         case (char) InputMapNumbers::TreasureMerchantHoard:
-            return new Tile{loc, Symbol::FloorTile, new Treasure{4}};
+            return new Tile{loc, Symbol::FloorTile, new Treasure{TreasureType::MerchantHoard}};
         case (char) InputMapNumbers::TreasureDragonHoard:
-            return new Tile{loc, Symbol::FloorTile, new Treasure{6}};
+            return new Tile{loc, Symbol::FloorTile, new Treasure{TreasureType::DragonHoard}};
 
         default:
             throw std::invalid_argument("unknown map tile character " + std::string(1, character));
@@ -163,6 +164,7 @@ std::vector<std::vector<Tile*>>
     return chambers;
 }
 
+// TODO: generate barrier suit
 void Game::randomPopulateMap(Board* newBoard, Player* player) {
     std::vector<std::vector<Tile*>>& chambers = newBoard->chambers;
     size_t totalTileCount = 0;
@@ -187,10 +189,10 @@ void Game::randomPopulateMap(Board* newBoard, Player* player) {
         Potion{"WA", 0, -5},
         Potion{"WD", 0, 0, -5}
     };
-    std::vector<int> goldDist = createVector(std::array<std::pair<size_t, int>, 3>{{
-        {SpawnRates::GoldNormalRate, 2},
-        {SpawnRates::GoldSmallHoardRate, 1},
-        {SpawnRates::GoldDragonHoardRate, 6},
+    std::vector<uint8_t> goldDist = createVector(std::array<std::pair<size_t, uint8_t>, 3>{{
+        {SpawnRates::GoldNormalRate, TreasureType::SmallGoldPile},
+        {SpawnRates::GoldSmallHoardRate, TreasureType::SmallHoard},
+        {SpawnRates::GoldDragonHoardRate, TreasureType::DragonHoard},
     }});
     std::vector<EnemyType> enemyDist = createVector(std::array<std::pair<size_t, EnemyType>, 6>{
         {{SpawnRates::EnemyVampireRate, EnemyType::Vampire},
@@ -211,7 +213,9 @@ void Game::randomPopulateMap(Board* newBoard, Player* player) {
         totalTileCount += chambers[index].size() - 1;
         size_t offsetChamberId = chambers[index][0]->chamberId - 1;
 
-        chamberTileCounts[offsetChamberId] = {offsetChamberId, chambers[offsetChamberId].size() - 1};
+        chamberTileCounts[offsetChamberId] = {
+            offsetChamberId, chambers[offsetChamberId].size() - 1
+        };
         chamberIters[offsetChamberId] = chambers[index].begin();
     }
 
@@ -242,7 +246,14 @@ void Game::randomPopulateMap(Board* newBoard, Player* player) {
         }
     }
 
-    // Use all the data we just collected to spawn stuff (steps should be simple)
+    // Use all the data we just collected to spawn stuff (steps should be relatively simple):
+    // 1. Randomly pick the type of item spawned based on the distribution arrays
+    // 2. Pop the next pre-selected random chamber ID from the queue
+    // 3. Get the next tile in the iterator of that chamber ID (recall the tiles were shuffled)
+    // 4. Repeat steps 2 and 3 until there is a free tile (the only case where there isn't a free
+    //    tile is when the dragon associated with a barrier suit/dragon hoard was placed)
+    // 5. Add item to tile
+
     for (uint8_t i = 0; i < SpawnRates::PotionTotal; i++) {
         Potion* potion = new Potion{potionDist[randInt(0, potionDist.size() - 1)]};
 
@@ -277,27 +288,57 @@ void Game::randomPopulateMap(Board* newBoard, Player* player) {
             chamberIters[chamberId]++;
         }
 
-        if (amt == 6) {
-            // TODO DRAGON HOW???
+        std::cout << "AMT: " << (int)amt << std::endl;
+        if (amt == TreasureType::DragonHoard) {
+            auto area = newBoard->getArea(tile);
+
+            std::vector<std::pair<uint8_t, uint8_t>> available{};
+
+            available.reserve(8);
+
+            for (uint8_t dx = 0; dx <= 2; dx++) {
+                for (uint8_t dy = 0; dy <= 2; dy++) {
+                    if (dx == 1 && dy == 1)
+                        continue;
+
+                    const Tile* tile = area[dy][dx];
+
+                    if (tile != nullptr && tile->empty() && tile->mapTile == Symbol::FloorTile) {
+                        available.push_back({dx, dy});
+                    }
+                }
+            }
+
+            std::cout << "A SIZE " << available.size() << std::endl;
+
+            if (available.size() == 0) {
+                tile->treasure = new Treasure{amt};
+            } else {
+                std::pair<uint8_t, uint8_t> dragonOffset =
+                    available[randInt(0, available.size() - 1)];
+                Tile* dragonTile =
+                    newBoard->at(area[dragonOffset.second][dragonOffset.first]->location);
+                Dragon* dragon = new Dragon{*newBoard};
+                Treasure* treasure = new Treasure{TreasureType::DragonHoard};
+
+                treasure->setProtector(dragon);
+                dragon->protects = treasure;
+
+                tile->treasure = treasure;
+                dragonTile->enemy = dragon;
+            }
         } else {
             tile->treasure = new Treasure{amt};
         }
     }
-    std::cout << "PENIS" << std::endl;
     for (uint8_t i = 0; i < SpawnRates::EnemyTotal; i++) {
-        std::cout << (int)i << std::endl;
         EnemyType type = enemyDist[randInt(0, enemyDist.size() - 1)];
 
         size_t chamberId = selectedChambers.front();
         selectedChambers.pop();
 
-        std::cout << "CHAMBER ID " << chamberId << " " << selectedChambers.size() << std::endl;
-
         Tile* tile = *chamberIters[chamberId];
         chamberIters[chamberId]++;
-
-        std::cout << "TILE PTR " << tile << std::endl;
-        std::cout << "TILE " << tile->getCharacter() << std::endl;
 
         while (!tile->empty()) {
             chamberId = selectedChambers.front();
@@ -306,19 +347,15 @@ void Game::randomPopulateMap(Board* newBoard, Player* player) {
             chamberIters[chamberId]++;
         }
 
-        std::cout << "CHAMBER ID " << chamberId << " " << selectedChambers.size() << std::endl;
-        std::cout << "TILE PTR " << tile << std::endl;
-        std::cout << "TILE " << tile->getCharacter() << std::endl;
-
         Enemy* newEnemy = new Enemy{type, *newBoard};
         tile->enemy = newEnemy;
 
-        // Should never be dragon but check anyways
+        // Should never be dragon but check anyways, merchant is definitely possible, and we should
+        // not give merchants the compass
         if (type != EnemyType::Dragon && type != EnemyType::Merchant) {
             compassHoldingEnemies.push_back(newEnemy);
         }
     }
-    std::cout << "PENIS" << std::endl;
 
     if (compassHoldingEnemies.empty()) {
         // If there is no enemy to hold the compass, put it on the ground somewhere

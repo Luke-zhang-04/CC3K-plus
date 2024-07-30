@@ -6,6 +6,7 @@
 #include <utility>
 
 class Dragon: public Enemy {
+        // dragon is a supernatural entity with elevated privileges
         friend class Game;
 
     private:

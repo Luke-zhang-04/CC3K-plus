@@ -13,6 +13,8 @@ class Merchant: public Enemy {
 
     public:
         Merchant(Board&);
+        // become hostile when attacked
+        std::pair<int, int> beAttacked(int attackPower) override;
 };
 
 #endif

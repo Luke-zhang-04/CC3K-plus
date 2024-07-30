@@ -76,6 +76,10 @@ bool Board::merchantHostile() {
     return game.merchantHostile;
 }
 
+void Board::aggravateMerchants() {
+    game.merchantHostile = true;
+}
+
 void Board::showStairs() {
     stairsVisible = true;
     // replace the map tile of the stair with the appropriate symbol

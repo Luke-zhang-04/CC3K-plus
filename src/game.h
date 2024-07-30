@@ -26,6 +26,8 @@ class Game {
         // current level count "first is 0"
         int level = 0;
 
+        int suitLevel; // randomly generate 0-4 on construction
+
         // update the board, then render the bottom bar. happens after a player action
         void update();
         void nextLevel();

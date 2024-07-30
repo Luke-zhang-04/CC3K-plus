@@ -40,7 +40,11 @@ class Board {
         Board(std::vector<std::vector<Tile*>>, Game&);
         ~Board();
 
+        // merchantsHostile getter
         bool merchantHostile();
+
+        // one time switch of merchantsHostile to true
+        void aggravateMerchants();
 
         void showStairs();
 
