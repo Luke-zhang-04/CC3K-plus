@@ -208,10 +208,10 @@ void Game::randomPopulateMap(Board* newBoard, Player* player) {
     for (size_t index = 0; index < chambers.size(); index++) {
         shuffle(chambers[index]);
 
-        totalTileCount += chambers[index].size();
+        totalTileCount += chambers[index].size() - 1;
         size_t offsetChamberId = chambers[index][0]->chamberId - 1;
 
-        chamberTileCounts[offsetChamberId] = {offsetChamberId, chambers[offsetChamberId].size()};
+        chamberTileCounts[offsetChamberId] = {offsetChamberId, chambers[offsetChamberId].size() - 1};
         chamberIters[offsetChamberId] = chambers[index].begin();
     }
 
@@ -244,34 +244,35 @@ void Game::randomPopulateMap(Board* newBoard, Player* player) {
 
     // Use all the data we just collected to spawn stuff (steps should be simple)
     for (uint8_t i = 0; i < SpawnRates::PotionTotal; i++) {
-        size_t chamberId = selectedChambers.front();
         Potion* potion = new Potion{potionDist[randInt(0, potionDist.size() - 1)]};
 
+        size_t chamberId = selectedChambers.front();
         selectedChambers.pop();
 
         Tile* tile = *chamberIters[chamberId];
         chamberIters[chamberId]++;
 
         while (!tile->empty()) {
+            chamberId = selectedChambers.front();
+            selectedChambers.pop();
             tile = *chamberIters[chamberId];
             chamberIters[chamberId]++;
         }
 
         tile->item = potion;
     }
-    std::cout << "PENIS" << std::endl;
     for (uint8_t i = 0; i < SpawnRates::GoldTotal; i++) {
-        std::cout << i << std::endl;
-
-        size_t chamberId = selectedChambers.front();
         int amt = goldDist[randInt(0, goldDist.size() - 1)];
 
+        size_t chamberId = selectedChambers.front();
         selectedChambers.pop();
 
         Tile* tile = *chamberIters[chamberId];
         chamberIters[chamberId]++;
 
         while (!tile->empty()) {
+            chamberId = selectedChambers.front();
+            selectedChambers.pop();
             tile = *chamberIters[chamberId];
             chamberIters[chamberId]++;
         }
@@ -282,28 +283,42 @@ void Game::randomPopulateMap(Board* newBoard, Player* player) {
             tile->treasure = new Treasure{amt};
         }
     }
+    std::cout << "PENIS" << std::endl;
     for (uint8_t i = 0; i < SpawnRates::EnemyTotal; i++) {
-        size_t chamberId = selectedChambers.front();
+        std::cout << (int)i << std::endl;
         EnemyType type = enemyDist[randInt(0, enemyDist.size() - 1)];
 
+        size_t chamberId = selectedChambers.front();
         selectedChambers.pop();
+
+        std::cout << "CHAMBER ID " << chamberId << " " << selectedChambers.size() << std::endl;
 
         Tile* tile = *chamberIters[chamberId];
         chamberIters[chamberId]++;
 
+        std::cout << "TILE PTR " << tile << std::endl;
+        std::cout << "TILE " << tile->getCharacter() << std::endl;
+
         while (!tile->empty()) {
+            chamberId = selectedChambers.front();
+            selectedChambers.pop();
             tile = *chamberIters[chamberId];
             chamberIters[chamberId]++;
         }
 
+        std::cout << "CHAMBER ID " << chamberId << " " << selectedChambers.size() << std::endl;
+        std::cout << "TILE PTR " << tile << std::endl;
+        std::cout << "TILE " << tile->getCharacter() << std::endl;
+
         Enemy* newEnemy = new Enemy{type, *newBoard};
-        (*chamberIters[chamberId])->enemy = newEnemy;
+        tile->enemy = newEnemy;
 
         // Should never be dragon but check anyways
         if (type != EnemyType::Dragon && type != EnemyType::Merchant) {
             compassHoldingEnemies.push_back(newEnemy);
         }
     }
+    std::cout << "PENIS" << std::endl;
 
     if (compassHoldingEnemies.empty()) {
         // If there is no enemy to hold the compass, put it on the ground somewhere
