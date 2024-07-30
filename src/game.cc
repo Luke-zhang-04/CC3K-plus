@@ -371,8 +371,6 @@ void Game::randomPopulateMap(Board* newBoard, Player* player) {
     }
 }
 
-size_t readChars = 0;
-
 /**
  * @brief delete the old board and create a new one using data from the layoutInput stream
  *
@@ -408,8 +406,6 @@ void Game::nextLevel() {
     std::vector<std::vector<Tile*>>& tiles = newBoard->map;
 
     while (layoutInput >> input) {
-        readChars++;
-        std::cout << (int)input << (input == '\n' ? '\n' : ' ') << std::flush;
         std::vector<Tile*>& row = tiles[tiles.size() - 1];
 
         if (input == '\n') {
@@ -453,8 +449,6 @@ void Game::nextLevel() {
             compassHoldingEnemies.push_back(row[row.size() - 1]->enemy);
         }
     }
-
-    std::cout << "READ CHARS " << readChars << std::endl;
 
     // Postprocessing: connect dragon to protected
     if (dragonProtectedItem != nullptr && dragon != nullptr) {
