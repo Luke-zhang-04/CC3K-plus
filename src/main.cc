@@ -101,7 +101,14 @@ int main(int argc, char* argv[]) {
                 }
 
                 game->render();
-            } else if (move == "no" || move == "so" || move == "ea" || move == "we" || move == "ne" || move == "nw" || move == "se" || move == "sw" || move == ArrowKey::StrKeyUp || move == ArrowKey::StrKeyDown || move == ArrowKey::StrKeyRight || move == ArrowKey::StrKeyLeft || move == ArrowKey::StrKeyUpRight || move == ArrowKey::StrKeyRightUp || move == ArrowKey::StrKeyUpLeft || move == ArrowKey::StrKeyLeftUp || move == ArrowKey::StrKeyDownRight || move == ArrowKey::StrKeyRightDown || move == ArrowKey::StrKeyDownLeft || move == ArrowKey::StrKeyLeftDown) {
+            } else if (move == "no" || move == "so" || move == "ea" || move == "we" ||
+                       move == "ne" || move == "nw" || move == "se" || move == "sw" ||
+                       move == ArrowKey::StrKeyUp || move == ArrowKey::StrKeyDown ||
+                       move == ArrowKey::StrKeyRight || move == ArrowKey::StrKeyLeft ||
+                       move == ArrowKey::StrKeyUpRight || move == ArrowKey::StrKeyRightUp ||
+                       move == ArrowKey::StrKeyUpLeft || move == ArrowKey::StrKeyLeftUp ||
+                       move == ArrowKey::StrKeyDownRight || move == ArrowKey::StrKeyRightDown ||
+                       move == ArrowKey::StrKeyDownLeft || move == ArrowKey::StrKeyLeftDown) {
                 playerAlive = game->playerMove(stringToDirection(move));
             } else if (move == "u") {
                 std::string direction;
