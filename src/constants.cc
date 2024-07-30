@@ -22,15 +22,15 @@ std::string symbolToColor(char symbol) {
         case Symbol::Dragon: return Color::BgRed;
         case Symbol::Phoenix: return Color::Yellow;
 
-        case Symbol::Player: return Color::ICyan;
+        case Symbol::Player: return Color::BICyan;
 
         case Symbol::Potion: return Color::Purple;
 
         case Symbol::Treasure: return Color::IYellow;
 
-        case Symbol::Stairs:
         case Symbol::WallVert:
         case Symbol::WallHorz:
+        case Symbol::Stairs:
         case Symbol::Door:
         case Symbol::Passage: return Color::White;
         case Symbol::FloorTile: return Color::Black;

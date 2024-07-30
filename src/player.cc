@@ -4,6 +4,7 @@
 #include "tile.h"
 
 #include <algorithm>
+#include <ostream>
 
 Player::Player(int maxHealth, int attack, int defense): Character{maxHealth, attack, defense} {}
 
@@ -14,7 +15,8 @@ char Player::getCharacter() {
 void Player::usePotion(int healthBuff, int attackBuff, int defenseBuff) {
     attackMod += attackBuff;
     defenseMod += defenseBuff;
-    health = std::max(health + healthBuff, maxHealth);
+    // don't gain more than max or less than 1
+    health = std::max(std::min(health + healthBuff, maxHealth), 1);
 }
 
 void Player::pickupSuit() {
@@ -47,26 +49,32 @@ bool Player::canMove(const Tile* t) const {
            mapTile == Symbol::Stairs;
 }
 
-void Player::log(std::string str) {
-    if (sysLog.str().length() > 0)
-        sysLog << " ";
-    sysLog << str;
-}
-
-void Player::log(int i) {
-    if (sysLog.str().length() > 0)
-        sysLog << " ";
-    sysLog << i;
-}
-
 void Player::clearLog() {
     sysLog.str(std::string());
 }
 
-std::stringstream& Player::getLog() {
+std::stringstream& Player::log() {
     return sysLog;
 }
 
-void Player::displayInfo(ostream& out) {
-    out << "Race: " << '\n';
+void Player::displayInfo(std::ostream& out) {
+    // display gold
+    out << "Gold: " << electrum / 2;
+    if (electrum % 2 == 1)
+        out << ".5";
+    out << '\n';
+
+    std::string healthColor = Color::IGreen;
+
+    if (health <= maxHealth / 4) {
+        healthColor = Color::IRed;
+    } else if (health <= maxHealth / 2) {
+        healthColor = Color::IYellow;
+    }
+
+    out << Color::BWhite << "HP: " << healthColor << health << Color::Reset << '\n';
+    out << Color::BWhite << "ATK: " << Color::Reset << attack << '\n';
+    out << Color::BWhite << "DEF: " << Color::Reset << defense << '\n';
+    out << sysLog.str() << "\n";
+    clearLog();
 }

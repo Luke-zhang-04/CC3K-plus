@@ -1,5 +1,6 @@
 #include "races.h"
 
+#include "constants.h"
 #include "player.h"
 
 #include <algorithm>
@@ -19,4 +20,24 @@ void Dwarf::pickupGold(int amt) {
 
 void Orc::pickupGold(int amt) {
     electrum += amt; // one gold is worth half, which is worth 1 electrum
+}
+
+void Dwarf::displayInfo(std::ostream& out) {
+    out << Color::BWhite << "Race: " << Color::Reset << "Dwarf ";
+    Player::displayInfo(out);
+}
+
+void Elf::displayInfo(std::ostream& out) {
+    out << Color::BWhite << "Race: " << Color::Reset << "Elf ";
+    Player::displayInfo(out);
+}
+
+void Human::displayInfo(std::ostream& out) {
+    out << Color::BWhite << "Race: " << Color::Reset << "Human ";
+    Player::displayInfo(out);
+}
+
+void Orc::displayInfo(std::ostream& out) {
+    out << Color::BWhite << "Race: " << Color::Reset << "Orc ";
+    Player::displayInfo(out);
 }

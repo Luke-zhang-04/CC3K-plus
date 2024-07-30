@@ -80,17 +80,17 @@ Tile* getTileFromChar(char character, Player* player, Board& board) {
             return new Tile{Symbol::FloorTile, nullptr, nullptr, new Dragon{board}};
 
         case (char) InputMapNumbers::PotionRestoreHealth:
-            return new Tile{Symbol::FloorTile, nullptr, new Potion{10}};
+            return new Tile{Symbol::FloorTile, nullptr, new Potion{"RH", 10}};
         case (char) InputMapNumbers::PotionBoostAttack:
-            return new Tile{Symbol::FloorTile, nullptr, new Potion{0, 5}};
+            return new Tile{Symbol::FloorTile, nullptr, new Potion{"BA", 0, 5}};
         case (char) InputMapNumbers::PotionBoostDefense:
-            return new Tile{Symbol::FloorTile, nullptr, new Potion{0, 0, 5}};
+            return new Tile{Symbol::FloorTile, nullptr, new Potion{"BD", 0, 0, 5}};
         case (char) InputMapNumbers::PotionPoisonHealth:
-            return new Tile{Symbol::FloorTile, nullptr, new Potion{-10}};
+            return new Tile{Symbol::FloorTile, nullptr, new Potion{"PH", -10}};
         case (char) InputMapNumbers::PotionWoundAttack:
-            return new Tile{Symbol::FloorTile, nullptr, new Potion{0, -5}};
+            return new Tile{Symbol::FloorTile, nullptr, new Potion{"WA", 0, -5}};
         case (char) InputMapNumbers::PotionWoundDefense:
-            return new Tile{Symbol::FloorTile, nullptr, new Potion{0, 0, -5}};
+            return new Tile{Symbol::FloorTile, nullptr, new Potion{"WD", 0, 0, -5}};
         case (char) InputMapNumbers::TreasureSmallGoldPile:
             return new Tile{Symbol::FloorTile, new Treasure{1}};
         case (char) InputMapNumbers::TreasureSmallHoard:
@@ -166,7 +166,7 @@ void Game::randomPopulateMap(Board* newBoard, Player* player) {
 
     // Spawn distributions
     std::array<Potion, 6> potionDist{
-        Potion{10}, Potion{0, 5}, Potion{0, 0, 5}, Potion{-10}, Potion{0, -5}, Potion{0, 0, -5}
+        Potion{"RH", 10}, Potion{"BH", 0, 5}, Potion{"BD", 0, 0, 5}, Potion{"PH", -10}, Potion{"WA", 0, -5}, Potion{"WD", 0, 0, -5}
     };
     std::vector<int> goldDist = createVector(std::array<std::pair<size_t, int>, 3>{{
         {SpawnRates::GoldNormalRate, 2},
@@ -192,7 +192,7 @@ void Game::randomPopulateMap(Board* newBoard, Player* player) {
         shuffle(chambers[index]);
 
         totalTileCount += chambers[index].size();
-        chamberTileCounts[index] = {index, chambers[index].size()};
+        chamberTileCounts[index] = {newBoard->at(chambers[index][0])->chamberId, chambers[index].size()};
         chamberIters[index] = chambers[index].begin();
     }
     if (totalTileCount <= SpawnRates::Total + 2) {
@@ -372,6 +372,11 @@ void Game::nextLevel() {
 
     delete currentBoard;
     currentBoard = newBoard;
+
+    ++level;
+
+    // DEBUG:
+    currentBoard->showStairs();
 }
 
 bool Game::playerMove(CardinalDirection dir) {
@@ -399,12 +404,32 @@ bool Game::playerMove(CardinalDirection dir) {
         // move the player to the open location
         std::swap(curTile->player, newTile->player);
         currentBoard->movePlayer(dir);
+
+        // logging logic
+        player->log() << "PC moves " << directionToString(dir);
+        auto newArea = currentBoard->getArea(loc);
+        for (int dx = 0; dx <= 2; ++dx) {
+            for (int dy = 0; dy <= 2; ++dy) {
+                if (dx == 1 && dy == 1)
+                    continue; // if both are 0, move on, don't let them not move
+
+                if (newArea[dy][dx] != nullptr) {
+                    if (newArea[dy][dx]->enemy)
+                        player->log() << " and sees a " << newArea[dy][dx]->getCharacter();
+                    else if (newArea[dy][dx]->item)
+                        player->log() << " and sees an unknown potion ";
+                    else if (newArea[dy][dx]->treasure)
+                        player->log() << " and sees a treasure";
+                }
+            }
+        }
+        player->log() << ".";
     }
+
 
     update();
 
     // logging
-    player->log("PC moves " + directionToString(dir));
 
     return player->getHealth() > 0;
 }
@@ -418,12 +443,9 @@ bool Game::playerAttack(CardinalDirection dir) {
     Enemy* enemy = targetTile->enemy;
     if (enemy) {
         std::pair<int, int> attackStats = enemy->beAttacked(player->getPower());
-        player->log(
-            "PC deals " + std::string(1, attackStats.second) + " damage to " +
-            std::string(1, targetTile->getCharacter()) + " (" +
-            std::string(1, std::max(0, attackStats.first)) + " HP)."
-        );
-        // ?????? was > 0 before
+        player->log() << "PC deals " << attackStats.second << " damage to "
+                      << targetTile->getCharacter() << " (" << std::max(0, attackStats.first)
+                      << " HP). ";
         if (attackStats.first < 0) {
             // if they die, take their gold
             player->pickupGold(enemy->goldValue());
@@ -468,8 +490,7 @@ bool Game::playerPickup(CardinalDirection dir) {
 }
 
 void Game::render() const {
-    currentBoard->render(output, player->getLog());
-
-    player->clearLog();
+    currentBoard->render(output);
+    player->displayInfo(output);
     // TODO: info pannel
 }

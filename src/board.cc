@@ -78,14 +78,13 @@ void Board::showStairs() {
     map[stairLocation.second][stairLocation.first]->mapTile = Symbol::Stairs;
 }
 
-void Board::render(std::ostream& out, std::stringstream& logs) const {
+void Board::render(std::ostream& out) const {
     for (const std::vector<Tile*>& row : map) {
         for (const Tile* tile : row) {
             out << *tile;
         }
         out << '\n';
     }
-    out << logs.str() << '\n';
     out << std::flush;
 }
 
@@ -103,11 +102,9 @@ void Board::updateEnemies() {
                         // don't worry if the player dies
                         std::pair<int, int> attackStats =
                             game.player->beAttacked(t->enemy->getPower());
-                        game.player->log(
-                            std::string(1, t->getCharacter()) + " deals " +
-                            std::string(1, attackStats.second) + " damage to PC."
-                        );
-                        std::cout << "DEBUG ATTK:" << attackStats.second << std::endl;
+
+                        (game.player->log()) << " " << t->getCharacter() << " deals "
+                                             << attackStats.second << " damage to PC.";
                     }
                 }
                 // otherwise, if they're doing anything they're moving

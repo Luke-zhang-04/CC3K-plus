@@ -78,3 +78,7 @@
 ### Character
 
 -   `Player`s don't care about board, only `Enemy`, so move `Board&` to `Enemy`
+
+### Potion
+
+-   Needs a self description of what type of potion it is

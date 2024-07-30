@@ -99,6 +99,7 @@
     "filesystem": "cpp",
     "utility": "cpp",
     "__tree": "cpp",
-    "set": "cpp"
+    "set": "cpp",
+    "algorithm": "cpp"
   },
 }

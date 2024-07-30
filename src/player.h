@@ -3,6 +3,7 @@
 
 #include "character.h"
 
+#include <iostream>
 #include <sstream>
 
 class Board;
@@ -15,6 +16,7 @@ class Player: public Character {
         int defenseMod = 0;
         int electrum = 0; // half gold increments
         std::stringstream sysLog;
+        void clearLog();
 
     public:
         Player(int maxHealth, int defense, int attack);
@@ -32,11 +34,9 @@ class Player: public Character {
 
         bool canMove(const Tile*) const override;
 
-        void log(std::string);
-        void clearLog(); // remove
-        std::stringstream& getLog(); // remove
+        std::stringstream& log(); // remove
 
-        void displayInfo(ostream&);
+        virtual void displayInfo(std::ostream&);
 };
 
 #endif

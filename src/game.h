@@ -22,6 +22,9 @@ class Game {
         /** If enemies/potions/gold should be randomly generated */
         bool shouldGenerate;
 
+        // current level count "first is 0"
+        int level = 0;
+
         // update the board, then render the bottom bar. happens after a player action
         void update();
         void nextLevel();

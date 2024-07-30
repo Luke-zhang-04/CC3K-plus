@@ -39,7 +39,7 @@ class Board {
         void showStairs();
 
         // render all tiles to ostream
-        void render(std::ostream&, std::stringstream&) const;
+        void render(std::ostream&) const;
 
         // update all enemies
         void updateEnemies();

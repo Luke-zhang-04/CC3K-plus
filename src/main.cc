@@ -1,6 +1,6 @@
 #include "constants.h"
-#include "default_floor.h"
 #include "game.h"
+#include "layouts.h"
 #include "player.h"
 #include "races.h"
 #include "random.h"
@@ -38,7 +38,8 @@ Game* init(std::string& fileName) {
         std::stringstream stream{};
 
         for (int i = 0; i < 5; i++) {
-            stream << defaultFloor << '\n';
+            // stream << defaultFloor << '\n';
+            stream << smallFloor << '\n';
         }
 
         return new Game(player, std::cout, stream, true);
@@ -110,7 +111,14 @@ int main(int argc, char* argv[]) {
             }
 
             if (!playerAlive) {
-                std::cout << "You DEER! Would you like to continue? " << std::flush;
+                std::cout << "You DEER! Would you like to continue? (Yes/No)" << std::flush;
+                delete game;
+                std::string choice;
+                std::cin >> choice;
+                if (choice == "Yes" || choice == "yes" || choice == "y")
+                    game = init(fileName);
+                else
+                    game = nullptr;
             } else {
                 std::cout << "Command: " << std::flush;
             }
