@@ -53,10 +53,20 @@ void Player::log(std::string str) {
     sysLog << str;
 }
 
+void Player::log(int i) {
+    if (sysLog.str().length() > 0)
+        sysLog << " ";
+    sysLog << i;
+}
+
 void Player::clearLog() {
-    sysLog.clear();
+    sysLog.str(std::string());
 }
 
 std::stringstream& Player::getLog() {
     return sysLog;
+}
+
+void Player::displayInfo(ostream& out) {
+    out << "Race: " << '\n';
 }

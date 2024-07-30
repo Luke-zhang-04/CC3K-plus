@@ -156,9 +156,10 @@ std::vector<std::vector<coordPair>>
 }
 
 void Game::randomPopulateMap(Board* newBoard, Player* player) {
+    std::vector<std::vector<coordPair>>& chambers = newBoard->chambers;
     size_t totalTileCount = 0;
     // Pair (chamber id, remaining spawnable tiles)
-    std::vector<std::pair<size_t, size_t>> chamberTileCounts{};
+    std::vector<std::pair<size_t, size_t>> chamberTileCounts(chambers.size());
     // Number of things have been spawned in each chamber
     std::unordered_map<size_t, std::vector<coordPair>::iterator> chamberIters{};
     std::queue<size_t> selectedChambers{}; // Chambers selected for spawning
@@ -185,9 +186,6 @@ void Game::randomPopulateMap(Board* newBoard, Player* player) {
     // of a chamberID is bounded by chamberTileCounts. Each spawned item advances
     // chamberIters. We shuffle chamberTiles, so this is random. to index the tiles.
 
-    std::vector<std::vector<coordPair>>& chambers = newBoard->chambers;
-
-    chamberTileCounts.reserve(chambers.size());
     chamberIters.reserve(chambers.size());
 
     for (size_t index = 0; index < chambers.size(); index++) {
@@ -211,7 +209,7 @@ void Game::randomPopulateMap(Board* newBoard, Player* player) {
     chamberIters[initSpawns.second]++;
 
     for (uint8_t i = 0; i < SpawnRates::Total; i++) {
-        int randIndex = randInt(0, chamberTileCounts.size() - 1);
+        size_t randIndex = randInt(0, chamberTileCounts.size() - 1);
 
         chamberTileCounts[randIndex].second--;
 
@@ -471,6 +469,7 @@ bool Game::playerPickup(CardinalDirection dir) {
 
 void Game::render() const {
     currentBoard->render(output, player->getLog());
+
     player->clearLog();
     // TODO: info pannel
 }

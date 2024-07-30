@@ -5,6 +5,7 @@
 -   `player->pickupGold` can just take an amount, no need to pass `Treasure`
 -   Gold should be stored as electrum (0.5 gold each), so orcs can easily collect in 1/2 increments
 -   `player->pickupSuit` needs no arguments, the suit will just call it when it's picked up, and now the player is suited
+-   `player->infoPannel` displays current information about the player to an ostream
 
 ### Retrievable
 

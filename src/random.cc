@@ -9,7 +9,7 @@
 std::default_random_engine randomEngine{};
 
 size_t randInt(size_t start, size_t end) {
-    return std::uniform_int_distribution<size_t>(start, end)(randomEngine);
+    return std::uniform_int_distribution<int>(start, end)(randomEngine);
 }
 
 std::pair<size_t, size_t> randIntPair(size_t start, size_t end) {
