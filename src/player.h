@@ -27,10 +27,11 @@ class Player: public Character {
         virtual void pickupSuit();
         void reset();
 
-        int getHealth();
-        int getAttack() override;
-        int getDefense() override;
-        int getElectrum();
+        int getHealth() const;
+        int getAttack() const override;
+        int getDefense() const override;
+        int getElectrum() const;
+        virtual int getScore() const; // calculate score and return it
 
         bool canMove(const Tile*) const override;
 

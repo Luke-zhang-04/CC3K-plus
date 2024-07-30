@@ -1,6 +1,5 @@
 #ifndef BARRIER_SUIT_H
 #define BARRIER_SUIT_H
-#include "dragon_protected.h"
 #include "retrievable.h"
 
 class Player;

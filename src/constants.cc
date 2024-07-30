@@ -73,15 +73,15 @@ CardinalDirection stringToDirection(std::string str) {
 
 std::string directionToString(CardinalDirection c) {
     switch (c) {
-        case CardinalDirection::NorthWest: return "North West";
-        case CardinalDirection::North: return "North";
-        case CardinalDirection::NorthEast: return "North East";
-        case CardinalDirection::West: return "West";
-        case CardinalDirection::Center: return "Center";
-        case CardinalDirection::East: return "East";
-        case CardinalDirection::SouthWest: return "South West";
-        case CardinalDirection::South: return "South";
-        case CardinalDirection::SouthEast: return "South East";
+        case CardinalDirection::NorthWest: return "north west";
+        case CardinalDirection::North: return "north";
+        case CardinalDirection::NorthEast: return "north east";
+        case CardinalDirection::West: return "west";
+        case CardinalDirection::Center: return "center";
+        case CardinalDirection::East: return "east";
+        case CardinalDirection::SouthWest: return "south west";
+        case CardinalDirection::South: return "south";
+        case CardinalDirection::SouthEast: return "south east";
         default: return "";
     }
 }

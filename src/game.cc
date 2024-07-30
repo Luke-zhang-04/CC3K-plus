@@ -21,6 +21,7 @@
 #include <iostream>
 #include <queue>
 #include <stdexcept>
+#include <string>
 #include <unordered_map>
 #include <utility>
 #include <vector>
@@ -29,7 +30,7 @@ using std::size_t;
 
 Game::Game(Player* player, std::ostream& output, std::istream& layoutInput, bool shouldGenerate):
     output{output}, layoutInput{layoutInput}, player{player}, shouldGenerate{shouldGenerate},
-    suitLevel{(int)randInt(0, 4)} {
+    suitLevel{(int) randInt(0, 4)} {
     nextLevel();
 }
 
@@ -202,7 +203,6 @@ void Game::randomPopulateMap(Board* newBoard, Player* player) {
          {SpawnRates::EnemyMerchantRate, EnemyType::Merchant},
          {SpawnRates::EnemyPhoenixRate, EnemyType::Phoenix}}
     });
-
     // Summary: selectedChambers holds chamberIDs in some random order. The number of occurrences
     // of a chamberID is bounded by chamberTileCounts. Each spawned item advances
     // chamberIters. We shuffle chamberTiles, so this is random. to index the tiles.
@@ -221,7 +221,11 @@ void Game::randomPopulateMap(Board* newBoard, Player* player) {
 
     // +2 for player/stairs, +1 for potential compass, + goldTotal for dragon hoards
     if (totalTileCount <= SpawnRates::Total + SpawnRates::GoldTotal + 3) {
-        throw std::length_error("board is not large enough to spawn everything");
+        throw std::length_error(
+            "board is not large enough to spawn everything (want " +
+            std::to_string(SpawnRates::Total + SpawnRates::GoldTotal + 3) + ", got " +
+            std::to_string(totalTileCount) + ")"
+        );
     }
 
     // (random player location, random stair location)
@@ -229,9 +233,8 @@ void Game::randomPopulateMap(Board* newBoard, Player* player) {
 
     (*chamberIters[initSpawns.first])->player = player;
     newBoard->playerLocation = (*chamberIters[initSpawns.first])->location;
-    newBoard->stairLocation = (*chamberIters[initSpawns.second])->location;
-
     chamberIters[initSpawns.first]++;
+    newBoard->stairLocation = (*chamberIters[initSpawns.second])->location;
     chamberIters[initSpawns.second]++;
 
     for (uint8_t i = 0; i < SpawnRates::Total + SpawnRates::GoldTotal + 1; i++) {
@@ -288,7 +291,6 @@ void Game::randomPopulateMap(Board* newBoard, Player* player) {
             chamberIters[chamberId]++;
         }
 
-        std::cout << "AMT: " << (int)amt << std::endl;
         if (amt == TreasureType::DragonHoard) {
             auto area = newBoard->getArea(tile);
 
@@ -308,8 +310,6 @@ void Game::randomPopulateMap(Board* newBoard, Player* player) {
                     }
                 }
             }
-
-            std::cout << "A SIZE " << available.size() << std::endl;
 
             if (available.size() == 0) {
                 tile->treasure = new Treasure{amt};
@@ -371,6 +371,8 @@ void Game::randomPopulateMap(Board* newBoard, Player* player) {
     }
 }
 
+size_t readChars = 0;
+
 /**
  * @brief delete the old board and create a new one using data from the layoutInput stream
  *
@@ -382,6 +384,11 @@ void Game::randomPopulateMap(Board* newBoard, Player* player) {
  */
 void Game::nextLevel() {
     // reset the player, just in case this isn't the first floor
+
+    // if we are calling nextLevel from the last level, do nothing (you win)
+    if (level >= levelCount)
+        return;
+
     player->reset();
 
     coordPair compassLocation{0, 0};
@@ -400,9 +407,9 @@ void Game::nextLevel() {
 
     std::vector<std::vector<Tile*>>& tiles = newBoard->map;
 
-    layoutInput >> std::noskipws;
-
     while (layoutInput >> input) {
+        readChars++;
+        std::cout << (int)input << (input == '\n' ? '\n' : ' ') << std::flush;
         std::vector<Tile*>& row = tiles[tiles.size() - 1];
 
         if (input == '\n') {
@@ -412,7 +419,6 @@ void Game::nextLevel() {
 
             tiles.emplace_back(std::vector<Tile*>{});
             isEnd = true;
-            std::cout << std::endl;
             continue;
         }
         if (input != Symbol::WallHorz && input != Symbol::WallVert) {
@@ -448,7 +454,7 @@ void Game::nextLevel() {
         }
     }
 
-    layoutInput >> std::skipws;
+    std::cout << "READ CHARS " << readChars << std::endl;
 
     // Postprocessing: connect dragon to protected
     if (dragonProtectedItem != nullptr && dragon != nullptr) {
@@ -459,8 +465,7 @@ void Game::nextLevel() {
         }
 
         dragon->protects = dragonProtectedItem;
-        dragonProtectedItem->setProtector(dragon
-        ); // DRAGON DEEZ NUTS ACROSS... // TODO: allow protecting after creation
+        dragonProtectedItem->setProtector(dragon); // DRAGON DEEZ NUTS ACROSS...
     }
 
     // Postprocessing: label chambers
@@ -471,14 +476,26 @@ void Game::nextLevel() {
         randomPopulateMap(newBoard, player);
     } else { // Passed in map
         if (stairLocation.first == 0 || stairLocation.second == 0) {
-            throw std::invalid_argument("invalid stair location in pre-determined map");
+            throw std::invalid_argument(
+                "invalid stair location in pre-determined map (" +
+                std::to_string(stairLocation.first) + ", " +
+                std::to_string(stairLocation.second) + ")"
+            );
         }
         if (playerLocation.first == 0 || playerLocation.second == 0) {
-            throw std::invalid_argument("invalid player location in pre-determined map");
+            throw std::invalid_argument(
+                "invalid player location in pre-determined map (" +
+                std::to_string(playerLocation.first) + ", " + std::to_string(playerLocation.second) +
+                ")"
+            );
         }
         if (compassHoldingEnemies.size() == 0 &&
             (compassLocation.first == 0 || compassLocation.second == 0)) {
-            throw std::invalid_argument("cannot assign compass to enemy and location not given");
+            throw std::invalid_argument(
+                "cannot assign compass to enemy and location not given (" +
+                std::to_string(compassLocation.first) + ", " +
+                std::to_string(compassLocation.second) + ")"
+            );
         }
 
         newBoard->stairLocation = stairLocation;
@@ -497,6 +514,10 @@ void Game::nextLevel() {
     currentBoard = newBoard;
 
     ++level;
+
+    if (level > 1) {
+        player->log() << " to level " << Color::Green << level << Color::Reset;
+    }
 }
 
 bool Game::playerMove(CardinalDirection dir) {
@@ -508,6 +529,27 @@ bool Game::playerMove(CardinalDirection dir) {
     Tile* curTile = currentBoard->at(loc);
     Player* player = curTile->player;
     Tile* newTile = currentBoard->inDirection(loc, dir);
+
+    // My first co-op work term, you know, I was writing C code, and I used a `goto`, and my boss
+    // looked at the code, and he said "what's this, what are you doing?", and you know, the `goto`
+    // made sense there, and then he deleted it, and then he put it back, and he said "you're a
+    // co-op, you're not allowed to use `goto`s, but I'm a senior guy so it's ok".
+    // - Ondřej Lhoták
+    if (newTile == nullptr) {
+        // we used a goto in an assignment :)
+        goto end;
+    }
+
+    // Check if we are going to walk onto a staircase
+    if (newTile->location == currentBoard->stairLocation) {
+        player->log() << " " << Color::BICyan << "PC" << Color::Reset << " moves down the "
+                      << Color::UBlack << "stairs" << Color::Reset;
+
+        nextLevel();
+        render();
+
+        return true;
+    }
 
     // now check if we landed on a pickup
     if (newTile->treasure) {
@@ -526,7 +568,8 @@ bool Game::playerMove(CardinalDirection dir) {
         currentBoard->movePlayer(dir);
 
         // logging logic
-        player->log() << "PC moves " << directionToString(dir);
+        player->log() << " " << Color::BICyan << "PC" << Color::Reset << " moves " << Color::UBlack
+                      << directionToString(dir) << Color::Reset;
         auto newArea = currentBoard->getArea(loc);
         for (int dx = 0; dx <= 2; ++dx) {
             for (int dy = 0; dy <= 2; ++dy) {
@@ -535,17 +578,20 @@ bool Game::playerMove(CardinalDirection dir) {
 
                 if (newArea[dy][dx] != nullptr) {
                     if (newArea[dy][dx]->enemy)
-                        player->log() << " and sees a " << newArea[dy][dx]->getCharacter();
+                        player->log() << " and sees a " << *newArea[dy][dx];
                     else if (newArea[dy][dx]->item)
-                        player->log() << " and sees an unknown potion";
+                        player->log() << " and sees an unknown " << Color::Purple << "potion"
+                                      << Color::Reset;
                     else if (newArea[dy][dx]->treasure)
-                        player->log() << " and sees a treasure";
+                        player->log()
+                            << " and sees a " << Color::IYellow << "treasure" << Color::Reset;
                 }
             }
         }
         player->log() << ".";
     }
 
+end:
     update();
 
     // logging
@@ -562,9 +608,10 @@ bool Game::playerAttack(CardinalDirection dir) {
     Enemy* enemy = targetTile->enemy;
     if (enemy) {
         std::pair<int, int> attackStats = enemy->beAttacked(player->getAttack());
-        player->log() << " PC deals " << attackStats.second << " damage to "
-                      << targetTile->getCharacter() << " (" << std::max(0, attackStats.first)
-                      << " HP). ";
+        player->log() << " " << Color::BICyan << "PC" << Color::Reset << " deals "
+                      << attackStats.second << " damage to " << *targetTile << " ("
+                      << enemy->getHealthColor() << std::max(0, attackStats.first) << Color::Reset
+                      << " HP).";
         if (attackStats.first <= 0) {
             // if they die, take their gold
             player->pickupGold(enemy->goldValue());
@@ -606,7 +653,15 @@ bool Game::playerPickup(CardinalDirection dir) {
     return player->getHealth() > 0;
 }
 
+bool Game::didWin() {
+    return (level >= levelCount);
+}
+
 void Game::render() const {
     currentBoard->render(output);
     player->displayInfo(output);
+}
+
+int Game::getScore() const {
+    return player->getScore();
 }

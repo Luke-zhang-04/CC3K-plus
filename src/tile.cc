@@ -30,11 +30,3 @@ char Tile::getCharacter() const {
 bool Tile::empty() const {
     return player == nullptr && enemy == nullptr && item == nullptr && treasure == nullptr;
 }
-
-std::ostream& operator<<(std::ostream& out, const Tile& tile) {
-    char character = tile.getCharacter();
-
-    out << symbolToColor(character) << character << Color::Reset;
-
-    return out;
-}

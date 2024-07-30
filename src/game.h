@@ -23,14 +23,14 @@ class Game {
         /** If enemies/potions/gold should be randomly generated */
         bool shouldGenerate;
 
-        // current level count "first is 0"
+        // current level count "first is 1"
         int level = 0;
 
         int suitLevel; // randomly generate 0-4 on construction
 
         // update the board, then render the bottom bar. happens after a player action
         void update();
-        void nextLevel();
+        // void nextLevel();
 
         /**
          * @brief randomly populates floorTiles according to spec
@@ -71,6 +71,9 @@ class Game {
         );
 
     public:
+        // temp
+        void nextLevel();
+
         Game(Player*, std::ostream&, std::istream&, bool generate);
         ~Game();
 
@@ -80,10 +83,13 @@ class Game {
         bool playerAttack(CardinalDirection);
         /** @returns boolean indicating if player is still alive or not */
         bool playerPickup(CardinalDirection);
-        bool isAlive();
 
         // Render with no side effects to the output stream
         void render() const;
+
+        bool didWin();
+
+        int getScore() const;
 };
 
 #endif

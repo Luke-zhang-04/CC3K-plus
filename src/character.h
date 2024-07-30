@@ -1,6 +1,7 @@
 #ifndef CHARACTER_H
 #define CHARACTER_H
 
+#include <string>
 #include <utility>
 
 class Board;
@@ -15,10 +16,11 @@ class Character {
 
         /** Character to be displayed on board */
         virtual char getCharacter() = 0;
+        std::string getHealthColor() const;
 
         /** Attacking power */
-        virtual int getAttack();
-        virtual int getDefense();
+        virtual int getAttack() const;
+        virtual int getDefense() const;
 
         /**
          * Update its own health and returns it, could be negative if it dies

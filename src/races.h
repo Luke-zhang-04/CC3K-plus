@@ -23,6 +23,7 @@ class Human: public Player {
     public:
         Human();
         void displayInfo(std::ostream&) override;
+        int getScore() const override;
 };
 
 class Orc: public Player {
@@ -35,6 +36,7 @@ class Orc: public Player {
 class God: public Player {
     public:
         God();
+        void usePotion(int healthMod, int attackMod, int defenseMod) override;
         void displayInfo(std::ostream&) override;
 };
 

@@ -1,19 +1,31 @@
 #include "character.h"
 
+#include "constants.h"
 #include "tile.h"
 
 #include <cmath>
+#include <string>
 #include <utility>
 
 Character::Character(int maxHealth, int attack, int defense):
     maxHealth{maxHealth}, health{maxHealth}, defense{defense}, attack{attack} {}
 
-int Character::getAttack() {
+int Character::getAttack() const {
     return attack;
 }
 
-int Character::getDefense() {
+int Character::getDefense() const {
     return defense;
+}
+
+std::string Character::getHealthColor() const {
+    if (health <= maxHealth / 4) {
+        return Color::IRed;
+    } else if (health <= maxHealth / 2) {
+        return Color::IYellow;
+    }
+
+    return Color::IGreen;
 }
 
 std::pair<int, int> Character::beAttacked(int attackPower) {

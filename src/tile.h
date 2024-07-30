@@ -15,7 +15,14 @@ class Player;
 
 /* clang-format off */
 struct Tile {
-    friend std::ostream& operator<<(std::ostream&, Tile&);
+    friend std::ostream& operator<<(std::ostream& out, const Tile& tile) {
+        char character = tile.getCharacter();
+
+        out << symbolToColor(character) << character << Color::Reset;
+
+        return out;
+    }
+
 
     coordPair location;
     char mapTile = Symbol::Blank;
@@ -36,7 +43,5 @@ struct Tile {
     ~Tile();
 };
 /* clang-format on */
-
-std::ostream& operator<<(std::ostream&, const Tile&);
 
 #endif

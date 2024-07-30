@@ -107,5 +107,5 @@
     "ranges": "cpp",
     "cinttypes": "cpp",
     "fstream": "cpp"
-  },
+  }
 }

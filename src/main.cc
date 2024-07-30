@@ -16,13 +16,16 @@
 using std::cout;
 using std::endl;
 
-Game* init(std::string& fileName) {
-    Player* player;
-    Game* game;
+Player* initPlayer() {
+    Player* player = nullptr;
     char move;
-    std::cout << "Select race: options are (h)uman, (e)lf, (d)warf, (o)rc, and (g)od: "
-              << std::flush;
+    std::cout << Color::BWhite << "Select race: " << Color::Reset << "options are "
+              << Color::Yellow << "(h)uman" << Color::Reset << ", " << Color::White << "(e)lf"
+              << Color::Reset << ", " << Color::Black << "(d)warf" << ", " << Color::Green
+              << "(o)rc" << Color::Reset << ", and " << Color::BIYellow << "(g)od" << Color::Reset
+              << ": " << Color::FWhite << std::flush;
     std::cin >> move;
+    std::cout << Color::Reset;
 
     switch (move) {
         case 'h': player = new Human(); break;
@@ -30,27 +33,14 @@ Game* init(std::string& fileName) {
         case 'd': player = new Dwarf(); break;
         case 'o': player = new Orc(); break;
         case 'g': player = new God(); break;
-        case 'r': return init(fileName);
+        case 'r': return initPlayer();
         case 'q': return nullptr;
-        default: return init(fileName);
+        default: return initPlayer();
     }
 
-    std::cout << "GENERATING NEW MAP WITH " << fileName << " AS FILENAME!\n";
+    player->log() << Color::BICyan << " Player character" << Color::Reset << " has spawned.";
 
-    if (fileName == "") {
-        std::stringstream stream{};
-
-        for (int i = 0; i < 5; i++) {
-            // stream << defaultFloor << '\n';
-            stream << smallFloor << '\n';
-        }
-
-        return new Game(player, std::cout, stream, true);
-    }
-
-    std::ifstream stream{fileName};
-
-    return new Game(player, std::cout, stream, false);
+    return player;
 }
 
 // void playerTurn(Player* player) {
@@ -72,8 +62,45 @@ int main(int argc, char* argv[]) {
 
         randomEngine.seed(seed);
 
+        if (fileName == "default") {
+            fileName = "";
+        }
+
+        bool isInputMap = fileName == "";
+
         Game* game = nullptr;
-        game = init(fileName);
+
+        std::istream* stream = nullptr;
+        if (fileName == "") {
+            std::stringstream _stream{};
+
+            stream = &_stream;
+
+            for (int i = 0; i < 5; i++) {
+                _stream << smallFloor << '\n';
+            }
+
+            std::cout << _stream.str() << std::endl;
+
+            _stream >> std::noskipws;
+
+            game = new Game(initPlayer(), std::cout, *stream, isInputMap);
+        } else {
+            std::ifstream _stream{fileName};
+            stream = &_stream;
+
+            _stream >> std::noskipws;
+
+            game = new Game(initPlayer(), std::cout, *stream, isInputMap);
+        }
+
+        // TODO REMOVE
+        game->render();
+        game->nextLevel();
+        game->render();
+        game->nextLevel();
+        game->render();
+
         bool playerAlive = true;
 
         if (game == nullptr) {
@@ -85,15 +112,16 @@ int main(int argc, char* argv[]) {
         game->render();
 
         std::string move;
-        std::cout << "Command: " << std::flush;
+        std::cout << "Command: " << Color::FWhite << std::flush;
         while (std::cin >> move && move != "q") {
+            std::cout << Color::Reset;
             if (!game)
                 break;
             else if (move == "r") {
                 delete game;
 
                 playerAlive = true;
-                game = init(fileName);
+                game = new Game(initPlayer(), std::cout, *stream, isInputMap);
                 if (game == nullptr) {
                     std::cout << "Exiting..." << std::endl;
 
@@ -131,11 +159,27 @@ int main(int argc, char* argv[]) {
                 std::cin >> choice;
                 if (choice == "Yes" || choice == "yes" || choice == "y") {
                     playerAlive = true;
-                    game = init(fileName);
+                    game = new Game(initPlayer(), std::cout, *stream, isInputMap);
                 } else
                     game = nullptr;
             } else {
-                std::cout << "Command: " << std::flush;
+                std::cout << Color::BWhite << "Command: " << Color::FWhite << std::flush;
+            }
+
+            if (game->didWin()) {
+                std::cout << Color::BWhite
+                          << "Congratulations! You Won! "
+                          << "Your score was " << game->getScore()
+                          << " Would you like to play again? (Yes/No) "
+                          << Color::FWhite << std::flush;
+                delete game;
+                std::string choice;
+                std::cin >> choice;
+                if (choice == "Yes" || choice == "yes" || choice == "y") {
+                    playerAlive = true;
+                    game = new Game(initPlayer(), std::cout, *stream, isInputMap);
+                } else
+                    game = nullptr;
             }
         }
 
@@ -144,10 +188,12 @@ int main(int argc, char* argv[]) {
 
         return 0;
     } catch (const std::exception& ex) {
-        std::cout << ex.what() << std::endl;
+        std::cout << Color::IRed << "ERROR: " << Color::Reset << ex.what() << std::endl;
 
         return 1;
     } catch (...) {
+        std::cout << "Uncaught thing" << std::endl;
+
         return 1;
     };
 }

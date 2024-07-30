@@ -54,6 +54,24 @@ Board::~Board() {
     }
 }
 
+/** Returns nullptr if element is out of bounds */
+template<typename T>
+T optional2DIndex(
+    const std::vector<std::vector<T>>& vec, size_t x, int xChange, size_t y, int yChange
+) {
+    if (y + yChange < 0 || y + yChange >= vec.size()) {
+        return nullptr;
+    }
+
+    const std::vector<T>& row = vec[y + yChange];
+
+    if (x + xChange < 0 || x + xChange >= row.size()) {
+        return nullptr;
+    }
+
+    return row[x + xChange];
+}
+
 Tile* Board::at(size_t x, size_t y) const {
     return map.at(y).at(x);
 }
@@ -65,7 +83,8 @@ Tile* Board::at(const coordPair& coords) const {
 Tile* Board::inDirection(size_t x, size_t y, CardinalDirection dir) const {
     auto d = directionToDisplacement(dir);
 
-    return map.at(y + d.second).at(x + d.first);
+    // return map.at(y + d.second).at(x + d.first);
+    return optional2DIndex(map, x, d.first, y, d.second);
 }
 
 Tile* Board::inDirection(const coordPair& loc, CardinalDirection dir) const {
@@ -111,8 +130,8 @@ void Board::updateEnemies() {
                         std::pair<int, int> attackStats =
                             game.player->beAttacked(t->enemy->getAttack());
 
-                        (game.player->log()) << " " << t->getCharacter() << " deals "
-                                             << attackStats.second << " damage to PC.";
+                        (game.player->log())
+                            << " " << *t << " deals " << attackStats.second << " damage to PC.";
                     }
                 }
                 // otherwise, if they're doing anything they're moving
@@ -123,24 +142,6 @@ void Board::updateEnemies() {
             }
         }
     }
-}
-
-/** Returns nullptr if element is out of bounds */
-template<typename T>
-T optional2DIndex(
-    const std::vector<std::vector<T>>& vec, size_t x, int xChange, size_t y, int yChange
-) {
-    if (y + yChange < 0 || y + yChange >= vec.size()) {
-        return nullptr;
-    }
-
-    const std::vector<T>& row = vec[y + yChange];
-
-    if (x + xChange < 0 || x + xChange >= row.size()) {
-        return nullptr;
-    }
-
-    return row[x + xChange];
 }
 
 const std::array<const std::array<const Tile*, 3>, 3> Board::getArea(size_t x, size_t y) const {

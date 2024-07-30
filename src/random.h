@@ -27,7 +27,10 @@ void shuffle(std::array<T, size>& arr) {
 /** @brief random integer between [start, end] */
 size_t randInt(size_t start, size_t end);
 
-/** @brief random pair of distinct integers between [start, end] (i.e first != second) */
+/**
+ * @brief random pair of distinct integers between [start, end] (i.e first != second), UNLESS start
+ * == end, in which case first = start = end = second
+ */
 std::pair<size_t, size_t> randIntPair(size_t start, size_t end);
 
 #endif

@@ -16,6 +16,10 @@ size_t randInt(size_t start, size_t end) {
 }
 
 std::pair<size_t, size_t> randIntPair(size_t start, size_t end) {
+    if (start == end) {
+        return {start, start};
+    }
+
     std::pair<size_t, size_t> pair{randInt(start, end), randInt(start, end - 1)};
 
     if (pair.second >= pair.first) {

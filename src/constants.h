@@ -7,6 +7,8 @@
 
 using std::string;
 
+constexpr const uint8_t levelCount = 5;
+
 namespace Symbol {
     constexpr const char BarrierSuit = 'B';
     constexpr const char Compass = 'C';
@@ -35,7 +37,7 @@ namespace Symbol {
 }; // namespace Symbol
 
 namespace SpawnRates {
-    const uint8_t EnemyTotal = 20;
+    const uint8_t EnemyTotal = 0;
     const uint8_t EnemyTotalRate = 18;
     const uint8_t EnemyVampireRate = 3;
     const uint8_t EnemyWerewolfRate = 4;
@@ -56,7 +58,6 @@ namespace SpawnRates {
 
     const uint8_t Total = SpawnRates::EnemyTotal + SpawnRates::PotionTotal + SpawnRates::GoldTotal;
 
-    static_assert(EnemyTotal > 0, "Need at least 1 enemy for compass");
     static_assert(
         Total == SpawnRates::EnemyTotal + SpawnRates::PotionTotal + SpawnRates::GoldTotal,
         "Spawn totals don't add up (how tf did we get here)"
@@ -127,12 +128,7 @@ namespace ArrowKey {
 }; // namespace ArrowKey
 
 namespace Color {
-    // Source: https://gist.github.com/RabaDabaDoba/145049536f815903c79944599c6f952a
-    /*
-     * This is free and unencumbered software released into the public domain.
-     *
-     * For more information, please refer to <https://unlicense.org>
-     */
+    // https://en.wikipedia.org/wiki/ANSI_escape_code
 
     // Regular Color
     const string Black = "\e[0;30m";
@@ -153,6 +149,26 @@ namespace Color {
     const string BPurple = "\e[1;35m";
     const string BCyan = "\e[1;36m";
     const string BWhite = "\e[1;37m";
+
+    // Faint
+    const string FBlack = "\e[2;30m";
+    const string FRed = "\e[2;31m";
+    const string FGreen = "\e[2;32m";
+    const string FYellow = "\e[2;33m";
+    const string FBlue = "\e[2;34m";
+    const string FPurple = "\e[2;35m";
+    const string FCyan = "\e[2;36m";
+    const string FWhite = "\e[2;37m";
+
+    // Italic
+    const string ItBlack = "\e[3;30m";
+    const string ItRed = "\e[3;31m";
+    const string ItGreen = "\e[3;32m";
+    const string ItYellow = "\e[3;33m";
+    const string ItBlue = "\e[3;34m";
+    const string ItPurple = "\e[3;35m";
+    const string ItCyan = "\e[3;36m";
+    const string ItWhite = "\e[3;37m";
 
     // Underline
     const string UBlack = "\e[4;30m";
@@ -193,6 +209,16 @@ namespace Color {
     const string BIPurple = "\e[1;95m";
     const string BICyan = "\e[1;96m";
     const string BIWhite = "\e[1;97m";
+
+    // Italic High Intensity
+    const string ItIBlack = "\e[3;90m";
+    const string ItIRed = "\e[3;91m";
+    const string ItIGreen = "\e[3;92m";
+    const string ItIYellow = "\e[3;93m";
+    const string ItIBlue = "\e[3;94m";
+    const string ItIPurple = "\e[3;95m";
+    const string ItICyan = "\e[3;96m";
+    const string ItIWhite = "\e[3;97m";
 
     // High Intensity backgrounds
     const string IBgBlack = "\e[0;100m";

@@ -33,20 +33,24 @@ void Player::pickupGold(int amt) {
     electrum += amt * 2;
 }
 
-int Player::getHealth() {
+int Player::getHealth() const {
     return health;
 }
 
-int Player::getAttack() {
+int Player::getAttack() const {
     return attack + attackMod;
 }
 
-int Player::getDefense() {
+int Player::getDefense() const {
     return defense + defenseMod;
 }
 
-int Player::getElectrum() {
+int Player::getElectrum() const {
     return electrum;
+}
+
+int Player::getScore() const {
+    return electrum/2;
 }
 
 bool Player::canMove(const Tile* t) const {
@@ -65,23 +69,15 @@ std::stringstream& Player::log() {
 
 void Player::displayInfo(std::ostream& out) {
     // display gold
-    out << Color::BWhite << "Gold: " << Color::Reset << electrum / 2;
+    out << Color::BWhite << "Gold: " << Color::IYellow << electrum / 2 << Color::Reset;
     if (electrum % 2 == 1)
         out << ".5";
     out << '\n';
 
-    std::string healthColor = Color::IGreen;
-
-    if (health <= maxHealth / 4) {
-        healthColor = Color::IRed;
-    } else if (health <= maxHealth / 2) {
-        healthColor = Color::IYellow;
-    }
-
-    out << Color::BWhite << "HP: " << healthColor << health << Color::Reset << '\n';
+    out << Color::BWhite << "HP: " << getHealthColor() << health << Color::Reset << '\n';
     out << Color::BWhite << "ATK: " << Color::Reset << attack + attackMod << '\n';
     out << Color::BWhite << "DEF: " << Color::Reset << defense + defenseMod << '\n';
     // logs begin with a space
-    out << "Action:" << sysLog.str() << "\n";
+    out << Color::BWhite << "Action:" << Color::Reset << sysLog.str() << "\n" << std::endl;
     clearLog();
 }
