@@ -26,13 +26,14 @@ void Player::pickupSuit() {
 void Player::reset() {
     attackMod = 0;
     defenseMod = 0;
-    // TODO: anything else?
 }
 
 int Player::calculateDamage(int attackPower) const {
     int damage = Character::calculateDamage(attackPower);
-    if (suited) return damage/2;
-    else return damage;
+    if (suited)
+        return damage / 2;
+    else
+        return damage;
 }
 
 void Player::pickupGold(int amt) {

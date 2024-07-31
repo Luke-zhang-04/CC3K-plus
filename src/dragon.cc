@@ -39,7 +39,6 @@ EnemyUpdateAction Dragon::act(std::size_t x, std::size_t y) {
                         // protects is a Treasure*, can easily cast it to Retrievable*
                         if (pArea[jy][jx]->treasure == static_cast<Retrievable*>(protects))
                             return EnemyUpdateAction::Attack;
-                        // TODO: unverified
                     }
                 }
             }

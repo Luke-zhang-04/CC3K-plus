@@ -6,6 +6,7 @@
 #include "treasure.h"
 
 #include <cstddef>
+#include <iostream>
 
 // does not drop gold... why would you kill it! -- for the merchant's hoard... I guess
 Merchant::Merchant(Board& board): Enemy{EnemyType::Merchant, board} {

@@ -164,7 +164,6 @@ std::vector<std::vector<Tile*>>
     return chambers;
 }
 
-// TODO: generate barrier suit
 void Game::randomPopulateMap(Board* newBoard, Player* player, bool shouldGenerateSuit) {
     std::vector<std::vector<Tile*>>& chambers = newBoard->chambers;
     size_t totalTileCount = 0;
@@ -389,7 +388,8 @@ void Game::randomPopulateMap(Board* newBoard, Player* player, bool shouldGenerat
             chamberIters[chamberId]++;
         }
 
-        Enemy* newEnemy = new Enemy{type, *newBoard};
+        Enemy* newEnemy =
+            type == EnemyType::Merchant ? new Merchant{*newBoard} : new Enemy{type, *newBoard};
         tile->enemy = newEnemy;
 
         // Should never be dragon but check anyways, merchant is definitely possible, and we should
@@ -434,11 +434,9 @@ void Game::nextLevel() {
     coordPair compassLocation{0, 0};
     coordPair stairLocation{0, 0};
     coordPair playerLocation{0, 0};
-    // TODO: there can actually be multiple dragons
-    Dragon* dragon = nullptr;                   // NON OWNERSHIP
-    Retrievable* dragonProtectedItem = nullptr; // NON OWNERSHIP
-    std::vector<Tile*> floorTiles;              // Keep track of floor tiles for spawning
-    std::vector<Enemy*> compassHoldingEnemies;  // Enemies that CAN hold a compass
+    std::vector<Tile*> dragonTreasureTiles{};  // Tiles of dragon treasure
+    std::vector<Tile*> floorTiles;             // Keep track of floor tiles for spawning
+    std::vector<Enemy*> compassHoldingEnemies; // Enemies that CAN hold a compass
 
     Board* newBoard = new Board{std::vector<std::vector<Tile*>>(1, std::vector<Tile*>{}), *this};
 
@@ -481,27 +479,38 @@ void Game::nextLevel() {
         if (input == Symbol::Compass) {
             compassLocation = currentLocation;
         }
+
+        // For dragons or treasure that should be guarded by a dragon, check any previous tiles and
+        // try and connect the two together
         if (input == Symbol::BarrierSuit || input == (char) InputMapNumbers::TreasureDragonHoard) {
-            dragonProtectedItem = row[row.size() - 1]->treasure;
-        }
-        if (input == Symbol::Dragon) {
-            dragon = dynamic_cast<Dragon*>(row[row.size() - 1]->enemy);
+            dragonTreasureTiles.push_back(row[row.size() - 1]);
         }
         if (isEnemy(input) && input != Symbol::Merchant && input != Symbol::Dragon) {
             compassHoldingEnemies.push_back(row[row.size() - 1]->enemy);
         }
     }
 
-    // Postprocessing: connect dragon to protected
-    if (dragonProtectedItem != nullptr && dragon != nullptr) {
-        if (dragon->protects != nullptr || dragonProtectedItem->isProtected()) {
-            throw std::logic_error{
-                "dragon/dragon protected item already linked (that's not supposed to happen wtf?)"
-            };
-        }
+    // Postprocessing: link dragons with treasure
+    for (auto treasureTile : dragonTreasureTiles) {
+        auto area = newBoard->getArea(treasureTile);
 
-        dragon->protects = dragonProtectedItem;
-        dragonProtectedItem->setProtector(dragon); // DRAGON DEEZ NUTS ACROSS...
+        for (uint8_t dx = 0; dx <= 2; dx++) {
+            for (uint8_t dy = 0; dy <= 2; dy++) {
+                if (dx == 1 && dy == 1)
+                    continue;
+
+                const Tile* tile = area[dy][dx];
+
+                if (tile != nullptr && tile->enemy != nullptr &&
+                    tile->enemy->getCharacter() == Symbol::Dragon) {
+                    Dragon* dragon = dynamic_cast<Dragon*>(tile->enemy);
+                    dragon->protects = treasureTile->treasure;
+                    treasureTile->treasure->setProtector(dragon); // DRAGON DEEZ NUTS ACROSS...
+                    goto dragonLink_break;
+                }
+            }
+        }
+    dragonLink_break:;
     }
 
     // Postprocessing: label chambers
@@ -560,8 +569,6 @@ bool Game::playerMove(CardinalDirection dir) {
     // current player location
     auto loc = currentBoard->getPlayerLoc();
 
-    // TODO: can I put an assertion here that player is not nullptr? It should always be defined
-    // and things have gone very wrong if not
     Tile* curTile = currentBoard->at(loc);
     Player* player = curTile->player;
     Tile* newTile = currentBoard->inDirection(loc, dir);

@@ -7,6 +7,7 @@
 
 #include <cmath>
 #include <cstddef>
+#include <iostream>
 #include <vector>
 
 using std::size_t;

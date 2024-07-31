@@ -26,7 +26,7 @@ class Player: public Character {
         char getCharacter() override;
         virtual void usePotion(int healthBuff, int attackBuff, int defenseBuff);
         virtual void pickupGold(int amt);
-        virtual void pickupSuit();
+        void pickupSuit();
         void reset();
 
         int getHealth() const;
