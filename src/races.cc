@@ -44,7 +44,7 @@ void Human::displayInfo(std::ostream& out) {
 
 int Human::getScore() const {
     // half again increase
-    return Player::getScore() + Player::getScore()/2;
+    return Player::getScore() + Player::getScore() / 2;
 }
 
 void Orc::displayInfo(std::ostream& out) {

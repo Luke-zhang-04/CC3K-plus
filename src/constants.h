@@ -37,7 +37,7 @@ namespace Symbol {
 }; // namespace Symbol
 
 namespace SpawnRates {
-    const uint8_t EnemyTotal = 0;
+    const uint8_t EnemyTotal = 20;
     const uint8_t EnemyTotalRate = 18;
     const uint8_t EnemyVampireRate = 3;
     const uint8_t EnemyWerewolfRate = 4;

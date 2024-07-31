@@ -36,6 +36,7 @@ class Orc: public Player {
 class God: public Player {
     public:
         God();
+        // should not be affected by potions
         void usePotion(int healthMod, int attackMod, int defenseMod) override;
         void displayInfo(std::ostream&) override;
 };

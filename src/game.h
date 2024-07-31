@@ -39,7 +39,7 @@ class Game {
          *
          * @returns player location, stair location
          */
-        static void randomPopulateMap(Board* newBoard, Player* player);
+        static void randomPopulateMap(Board* newBoard, Player* player, bool shouldGenerateSuit);
 
         /**
          * @brief go through each floor tile and try to find and label all chambers

@@ -10,6 +10,7 @@ struct Tile;
 class Character {
     protected:
         int maxHealth, health, defense, attack;
+        virtual int calculateDamage(int attackPower) const;
 
     public:
         Character(int maxHealth, int attack, int defense);

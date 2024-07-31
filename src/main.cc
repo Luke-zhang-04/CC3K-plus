@@ -24,18 +24,26 @@ Player* initPlayer() {
               << Color::Reset << ", " << Color::Black << "(d)warf" << ", " << Color::Green
               << "(o)rc" << Color::Reset << ", and " << Color::BIYellow << "(g)od" << Color::Reset
               << ": " << Color::FWhite << std::flush;
-    std::cin >> move;
+
+    while (player == nullptr && std::cin >> move) {
+        switch (move) {
+            case 'h': player = new Human(); break;
+            case 'e': player = new Elf(); break;
+            case 'd': player = new Dwarf(); break;
+            case 'o': player = new Orc(); break;
+            case 'g': player = new God(); break;
+            case 'q': throw std::invalid_argument{"exiting..."};
+            default:
+                std::cout << Color::Reset << "invalid race " << move
+                          << ", try again: " << Color::FWhite << std::endl;
+                break;
+        }
+    }
+
     std::cout << Color::Reset;
 
-    switch (move) {
-        case 'h': player = new Human(); break;
-        case 'e': player = new Elf(); break;
-        case 'd': player = new Dwarf(); break;
-        case 'o': player = new Orc(); break;
-        case 'g': player = new God(); break;
-        case 'r': return initPlayer();
-        case 'q': return nullptr;
-        default: return initPlayer();
+    if (player == nullptr) {
+        throw std::invalid_argument{"exiting..."};
     }
 
     player->log() << Color::BICyan << " Player character" << Color::Reset << " has spawned.";
@@ -78,7 +86,8 @@ int main(int argc, char* argv[]) {
             stream = _stream;
 
             for (int i = 0; i < 5; i++) {
-                *_stream << std::string{oneChamberFloor} << '\n';
+                *_stream << std::string{defaultFloor} << '\n';
+                // *_stream << std::string{oneChamberFloor} << '\n';
             }
 
             *_stream >> std::noskipws;
@@ -152,17 +161,17 @@ int main(int argc, char* argv[]) {
                 if (choice == "Yes" || choice == "yes" || choice == "y") {
                     playerAlive = true;
                     game = new Game(initPlayer(), std::cout, *stream, isInputMap);
-                } else
+                } else {
                     game = nullptr;
+                    break;
+                }
             } else {
                 std::cout << Color::BWhite << "Command: " << Color::FWhite << std::flush;
             }
 
             if (game->didWin()) {
-                std::cout << Color::BWhite
-                          << "Congratulations! You Won! "
-                          << "Your score was " << game->getScore()
-                          << " Would you like to play again? (Yes/No) "
+                std::cout << Color::BWhite << "Congratulations! You Won! " << "Your score was "
+                          << game->getScore() << " Would you like to play again? (Yes/No) "
                           << Color::FWhite << std::flush;
                 delete game;
                 std::string choice;
@@ -170,8 +179,10 @@ int main(int argc, char* argv[]) {
                 if (choice == "Yes" || choice == "yes" || choice == "y") {
                     playerAlive = true;
                     game = new Game(initPlayer(), std::cout, *stream, isInputMap);
-                } else
+                } else {
                     game = nullptr;
+                    break;
+                }
             }
         }
 

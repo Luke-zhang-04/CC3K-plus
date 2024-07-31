@@ -12,7 +12,7 @@ bool isEnemy(char symbol) {
 
 std::string symbolToColor(char symbol) {
     switch (symbol) {
-        case Symbol::BarrierSuit:
+        case Symbol::BarrierSuit: return Color::ICyan;
         case Symbol::Compass:
             return Color::White; // TODO: these white/values may not show up if light mode?
 
@@ -68,7 +68,7 @@ CardinalDirection stringToDirection(std::string str) {
         return CardinalDirection::SouthWest;
     }
 
-    throw std::invalid_argument("unknown direction " + str);
+    throw std::invalid_argument{"unknown direction " + str};
 }
 
 std::string directionToString(CardinalDirection c) {

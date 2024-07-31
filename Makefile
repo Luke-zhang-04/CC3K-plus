@@ -1,6 +1,6 @@
 CXX=g++
 CXXFLAGS=-std=c++14 -Wall -g -MMD
-EXEC=main
+EXEC=cc3k
 OBJDIR=obj
 SRCDIR=src
 CCFILES=$(wildcard $(SRCDIR)/*.cc)

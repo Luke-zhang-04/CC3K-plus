@@ -29,6 +29,12 @@ void Player::reset() {
     // TODO: anything else?
 }
 
+int Player::calculateDamage(int attackPower) const {
+    int damage = Character::calculateDamage(attackPower);
+    if (suited) return damage/2;
+    else return damage;
+}
+
 void Player::pickupGold(int amt) {
     electrum += amt * 2;
 }
@@ -50,7 +56,7 @@ int Player::getElectrum() const {
 }
 
 int Player::getScore() const {
-    return electrum/2;
+    return electrum / 2;
 }
 
 bool Player::canMove(const Tile* t) const {

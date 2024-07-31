@@ -17,6 +17,8 @@ class Player: public Character {
         int electrum = 0; // half gold increments
         std::stringstream sysLog;
         void clearLog();
+        // if it's suited, halve the damage
+        virtual int calculateDamage(int attackPower) const override;
 
     public:
         Player(int maxHealth, int attack, int defense);

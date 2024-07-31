@@ -22,7 +22,6 @@
 #include <queue>
 #include <stdexcept>
 #include <string>
-#include <unordered_map>
 #include <utility>
 #include <vector>
 
@@ -110,7 +109,7 @@ Tile* getTileFromChar(coordPair loc, char character, Player* player, Board& boar
             return new Tile{loc, Symbol::FloorTile, new Treasure{TreasureType::DragonHoard}};
 
         default:
-            throw std::invalid_argument("unknown map tile character " + std::string(1, character));
+            throw std::invalid_argument{"unknown map tile character " + std::string(1, character)};
     }
 }
 
@@ -166,7 +165,7 @@ std::vector<std::vector<Tile*>>
 }
 
 // TODO: generate barrier suit
-void Game::randomPopulateMap(Board* newBoard, Player* player) {
+void Game::randomPopulateMap(Board* newBoard, Player* player, bool shouldGenerateSuit) {
     std::vector<std::vector<Tile*>>& chambers = newBoard->chambers;
     size_t totalTileCount = 0;
     // Pair (chamber id, remaining spawnable tiles)
@@ -174,7 +173,7 @@ void Game::randomPopulateMap(Board* newBoard, Player* player) {
     // always pick a random chamber that has a free tile.
     std::vector<coordPair> chamberTileCounts(chambers.size());
     // Number of things have been spawned in each chamber
-    std::unordered_map<size_t, std::vector<Tile*>::iterator> chamberIters{};
+    std::vector<std::vector<Tile*>::iterator> chamberIters{};
     std::queue<size_t> selectedChambers{}; // Chambers selected for spawning
     std::vector<Enemy*> compassHoldingEnemies{};
 
@@ -219,17 +218,18 @@ void Game::randomPopulateMap(Board* newBoard, Player* player) {
         chamberIters[offsetChamberId] = chambers[index].begin();
     }
 
-    // +2 for player/stairs, +1 for potential compass, + goldTotal for dragon hoards
+    // +2 for player/stairs, +1 for potential compass, +2 for potential barrier suit, +goldTotal
+    // for dragon hoards
     if (totalTileCount <= SpawnRates::Total + SpawnRates::GoldTotal + 3) {
-        throw std::length_error(
+        throw std::length_error{
             "board is not large enough to spawn everything (want " +
             std::to_string(SpawnRates::Total + SpawnRates::GoldTotal + 3) + ", got " +
             std::to_string(totalTileCount) + ")"
-        );
+        };
     }
 
     // (random player location, random stair location)
-    std::pair<int, int> initSpawns = randIntPair(0, chambers.size() - 1);
+    std::pair<size_t, size_t> initSpawns = randIntPair(0, chambers.size() - 1);
 
     (*chamberIters[initSpawns.first])->player = player;
     newBoard->playerLocation = (*chamberIters[initSpawns.first])->location;
@@ -237,6 +237,48 @@ void Game::randomPopulateMap(Board* newBoard, Player* player) {
     newBoard->stairLocation = (*chamberIters[initSpawns.second])->location;
     chamberIters[initSpawns.second]++;
 
+    // Generate barrier suit
+    if (shouldGenerateSuit) {
+        size_t chamberId = randInt(0, chambers.size() - 1);
+
+        Tile* tile = *chamberIters[chamberId];
+        chamberIters[chamberId]++;
+        auto area = newBoard->getArea(tile);
+
+        std::vector<std::pair<uint8_t, uint8_t>> available{};
+
+        available.reserve(8);
+
+        for (uint8_t dx = 0; dx <= 2; dx++) {
+            for (uint8_t dy = 0; dy <= 2; dy++) {
+                if (dx == 1 && dy == 1)
+                    continue;
+
+                const Tile* tile = area[dy][dx];
+
+                if (tile != nullptr && tile->empty() && tile->mapTile == Symbol::FloorTile) {
+                    available.push_back({dx, dy});
+                }
+            }
+        }
+
+        if (available.size() == 0) {
+            tile->treasure = new BarrierSuit{nullptr};
+        } else {
+            std::pair<uint8_t, uint8_t> dragonOffset = available[randInt(0, available.size() - 1)];
+            Tile* dragonTile =
+                newBoard->at(area[dragonOffset.second][dragonOffset.first]->location);
+            Dragon* dragon = new Dragon{*newBoard};
+            BarrierSuit* treasure = new BarrierSuit{dragon};
+
+            dragon->protects = treasure;
+
+            tile->treasure = treasure;
+            dragonTile->enemy = dragon;
+        }
+    }
+
+    // Select chambers randomly
     for (uint8_t i = 0; i < SpawnRates::Total + SpawnRates::GoldTotal + 1; i++) {
         size_t randIndex = randInt(0, chamberTileCounts.size() - 1);
 
@@ -453,9 +495,9 @@ void Game::nextLevel() {
     // Postprocessing: connect dragon to protected
     if (dragonProtectedItem != nullptr && dragon != nullptr) {
         if (dragon->protects != nullptr || dragonProtectedItem->isProtected()) {
-            throw std::logic_error(
+            throw std::logic_error{
                 "dragon/dragon protected item already linked (that's not supposed to happen wtf?)"
-            );
+            };
         }
 
         dragon->protects = dragonProtectedItem;
@@ -467,29 +509,29 @@ void Game::nextLevel() {
     newBoard->chambers = labelChambers(floorTiles, newBoard);
 
     if (shouldGenerate) { // Random gen
-        randomPopulateMap(newBoard, player);
+        randomPopulateMap(newBoard, player, level == suitLevel);
     } else { // Passed in map
         if (stairLocation.first == 0 || stairLocation.second == 0) {
-            throw std::invalid_argument(
+            throw std::invalid_argument{
                 "invalid stair location in pre-determined map (" +
-                std::to_string(stairLocation.first) + ", " +
-                std::to_string(stairLocation.second) + ")"
-            );
+                std::to_string(stairLocation.first) + ", " + std::to_string(stairLocation.second) +
+                ")"
+            };
         }
         if (playerLocation.first == 0 || playerLocation.second == 0) {
-            throw std::invalid_argument(
+            throw std::invalid_argument{
                 "invalid player location in pre-determined map (" +
-                std::to_string(playerLocation.first) + ", " + std::to_string(playerLocation.second) +
-                ")"
-            );
+                std::to_string(playerLocation.first) + ", " +
+                std::to_string(playerLocation.second) + ")"
+            };
         }
         if (compassHoldingEnemies.size() == 0 &&
             (compassLocation.first == 0 || compassLocation.second == 0)) {
-            throw std::invalid_argument(
+            throw std::invalid_argument{
                 "cannot assign compass to enemy and location not given (" +
                 std::to_string(compassLocation.first) + ", " +
                 std::to_string(compassLocation.second) + ")"
-            );
+            };
         }
 
         newBoard->stairLocation = stairLocation;
@@ -564,21 +606,25 @@ bool Game::playerMove(CardinalDirection dir) {
         // logging logic
         player->log() << " " << Color::BICyan << "PC" << Color::Reset << " moves " << Color::UBlack
                       << directionToString(dir) << Color::Reset;
-        auto newArea = currentBoard->getArea(loc);
+        auto newArea = currentBoard->getArea(currentBoard->getPlayerLoc());
         for (int dx = 0; dx <= 2; ++dx) {
             for (int dy = 0; dy <= 2; ++dy) {
                 if (dx == 1 && dy == 1)
                     continue; // if both are 0, move on, don't let them not move
 
+                // Needs to happen after enemy move?? (should enemies be able to attack player?)
                 if (newArea[dy][dx] != nullptr) {
-                    if (newArea[dy][dx]->enemy)
-                        player->log() << " and sees a " << *newArea[dy][dx];
-                    else if (newArea[dy][dx]->item)
+                    // remove enemy logging
+                    // if (newArea[dy][dx]->enemy)
+                    //     player->log() << " and sees a " << *newArea[dy][dx];
+                    if (newArea[dy][dx]->item)
                         player->log() << " and sees an unknown " << Color::Purple << "potion"
                                       << Color::Reset;
                     else if (newArea[dy][dx]->treasure)
                         player->log()
                             << " and sees a " << Color::IYellow << "treasure" << Color::Reset;
+                } else {
+                    std::cout << "NULLPTR\n";
                 }
             }
         }
@@ -587,8 +633,6 @@ bool Game::playerMove(CardinalDirection dir) {
 
 end:
     update();
-
-    // logging
 
     return player->getHealth() > 0;
 }

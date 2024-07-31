@@ -10,6 +10,10 @@
 Character::Character(int maxHealth, int attack, int defense):
     maxHealth{maxHealth}, health{maxHealth}, defense{defense}, attack{attack} {}
 
+int Character::calculateDamage(int attackPower) const {
+    return std::ceil((100.0 / (100 + getDefense())) * attackPower);
+}
+
 int Character::getAttack() const {
     return attack;
 }
@@ -29,10 +33,12 @@ std::string Character::getHealthColor() const {
 }
 
 std::pair<int, int> Character::beAttacked(int attackPower) {
-    int attackCalc = std::ceil((100.0 / (100 + getDefense())) * attackPower);
-    health -= attackCalc;
+    int damage = calculateDamage(attackPower);
+    health -= damage;
 
-    return {health, attackCalc};
+    health = std::max(health, 0);
+
+    return {health, damage};
 }
 
 bool Character::canMove(const Tile* t) const {
